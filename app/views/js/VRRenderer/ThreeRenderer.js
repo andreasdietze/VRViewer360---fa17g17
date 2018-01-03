@@ -52,31 +52,36 @@ var ThreeRenderer = function()
 	this.initSpheres();
 
 	// Set controls
-	this.isOrbitActive = true;
+	this.isOrbitActive = false;
 	if(this.isOrbitActive)
 	{
 		this.setOrbitControls();
 	}
 
 	var that = this;
+
+	// document.addEventListener('mousedown', function (event){
+	// 	that.onDocumentMouseDown(event, that)
+	// }, false );
+
 	document.addEventListener('mousedown', function (event){
-		that.onDocumentMouseDown(event, that)
+		that.onDocumentMouseDown(event)
 	}, false );
 
 	document.addEventListener('mouseup',  function (event){
-		that.onDocumentMouseUp(event, that)
+		that.onDocumentMouseUp(event)
 	}, false );
 
 	document.addEventListener('mousemove', function (event){
-		that.onDocumentMouseMove(event, that)
+		that.onDocumentMouseMove(event)
 	}, false );
 
 	document.addEventListener('mousewheel', function (event){
-		that.onDocumentMouseWheel(event, that)
+		that.onDocumentMouseWheel(event)
 	}, false );
 
 	document.addEventListener('DOMMouseScroll', function (event){
-		that.onDocumentMouseWheel(event, that)
+		that.onDocumentMouseWheel(event)
 	}, false );
 	
 
@@ -151,7 +156,8 @@ ThreeRenderer.prototype.initTJS = function()
 	};
 
 	this.grid = new GridGenerator(this);
-	this.scene.add(this.grid.createGrid(gridSettings));
+	// Grid interferes with raycaster
+	//this.scene.add(this.grid.createGrid(gridSettings));
 }
 
 ThreeRenderer.prototype.initSpheres = function ()
@@ -255,24 +261,27 @@ ThreeRenderer.prototype.setOrbitControls = function()
 // Update user input (mouse) if left or right mouse button is pressed
 // Update user input (mouse) once if middle mouse button is pressed
 // and switch panorama
-ThreeRenderer.prototype.onDocumentMouseDown = function ( event, that ) 
+ThreeRenderer.prototype.onDocumentMouseDown = function ( event ) 
 {
 	event.preventDefault();
+	//console.log(event);
+	//console.log(that);
+	//console.log(this);
 
 	//console.log(that.onPointerDownPointerX);
 	switch(event.button)
 	{
 		case 0: // left
-			that.isUserInteracting = true;
+		this.isUserInteracting = true;
 
 			// Update non THREE mouse controls on button press
 			if(!this.isOrbitActive)
 			{
-				that.onPointerDownPointerX = event.clientX;
-				that.onPointerDownPointerY = event.clientY;
+				this.onPointerDownPointerX = event.clientX;
+				this.onPointerDownPointerY = event.clientY;
 			
-				that.onPointerDownLon = that.lon;
-				that.onPointerDownLat = that.lat;
+				this.onPointerDownLon = this.lon;
+				this.onPointerDownLat = this.lat;
 			}
 
 			// Get mouse position between -1 and 1 for both axis
@@ -283,43 +292,44 @@ ThreeRenderer.prototype.onDocumentMouseDown = function ( event, that )
 
 			// Calculate objects intersecting the picking ray
 			var intersects = this.raycaster.intersectObjects( this.scene.children, true );
-	
+			
 			if(intersects.length > 0)
 			{
 				if(intersects[0].object.geometry.type === 'PlaneGeometry')
 				{
+					console.log(intersects[0]);
 					intersects[0].object.material.color.set( 0xff0000 );
-					that.panocounter++;
+					this.panocounter++;
 		
-					if(that.panocounter > 6) 
-						that.panocounter = 0; 
+					if(this.panocounter > 6) 
+						this.panocounter = 0; 
 		
 					// Switch panoramas
-					console.log(that.innerspheremesh);
-					that.innerspheremesh.material.map = THREE.ImageUtils.loadTexture(that.panoramas[that.panocounter]);
-					that.innerspheremesh.material.needUpdate = true;
+					console.log(this.innerspheremesh);
+					this.innerspheremesh.material.map = THREE.ImageUtils.loadTexture(this.panoramas[this.panocounter]);
+					this.innerspheremesh.material.needUpdate = true;
 		
-					console.log('Src in panoramas : ' + that.panoramas[that.panocounter]);
-					console.log('Panocounter: ' + that.panocounter);
+					console.log('Src in panoramas : ' + this.panoramas[this.panocounter]);
+					console.log('Panocounter: ' + this.panocounter);
 				}
 			}
 			break;
 
 		case 1: // middle
 			// Switch between panoramas
-			console.log(that.camera);
-			that.panocounter++;
+			console.log(this.camera);
+			this.panocounter++;
 
-			if(that.panocounter > 6) 
-				that.panocounter = 0; 
+			if(this.panocounter > 6) 
+				this.panocounter = 0; 
 
 			// Switch panoramas
-			console.log(that.innerspheremesh);
-			that.innerspheremesh.material.map = THREE.ImageUtils.loadTexture(that.panoramas[that.panocounter]);
-			that.innerspheremesh.material.needUpdate = true;
+			console.log(this.innerspheremesh);
+			this.innerspheremesh.material.map = THREE.ImageUtils.loadTexture(this.panoramas[this.panocounter]);
+			this.innerspheremesh.material.needUpdate = true;
 
-			console.log('Src in panoramas : ' + that.panoramas[that.panocounter]);
-			console.log('Panocounter: ' + that.panocounter);
+			console.log('Src in panoramas : ' + this.panoramas[this.panocounter]);
+			console.log('Panocounter: ' + this.panocounter);
 			break;
 
 		case 2: // right
@@ -329,30 +339,29 @@ ThreeRenderer.prototype.onDocumentMouseDown = function ( event, that )
 }
 
 // Lock user input (mouse) once if button was released
-ThreeRenderer.prototype.onDocumentMouseUp = function(event, that) 
+ThreeRenderer.prototype.onDocumentMouseUp = function( event ) 
 {
-	that.isUserInteracting = false;
+	this.isUserInteracting = false;
 }
 
 // While lift mouse button is pressed, update mouse user input
-ThreeRenderer.prototype.onDocumentMouseMove = function(event, that)
+ThreeRenderer.prototype.onDocumentMouseMove = function( event )
 {
 	// Update non THREE mouse controls on mouse move
-	if (that.isUserInteracting && !that.isOrbitActive) 
+	if (this.isUserInteracting && !this.isOrbitActive) 
 	{
-		that.lon = ( that.onPointerDownPointerX - event.clientX ) * 0.1 + that.onPointerDownLon;
-		that.lat = ( event.clientY - that.onPointerDownPointerY ) * 0.1 + that.onPointerDownLat;
+		this.lon = ( this.onPointerDownPointerX - event.clientX ) * 0.1 + this.onPointerDownLon;
+		this.lat = ( event.clientY - this.onPointerDownPointerY ) * 0.1 + this.onPointerDownLat;
 	}
 }
 
 // Update user input from mouse wheel
-ThreeRenderer.prototype.onDocumentMouseWheel = function(event, that) 
+ThreeRenderer.prototype.onDocumentMouseWheel = function( event ) 
 {
 	// WebKit
 	if ( event.wheelDeltaY ) 
 	{
-
-		that.camera.fov -= event.wheelDeltaY * 0.05;
+		this.camera.fov -= event.wheelDeltaY * 0.05;
 		// fovrange -= event.wheelDeltaY * 0.05;
 		// fovscale -= event.wheelDeltaY * 0.0005;
 		// console.log("Increased RiftFOV by : " + fovscale);
@@ -363,8 +372,7 @@ ThreeRenderer.prototype.onDocumentMouseWheel = function(event, that)
 	} 
 	else if ( event.wheelDelta ) 
 	{
-
-		that.camera.fov -= event.wheelDelta * 0.05;
+		this.camera.fov -= event.wheelDelta * 0.05;
 		// fovrange -= event.wheelDelta * 0.05;
 		// fovscale -= event.wheelDelta * 0.0005;
 		// console.log("Increased RiftFOV by : " + fovscale);
@@ -375,8 +383,7 @@ ThreeRenderer.prototype.onDocumentMouseWheel = function(event, that)
 	}
 	else if ( event.detail ) 
 	{
-
-		that.camera.fov += event.detail * 1.0;
+		this.camera.fov += event.detail * 1.0;
 		// fovrange += event.detail * 1.0;
 		// fovscale += event.detail * 0.01;
 		// console.log("Increased RiftFOV by : " + fovscale);
@@ -386,11 +393,11 @@ ThreeRenderer.prototype.onDocumentMouseWheel = function(event, that)
 	} // end if mouse wheel
 
 	// Update projection with new FOV
-	that.camera.updateProjectionMatrix();
+	this.camera.updateProjectionMatrix();
 	//riftCam = new THREE.OculusRiftEffect(renderer);
 }
 
-ThreeRenderer.prototype.updateMouseVector = function(event)
+ThreeRenderer.prototype.updateMouseVector = function( event )
 {
 	// Init vector2D for mouse
 	var mouse = new THREE.Vector2(0,0,0);
