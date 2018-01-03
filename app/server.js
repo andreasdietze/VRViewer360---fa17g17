@@ -280,6 +280,10 @@ router.get("/",function(req,res){
 	res.sendFile(path + "/index.html");
 });
 
+router.get("/VRViewer360",function(req,res){
+	res.sendFile(path + "/VRViewer360.html");
+});
+
 router.get("/about",function(req,res){
 	res.sendFile(path + "/about.html");
 });
@@ -2318,7 +2322,6 @@ app.use('/fa17g17/js', express.static(path + '/js'));
 
 //Zugriff Revealjs-Dependencies
 app.use('/fa17g17/lib', express.static(path + '/lib'));
-app.use('/fa17g17/plugin', express.static(path + '/plugin'));
 
 //Zugriff auf Dateiuploads
 app.use('/fa17g17/DL', express.static(dlPath));

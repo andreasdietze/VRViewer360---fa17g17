@@ -9,7 +9,7 @@ AJAXSettings.prototype.setAJAXURL = function(){
 	// 1: URL is "https://sfsuse.com/...."
 	// 2: URL is "http://192.168.0.100:17017/ (David)"
 	// 3: URL is "http://192.168.178.29:17017/ (David)"
-	return 1;
+	return 0;
 }
 
 AJAXSettings.prototype.getAJAXURL = function(){
