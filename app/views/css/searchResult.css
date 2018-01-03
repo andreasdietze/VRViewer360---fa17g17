@@ -1,0 +1,23 @@
+// -------------------- Searchresult Styles ----------------
+	.searchResultBox {
+		color: white;
+	}
+	
+	.container-fluid {
+			width: 100%;
+			height: 70%;
+			margin: 0 auto; 
+			display: flex;
+			align-items: center;
+	}
+
+	.jumbotron {
+			margin-left: auto;
+			margin-right: auto;
+		  width: 100%;
+			height: 90%;
+			margin: 0 auto; 
+			display: flex;
+			align-items: center;
+	}
+	

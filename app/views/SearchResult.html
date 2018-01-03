@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Real Estates - FA17G17</title>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-110932262-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-110932262-1');
+</script>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="./css/singleOffer.css">
+<link rel="stylesheet" type="text/css" href="./css/searchResult.css">
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+<!-- AJAX URL Helper -->
+<script type="text/javascript" src="js/handleAJAX.js"></script>
+<script type="text/javascript" src="js/searchLogic.js"></script>
+<script type="text/javascript" src="js/favorit-logic.js"></script>
+</head>
+<style>
+.add_to_favorits {
+	float: right;
+	cursor: pointer;
+}
+</style>
+<body style="
+	background-image: url('./img/background.jpeg');
+	background-image-size: 100%;
+">
+<div>
+	<nav class="navbar navbar-inverse" role="navigation" style="padding-left:80px;">
+			<ul class="nav navbar-nav">
+			<li><a href="/fa17g17">Home<span class="sr-only">(current)</span></a></li>
+			<li>
+			<form id="searchbar_for_estates" class="navbar-form" role="search">
+				<div class="input-group add-on" style="display: flex; flex: 1 1 auto;">
+				<select id = "nav_angebot_art" class="form-control">
+					<option>Buy</option>
+					<option>Rent</option>
+				</select>
+				<select id = "nav_ort" class="form-control">
+					<option>Fulda</option>
+					<option>Hünfeld</option>
+					<option>Eichenzell</option>
+					<option>Neuhof</option>
+					<option>Petersberg</option>
+				</select>
+				<select id = "nav_objektart" class="form-control">
+					<option>Estate</option>
+					<option>House</option>
+					<option>Apartment</option>
+					<option>Villa/Townhouse</option>
+				</select>
+				<div class="col-md-2"><input id = "nav_qm" type="text" class="form-control" placeholder="Square meters..."></div>
+				<div class="col-md-2"><input id = "nav_preis" type="text" class="form-control" placeholder="Max Price..."></div>
+				<select id = "nav_zimmeranzahl" class="form-control">
+					<option value="0">-</option>
+					<option value="1">ab 1 Zimmer</option>
+					<option value="2">ab 2 Zimmer</option>
+					<option value="3">ab 3 Zimmer</option>
+					<option value="4">ab 4 Zimmer</option>
+					<option value="5">ab 5 Zimmer</option>
+				</select>
+
+				<div class="input-group-btn">
+					<button id="nav_bt_search" class="btn btn-default" type="button"><i class="glyphicon glyphicon-search"></i></button>
+				</div>
+			 </div>
+			</form>
+			</li>
+			<li id="logDropping">
+			<div class="navbar-form dropdown">
+			<button class="btn btn-primary dropdown-toggle loggedInDropdown" type="button" data-toggle="dropdown" >Manage
+			<span class="caret"></span></button>
+			<ul class="dropdown-menu">
+				<li><a href="/fa17g17/dashboard">Dashboard</a></li>
+				<li><a href="/fa17g17/dashboard/messages">Messages</a></li>
+				<li class="divider"></li>
+				<li><a href="/fa17g17/user/logout">Logout</a></li>
+			 <!-- <li id="logOut"><a style="cursor: pointer;">Logout</a></li>-->
+			</ul>
+			</div>
+			</li><!-- if logged in -->
+			<li id="nlogDropping" style="float: right;"><a href="/fa17g17/Login">Sign-In</a></li><!-- if logged out -->
+		</ul>
+	</nav>
+</div>
+<!-- Search Result Box -->
+<div class="searchResultBox">
+    <div class="container-fluid">
+        <div class="container container-pad" id="property-listings">
+
+			<h1 style="text-align: center; color: white">Find Your Dream Home</h1>
+			<div class="container">
+
+						<div class="col-md-12 well">
+						<div class="row">
+							<div class="col-md-2">
+								<select id = "angebot_art" class="form-control">
+											<option>Rent</option>
+											<option>Buy</option>
+								</select>
+							<h5>Buy-/Rent-Options</h5>
+							</div>
+							<div class="col-md-2">
+								<select id = "ort" class="form-control">
+										<option>Fulda</option>
+										<option>Hünfeld</option>
+										<option>Eichenzell</option>
+										<option>Neuhof</option>
+										<option>Petersberg</option>
+								</select>
+							<h5>Town</h5>
+							</div>
+							<div class="col-md-2">
+								<select id = "objektart" class="form-control">
+									<option>Estate</option>
+									<option>House</option>
+									<option>Apartment</option>
+									<option>Villa/Townhouse</option>
+								</select>
+							<h5>Estatetyp</h5>
+							</div>
+							<div class="col-md-2"><input id = "qm" type="text" class="form-control" placeholder="...">
+							<h5>Square Meters</h5>
+							</div>
+							<div class="col-md-2"><input id = "preis" type="text" class="form-control" placeholder="Maximum...">
+							<h5>Maximum Price</h5>
+							</div>
+							<div class="col-md-1">
+								<select id = "zimmeranzahl" class="form-control">
+									<option value="0">-</option>
+									<option value="1">1</option>
+									<option value="2">2</option>
+									<option value="3">3</option>
+									<option value="4">4</option>
+									<option value="5">5</option>
+								</select>
+							<h5>Rooms (Min)</h5>
+							</div>
+							<div class="col-md-1" style="align-items: center;"><button id = "bt_search" class="btn btn-primary"><i class="glyphicon glyphicon-search"></i></button></div>
+							</div>
+						</div>
+						<!-- Search Result Box -->
+
+						<!-- Additional Filters Box -->
+						<div id="filter" class="container-fluid well">
+							<div class="container">
+								<h3>Find more details for the Estate</h3>
+								<a href="#detail" class="btn btn-info" data-toggle="collapse">Find details ....</a>
+							</div>
+						</div>
+								<div id="detail" class="collapse" style="padding:20px">
+									<div class="row container-fluid well">
+										<div class="col-md-6">
+											<strong>Square Meters from : </strong>
+											<input id = "minQm" type="text" class="form-control" placeholder="minimum Square Meters...">
+										</div>
+										<div class="col-md-6">
+											------ to:
+											<input id = "maxQm" type="text" class="form-control" placeholder="maximum Square Meters...">
+										</div>
+									</div>
+									<div class="row container-fluid well">
+											<div class="col-md-6">
+												<strong> Price from : </strong>
+												<input id = "minPreis" type="text" class="form-control" placeholder="Min Price...">
+											</div>
+											<div class="col-md-6">
+												------ to:
+												<input id = "maxPreis" type="text" class="form-control" placeholder="Max Price...">
+											</div>
+									</div>
+									<div class="row container-fluid well" >
+
+											<div class="col-md-6">
+												<strong> Year of Building (Min)</strong>
+												<input id = "bauJahr" type="text" class="form-control" placeholder="Year of Construction...">
+											</div>
+											<div class="col-md-6">
+												<strong> Type of heating</strong>
+												<select id = "heizungs_art" class="form-control">
+													<option value="">-</option>
+													<option>Centralized (Oil)</option>
+													<option>Centralized (Gas)</option>
+													<option>Wood Stove (Floor)</option>
+												</select>
+											</div>
+									</div>
+									<div class="row container-fluid well">
+										<div class="col-md-6">
+											<strong> Who buy/rent this house: </strong>
+											<select id = "agencyID" class="form-control">
+												<option value="">-</option>
+												<option>SFStateHomes</option>
+												<option>SJStateRealtors</option>
+												<option>CSURealEstate</option>
+											</select>
+										</div>
+										<div class="col-md-6" style="margin-top:20px;">
+											<button id = "bt_filter" class="btn btn-primary">Filter</button>
+										</div>
+									</div>
+								</div>
+
+			</div><!-- Additional Filters End -->
+
+            <div class="row">
+              <div class="col-md-8">
+                <h1>Search Results</h1>
+			  </div>
+			  <div class="col-md-4" id = "sortForm" style="text-align : right; visibility:hidden">
+				<div class="row" style="padding: 30px 10px 10px 10px">
+					<div class="col-md-7">
+					<select class="form-control">
+							<option>Price Increase</option>
+							<option>Price Decrease</option>
+							<option>Square Meter Increase</option>
+							<option>Square Meter Decrease</option>
+					</select>
+					</div>
+					<div class="col-md-4">
+					<button class="btn btn-primary">Sort</button>
+					</div>
+				</div>
+				</div>
+            </div>
+
+            <div id = "result">
+            </div><!-- End row -->
+        </div><!-- End container -->
+    </div>
+</div><!-- Search Result Box End -->
+<!-- Sticky Footer der Seite -->
+<footer class="footer">
+      <div class="container">
+        <span class="text-muted"><a href="/fa17g17/about">About us</a>, Copyrights, Social Media</span>
+      </div>
+    </footer>
+</body>
+<script>
+$(document).ready(function(){
+	var ajaxURL = new AJAXSettings().getAJAXURL();
+
+	var valid = 1;
+
+	function hideFilter() {
+		$('#filter').hide();
+		$('#sortForm').hide();
+	}
+	hideFilter();
+
+	//Suchleiste innerhalb der Seite (nicht NAV!!!)
+	function checkValidateSearchForm() {
+		if (isNaN($('#qm').val()) && $('#qm').val() != "") {
+			valid = 0;
+			alert("Square Meter must be a number");
+		}
+		if (isNaN($('#preis').val()) && $('#preis').val() != ""){
+			valid = 0;
+			alert("Price must be a number");
+		}
+		if (parseInt($('#qm').val()) < 0) {
+			valid = 0;
+			alert("Square Meter can not have a negative value");
+		}
+		if (parseInt($('#preis').val()) < 0) {
+			valid = 0;
+			alert("Price can not have a negative value");
+		}
+	}
+
+	function checkValidateFilterForm() {
+			if (isNaN($('#minQm').val()) && $('#minQm').val() != ""){
+				valid = 0;
+				alert("Minimum Square must be a number");
+			}
+			if (isNaN($('#maxQm').val()) && $('#maxQm').val() != ""){
+				valid = 0;
+				alert("Maximum Square must be a number");
+			}
+			if (isNaN($('#minPreis').val()) && $('#minPreis').val() != ""){
+				valid = 0;
+				alert("Minimum Price must be a number");
+			}
+			if (isNaN($('#maxPreis').val()) && $('#maxPreis').val() != ""){
+				valid = 0;
+				alert("Maximum Price must be a number");
+			}
+			if ($('#minQm').val() < 0){
+				valid = 0;
+				alert("Minimum Square can not have a negative value");
+			}
+			if ($('#maxQm').val() < 0){
+				valid = 0;
+				alert("Maximum Square can not have a negative value");
+			}
+			if ($('#minPreis').val() < 0){
+				valid = 0;
+				alert("Minimum Price can not have a negative value");
+			}
+			if ($('#maxPreis').val() < 0){
+				valid = 0;
+				alert("Maximum Price can not have a negative value");
+			}
+			if (isNaN($('#bauJahr').val()) && $('#bauJahr').val() != ""){
+				valid = 0;
+				alert("Year of Building must be a number between 0 and 4000");
+			}
+			if ($('#bauJahr').val() < 0){
+				valid = 0;
+				alert("Year of Building must be a number between 0 and 4000");
+			}
+		}
+
+	//Ziehe Suchparameter aus vorheriger Seite in die aktuelle Seite (bisschen gehackt ;) )
+	$.get( "/fa17g17/estatesearch/buffersearch", function( data ) {
+		if(data.buffered == "true"){
+			$('#nav_angebot_art').val(data.buffer.angebot_art);
+			$('#angebot_art').val(data.buffer.angebot_art);
+			$('#nav_ort').val(data.buffer.ort);
+			$('#ort').val(data.buffer.ort);
+			$('#nav_objektart').val(data.buffer.objektart);
+			$('#objektart').val(data.buffer.objektart);
+			if(data.buffer.qm != 10000) {
+				$('#nav_qm').val(data.buffer.qm);
+				$('#qm').val(data.buffer.qm);
+			}
+			if(data.buffer.preis != 50000000){
+				$('#nav_preis').val(data.buffer.preis);
+				$('#preis').val(data.buffer.preis);
+			}
+			$('#nav_zimmeranzahl').val(data.buffer.zimmeranzahl);
+			$('#zimmeranzahl').val(data.buffer.zimmeranzahl);
+			$("#bt_search").trigger('click');
+		}
+	});
+
+	//Löst die Suche aus
+	$("#bt_search").click(function() {
+		valid = 1;
+		checkValidateSearchForm();
+		if (valid == 1) {
+		var angebot_art = document.getElementById("angebot_art").value;
+		var ort = document.getElementById("ort").value;
+		var objektart = document.getElementById("objektart").value;
+		var qm = document.getElementById("qm").value;
+		if (qm == "") {qm=10000;}
+		var preis = document.getElementById("preis").value;
+		if (preis == "") {preis=50000000;}
+		var zimmeranzahl = document.getElementById("zimmeranzahl").value;
+
+		$.ajax
+		(
+			{
+				type: "POST",
+				url: ajaxURL + "/fa17g17/estatesearch/search",
+				contentType	: 'application/json',
+				data: JSON.stringify(
+				{
+						"angebot_art": angebot_art,
+						"ort": ort,
+						"objektart": objektart,
+						"qm": qm,
+						"preis": preis,
+						"zimmeranzahl": zimmeranzahl
+				}),
+				success		: function (res) {
+					console.log("SUCCESS-CB");
+					obj = JSON.parse (res);
+					console.log(obj);
+					$("#result").empty();
+					renderOffers (obj, 'search', ajaxURL);
+				},
+				error		: function (err) {
+					console.log("ERROR-CB");
+				}
+			}
+		).done (
+			function () {
+				console.log("DONE-CB");
+			}
+		);
+		}
+	});
+
+	//Filtert bereits zurückgelieferte Suchergebnisse
+	$("#bt_filter").click(function() {
+		valid = 1
+		checkValidateFilterForm();
+		// Filterwerte
+		if(valid == 1) {
+			var minQm = $('#minQm').val();
+			var maxQm = $('#maxQm').val();
+			var minPreis = $('#minPreis').val();
+			var maxPreis = $('#maxPreis').val();
+			var bauJahr = $('#bauJahr').val();
+			var heizungs_art = $('#heizungs_art').val();
+			var agencyID = $('#agencyID').val();
+
+			$.ajax({
+				type		: "POST",
+				url			: ajaxURL + "/fa17g17/estatesearch/filter",
+				contentType	: 'application/json',
+				data		: JSON.stringify
+				(
+					{
+						"minQm": minQm,
+						"maxQm": maxQm,
+						"minPreis": minPreis,
+						"maxPreis": maxPreis,
+						"bauJahr": bauJahr,
+						"heizungs_art": heizungs_art,
+						"agencyID": agencyID
+					}
+				),
+				success		: function (data)
+				{
+					console.log("SUCCESS-CB");
+					if( data.filtered == 'true') {
+						obj = data.data;
+						$("#result").empty();
+						renderOffers(obj, 'filter', ajaxURL);
+
+					} else {
+						console.log("Something went wrong, try again!");
+						$("#result").empty();
+						$('#result').append("<p> No results found. Specify your search!!!</p>");
+					}
+
+				},
+				error		: function (err)
+				{
+					console.log("ERROR-CB");
+					console.log(err);
+				}
+			}).done(
+				function () {
+					console.log("DONE-CB");
+				}
+			);
+		} else {
+		// Filter invalide
+		}
+	});
+});
+
+function renderOffers (obj, mode, ajaxURL) {
+	console.log(obj);
+		if (obj.length > 0) {
+			for (var i = 0; i<obj.length; i++)
+			{
+				var imgs = [];
+				if(obj[i].media){
+					imgs = obj[i].media.split(",");
+					console.log(imgs[0]);
+				}
+
+				// src='http://images.prd.mris.com/image/V2/1/Yu59d899Ocpyr_RnF0-8qNJX1oYibjwp9TiLy-bZvU9vRJ2iC1zSQgFwW-fTCs6tVkKrj99s7FFm5Ygwl88xIA.jpg'
+				var source = ajaxURL + "/fa17g17/img/" + imgs[0];
+
+				var div_result = "<div class='col-sm-12 well'>"
+				+ "<h3 class='estate-heading' style='color: darkgray; padding: 0px 0px; margin: 0px 0px;'>"+ obj[i].angebot_titel
+				+ "<span id="+obj[i].id + 'toFav'+" style='float: right; cursor: pointer;' class='glyphicon glyphicon-star add_to_favorits'></span>"
+				+ "</h3>"
+				+ "<div class='row'>"
+				+ "<div class='col-sm-5'>"
+				+ "<a href='/fa17g17/singleOffer?estate_id="+ obj[i].id +"' target='_parent'><img alt='image' class='img-responsive' src='" + source + "'></a>"
+				+ "</div>"
+				+ "<div class='col-sm-7'>"
+				+ "<h4 class='media-heading' style = 'color: red'><i class='glyphicon glyphicon-eur'></i> "+ obj[i].kaufpreis +" <small class='pull-right'>" + obj[i].immobilien_adress + "</small></h4>"
+				+ "<h5> <i class='glyphicon glyphicon-home'></i> " + obj[i].qm + " m² | " + obj[i].zimmeranzahl + " Rooms | " + obj[i].ortname + " | " + obj[i].plz + "</h5>"
+				+ "<p class='hidden-xs' style='color: darkgray;'>"+ obj[i].beschreibung +"</p>"
+				+ "</div>"
+				+ "</div>"
+				+ "</div>";
+				$("#result").append(div_result);
+				// obj[i].id + 'toFav'
+				addFavoritListeners(obj[i].id, obj[i].angebot_id);
+			}
+		checkFavoritStatus();
+		showFilter();
+		} else {
+			//Keine Elemente gefunden
+			if(mode == 'filter') {
+				$('#result').append("<p> The Filter yielded no results. Change the filteroptions.</p>");
+			} else {
+				$('#result').append("<p> No results found. Specify your search!!!</p>");
+			}
+
+		}
+}
+
+function showFilter() {
+	$('#filter').show();
+	$('#sortForm').show();
+}
+</script>
+</html>

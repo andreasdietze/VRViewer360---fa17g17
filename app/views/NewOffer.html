@@ -1,0 +1,594 @@
+<html>
+<head>
+
+	<title>New Offer</title>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-110932262-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-110932262-1');
+</script>
+
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+	<!-- s js -->
+	<script type="text/javascript" src="/fa17g17/js/searchLogic.js"></script>
+
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap.tagsinput/0.4.2/bootstrap-tagsinput.css" />
+	<script src="//cdn.jsdelivr.net/bootstrap.tagsinput/0.4.2/bootstrap-tagsinput.min.js"></script>
+	<!-- Ajax Logik für die neuen Offers -->
+	<!--<script src="./js/new-offer-ajax.js"></script> -->
+	<!--<script src=".././js/new-offer-ajax.js"></script> -->
+
+	<!-- AJAX URL Helper -->
+	<script type="text/javascript" src="/fa17g17/js/handleAJAX.js"></script>
+	<script type="text/javascript" src="/fa17g17/js/inputChecker.js"></script>
+</head>
+<style>
+.form-head {
+	padding: 5px 5px;
+}
+.form-body {
+	background-color: #222;
+	border-radius: 5px;
+	padding-bottom: 5px;
+}
+.label-info{
+	background-color: #222;
+}
+
+</style>
+<body style="
+	background-image: url(.././img/background.jpeg);
+	background-image-size: auto;
+	color: white;
+">
+<div>
+	<nav class="navbar navbar-inverse" role="navigation" style="padding-left:80px;">
+			<ul class="nav navbar-nav">
+			<li><a href="/fa17g17">Home<span class="sr-only">(current)</span></a></li>
+			<li>
+			<form id="searchbar_for_estates" class="navbar-form" role="search">
+				<div class="input-group add-on" style="display: flex; flex: 1 1 auto;">
+				<select id = "nav_angebot_art" class="form-control">
+					<option>Buy</option>
+					<option>Rent</option>
+				</select>
+				<select id = "nav_ort" class="form-control">
+					<option>Fulda</option>
+					<option>Hünfeld</option>
+					<option>Eichenzell</option>
+					<option>Neuhof</option>
+					<option>Petersberg</option>
+				</select>
+				<select id = "nav_objektart" class="form-control">
+					<option>Estate</option>
+					<option>House</option>
+					<option>Apartment</option>
+					<option>Villa/Townhouse</option>
+				</select>
+				<div class="col-md-2"><input id = "nav_qm" type="text" class="form-control" placeholder="Square meters..."></div>
+				<div class="col-md-2"><input id = "nav_preis" type="text" class="form-control" placeholder="Max Price..."></div>
+				<select id = "nav_zimmeranzahl" class="form-control">
+					<option value="0">-</option>
+					<option value="1">ab 1 Zimmer</option>
+					<option value="2">ab 2 Zimmer</option>
+					<option value="3">ab 3 Zimmer</option>
+					<option value="4">ab 4 Zimmer</option>
+					<option value="5">ab 5 Zimmer</option>
+				</select>
+
+				<div class="input-group-btn">
+					<button id="nav_bt_search" class="btn btn-default" type="button"><i class="glyphicon glyphicon-search"></i></button>
+				</div>
+			 </div>
+			</form>
+			</li>
+			<li id="logDropping">
+			<div class="navbar-form dropdown">
+			<button class="btn btn-primary dropdown-toggle loggedInDropdown" type="button" data-toggle="dropdown" >Manage
+			<span class="caret"></span></button>
+			<ul class="dropdown-menu">
+				<li><a href="/fa17g17/dashboard">Dashboard</a></li>
+				<li><a href="/fa17g17/dashboard/messages">Messages</a></li>
+				<li class="divider"></li>
+				<li><a href="/fa17g17/user/logout">Logout</a></li>
+			 <!-- <li id="logOut"><a style="cursor: pointer;">Logout</a></li>-->
+			</ul>
+			</div>
+			</li><!-- if logged in -->
+			<li id="nlogDropping" style="float: right;"><a href="/fa17g17/Login">Sign-In</a></li><!-- if logged out -->
+		</ul>
+	</nav>
+</div>
+	<div id="wrapper-forms" style="padding-top: 10px;" >
+
+	<form id="insertForm">
+		<div class="row"><!-- Double Column Form first Try -->
+            <div class="col-sm-1"></div>
+			<div class="col-sm-5">
+              <div class="form-horizontal form-body">
+					<h2 class="form-head">General Information</h2>
+					<div class="form-group">
+						<label for="title" class="col-sm-3 control-label">Title</label>
+						<div class="col-sm-8">
+							<input type="text" id="title" placeholder="Your Title" class="form-control" autofocus />
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="estateType" class="col-sm-3 control-label">Estate Type</label>
+						<div class="col-sm-8">
+							<select id="estateType" class="form-control">
+								<option>Estate</option>
+								<option>House</option>
+								<option>Apartment</option>
+								<option>Villa/Townhouse</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="offerPurpose" class="col-sm-3 control-label">Offer Purpose</label>
+						<div class="col-sm-8">
+							<select id="offerPurpose" class="form-control">
+								<option>Private</option>
+								<option>Commercial</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="desc" class="col-sm-3 control-label">Description</label>
+						<div class="col-sm-8">
+							<input type="text" id="desc" placeholder="Describe your Estate..." class="form-control" autofocus />
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="condition" class="col-sm-3 control-label">Condition</label>
+						<div class="col-sm-8">
+							<input type="text" id="condition" placeholder="Condition of the Estate..." class="form-control" autofocus />
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="features" class="col-sm-3 control-label">Features</label>
+						<div class="col-sm-8">
+							<input type="text" data-role="tagsinput" id="features" value="Bath" class="form-control" />
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="heatingType" class="col-sm-3 control-label">Type of heating</label>
+						<div class="col-sm-8">
+							<select id="heatingType" class="form-control">
+								<option>Centralized (Oil)</option>
+								<option>Centralized (Gas)</option>
+								<option>Wood Stove (Floor)</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="baujahr" class="col-sm-3 control-label">Year of Const.</label>
+						<div class="col-sm-8">
+							<input type="text" data-role="number" id="baujahr" placeholder="1993" class="form-control" />
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="address" class="col-sm-3 control-label">Address</label>
+						<div class="col-sm-4">
+							<input type="text" id="address" placeholder="Street" class="form-control" autofocus />
+						</div>
+						<div class="col-sm-2">
+							<input type="text" id="postal" placeholder="Postal" class="form-control" autofocus />
+						</div>
+						<div class="col-sm-2">
+							<input type="text" id="city" placeholder="City" class="form-control" autofocus />
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="size" class="col-sm-3 control-label">Size</label>
+						<div class="col-sm-2">
+							<input type="text" id="floors" placeholder="Floors" class="form-control" autofocus />
+						</div>
+						<div class="col-sm-2">
+							<input type="text" id="rooms" placeholder="Rooms" class="form-control" autofocus />
+						</div>
+						<div class="col-sm-4">
+							<input type="text" id="size" placeholder="qmeters" class="form-control" autofocus />
+						</div>
+					</div>
+					<!-- Condition, Features -->
+              </div>
+
+            </div>
+            <div class="col-sm-5">
+      <div class="form-horizontal form-body">
+				<h2 class="form-head">Pricing</h2>
+				<div class="form-group">
+					<label for="offerType" class="col-sm-3 control-label">Offer Type</label>
+					<div class="col-sm-8">
+						<select id="offerType" class="form-control">
+							<option>Rent</option>
+							<option>Buy</option>
+						</select>
+					</div>
+				</div>
+					<div class="form-group">
+						<label for="price" class="col-sm-3 control-label">Buy/Rent Price</label>
+						<div class="col-sm-8">
+							<input type="text" id="price" placeholder="$" class="form-control" autofocus />
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="bail" class="col-sm-3 control-label">Bail</label>
+						<div class="col-sm-8">
+							<input type="text" id="bail" placeholder="$" class="form-control" autofocus />
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="provision" class="col-sm-3 control-label">Provision</label>
+						<div class="col-sm-8">
+							<input type="text" id="provision" placeholder="%" class="form-control" autofocus />
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="utilities" class="col-sm-3 control-label">Utility costs</label>
+						<div class="col-sm-8">
+							<input type="text" id="utilities" placeholder="$" class="form-control" autofocus />
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="startdate" class="col-sm-3 control-label">Begin</label>
+						<div class="col-sm-8">
+							<input class="form-control" id="startdate" name="startdate" placeholder="YYYY-MM-DD" type="text">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="enddate" class="col-sm-3 control-label">End</label>
+						<div class="col-sm-8">
+							<input class="form-control" id="enddate" name="enddate" placeholder="YYYY-MM-DD" type="text">
+						</div>
+					</div>
+					<!-- Bail, Provision % start,  end utilities-->
+              </div>
+							<div id="agency" class="form-horizontal form-body">
+
+							</div>
+            </div>
+			<div class="col-sm-1"></div>
+          </div>
+		  <div class="row" style="padding-top: 5px;"><!-- Button Space -->
+		     <div class="col-sm-1"></div>
+			 <div id="submit-column" class="col-sm-10">
+			 	<form method="post" enctype="multipart/form-data">
+					<input id="fileInputMSG" type="file" style="display:none;" name="file" accept=".xls,.xlsx,.pdf,.jpg,.jpeg,.bmp,.png,.gif,.doc,.docx,.txt,.rtf" multiple="multiple"/> <!-- multiple="multiple" -->
+					<button type="button" class="btn btn-default" style="margin-right: 5px;" onclick="document.getElementById('fileInputMSG').click();" id="uploadAssetsButton">
+						<span class="glyphicon glyphicon-open-file"></span> Attachtments
+					</button>
+				</form>
+			    <!--<div class="btn-group" role="group">
+				   <button id="new-offer" type="button" class="btn btn-primary">Submit</button>
+			    </div>-->
+			 </div>
+		  </div>
+		  <div class="row" style="padding-top: 5px; color: white;">
+		  <p id="error-offer-submit"></p>
+		  </div>
+	</form>
+	</div>
+</body>
+<script>
+// Offer enhaelt dateien ?
+var msgHasFiles = false;
+
+// Enthaelt alle Dateireferenzen
+var allFiles = [];
+
+// Helper-Object: set url to sfsuse or localhost
+var ajaxURL = new AJAXSettings().getAJAXURL();
+
+var cookieArray = Cookies.get('UserID');
+var userObject = null;
+
+if(typeof(cookieArray) != "undefined") {
+	userObject = JSON.parse(cookieArray.substring(2));
+}
+
+// Lokale Dateien oder vom Server, else sfsuse
+var local;
+if(ajaxURL === 'http://127.0.0.1:17017')
+	local = true;
+else
+	local = false;
+
+var attachURL		= '';
+if(local)
+	attachURL = ajaxURL + "\\fa17g17\\DL\\Estates\\";
+else
+	attachURL = ajaxURL + "/fa17g17/DL/Estates/";
+
+// Helper-Object: set url to sfsuse or localhost
+var ajaxURL = new AJAXSettings().getAJAXURL();
+
+var cookieArray = Cookies.get('UserID');
+var userObject = null;
+
+if(typeof(cookieArray) != "undefined") {
+	userObject = JSON.parse(cookieArray.substring(2));
+}
+
+$("document").ready(function() {
+	var submit_col = $('#submit-column');
+	var button_config;
+	var agency_config;
+	if( userObject.role == 2 ) {
+		agency_config = '<h2 class="form-head">Agency Information</h2>' +	'<div class="form-group">' +
+										'<label for="agent_id" class="col-sm-3 control-label">ID of Agent</label>' +
+										'<div class="col-sm-8">' +
+										'<select id="allAgents" class="form-control">' +
+										'</select>' +
+										'</div>' + '</div>';
+		button_config = '<div class="btn-group" role="group">' +
+										'<button id="new-offer" type="button" onclick="startAJAXCall()" class="btn btn-primary">Agency Request</button>' +
+			  						'</div>' ;
+	} else if( userObject.role == 3) {
+		button_config = '<div class="btn-group" role="group">' +
+				'<button id="new-offer" type="button" onclick="startAJAXCall()" class="btn btn-primary">Submit</button>' +
+			  '</div>';
+	} else {
+		button_config ='<p style="color: red;"> Something went wrong!</p>';
+	}
+	$('#agency').append(agency_config);
+	$('#submit-column').append(button_config);
+
+	if( userObject.role == 2 ) {
+		startAllAgents();
+	}
+
+
+	// File upload offers ------------------------------------
+	document.getElementById("uploadAssetsButton").addEventListener("click", renderUploads, false);
+	function renderUploads() {
+		console.log("OPEN Attachtments");
+
+		document.getElementById("fileInputMSG").addEventListener('change', function (evt){
+			var files = evt.target.files;
+			console.log(files);
+
+			for(var i = 0; i < files.length; i++){
+				(function(file){
+					// Ein Objekt um Dateien einzulesen
+					var senddata = new Object();
+					var reader = new FileReader();
+
+					// Auslesen der Datei-Metadaten
+					senddata.name = file.name;
+					senddata.date = file.lastModified;
+					senddata.size = file.size;
+					senddata.type = file.type;
+
+					// Wenn der Dateiinhalt ausgelesen wurde
+					reader.onload = function(e) {
+						senddata.fileData = e.target.result;
+					}
+
+					// Die Datei einlesen und in eine Data-URL konvertieren
+					reader.readAsDataURL(file);
+
+					// Nachricht enhaelt Dateien
+					msgHasFiles = true;
+
+					// Dateien ins Dateiarray einfuegen
+					allFiles.push(senddata);
+
+				})(files[i]);	// Closure
+			};
+			console.log(allFiles);
+
+		}, false);
+	}
+
+});
+
+$('#features').tagsinput('refresh');
+
+	var empty = 0;
+
+	function startAllAgents(){
+		$.ajax(
+			{
+				type		: "POST",
+				url			: ajaxURL + "/fa17g17/user/agents",
+				contentType	: 'application/json',
+				data		: JSON.stringify
+				(
+					{
+						"getAll":"true"
+					}
+				),
+				success		: function (data)
+				{
+					console.log("SUCCESS-CB");
+					console.log(data);
+					if(data.response == "true") {
+						for(var i = 0; i < data.result.length; i++) {
+							var option = '<option value="' + data.result[i].id + '">' + data.result[i].firstname + ", " + data.result[i].lastname + " - " + data.result[i].agency + '</option>';
+							$('#allAgents').append(option);
+						}
+					} else {
+						$('#allAgents').append("<option>No Data available</option>");
+					}
+				},
+				error		: function (err)
+				{
+					console.log("ERROR-CB");
+					console.log(err);
+				}
+			}
+		).done(
+			function () {
+				console.log("DONE-CB");
+			}
+		);
+	}
+
+	function startAJAXCall(){
+		empty = 0;
+		if (empty == 0) {
+			// Config, if create = Agency request
+			var owner_id = userObject.id;
+			var agent_id = userObject.id
+			var request = 3;
+			if( userObject.role == 2 ) {
+				agent_id = $('#allAgents').val();
+				request = 2;
+			}
+
+			var valid = 1;
+			$("form#insertForm input[type=text]").each(function() {
+				var input = $(this);
+				//Hier gibt es ansonsten ein Problem bezüglich den Features
+				if(input.attr('id') != undefined){
+					
+					if(input.val() == ""){
+						 $('#' + input.attr('id')).css("border", "5px solid red");
+						 valid = 0;
+					 } else {
+						 $('#' + input.attr('id')).css("border", "5px solid green");
+					 }
+
+					if(input.attr('id') == "startdate" || input.attr('id') == "enddate"){
+						var dateRex = "([0-9]{4}-[0-9]{2}-[0-9]{2})";
+						var match = input.val().match(dateRex);
+						if(match == null){
+							$('#' + input.attr('id')).css("border", "5px solid red");
+							valid = 0;
+						}
+					}
+
+					if(input.attr('id') == "baujahr" || input.attr('id') == "postal"
+						|| input.attr('id') == "floors" || input.attr('id') == "rooms"
+						|| input.attr('id') == "size" || input.attr('id') == "price"
+						|| input.attr('id') == "bail" || input.attr('id') == "provision"
+						|| input.attr('id') == "utilities") {
+
+							var testString = input.val();
+							testString = testString.split(' ').join('');
+							testString = testString.split('€').join('');
+							testString = testString.split('%').join('');
+							testString = testString.split(',').join('');
+
+							if(isNaN(testString) || testString == "") {
+								$('#' + input.attr('id')).css("border", "5px solid red");
+								alert("The transferred value must correspond to a number");
+								valid = 0;
+							}
+
+							if(input.attr('id') == "postal"){
+								if(input.val().toString().length < 5 || input.val().toString().length > 5){
+									$('#' + input.attr('id')).css("border", "5px solid red");
+									alert("A postal code can only consist of five numbers.");
+									valid = 0;
+								}
+							}
+					}
+					
+					// Checking of String values
+					var regex = new RegExp("<|>");
+					results = regex.exec(input.val());
+					if (results != null) {
+						$('#' + input.attr('id')).css("border", "5px solid red");
+						alert("invalid character detected.");
+						valid = 0;
+					}
+				}
+			});
+			
+
+			if(valid == 1) {
+				$.ajax
+				(
+					{
+						type		: "POST",
+						url			: ajaxURL + "/fa17g17/estatehandling/create",
+						contentType	: 'application/json',
+						data		: JSON.stringify
+						(
+							{
+								// Infos zur Immobilie
+								// "user":userObject.id,
+								"agentID":agent_id,
+								"ownerID":owner_id,
+								"request":request,
+								"title": $('#title').val(),
+								"desc": $('#desc').val(),
+								"estateType":$('#estateType').val(),
+								"offerPurpose":$('#offerPurpose').val(),
+								"condition": $('#condition').val(), // Bau-zustand
+								// Die Features sind ein Array aus strings
+								"heatingType": $('#heatingType').val(),
+								"baujahr": $('#baujahr').val(),
+								"features": $('#features').val(),
+								"address": $('#address').val(), // Straße
+								"postal": $('#postal').val(),
+								"city": $('#city').val(),
+								"floors": $('#floors').val(),
+								"rooms": $('#rooms').val(),
+								"size": $('#size').val(),
+								// Offer Information wie Pricing
+								"offerType":$('#offerType').val(),
+								"price": $('#price').val(),
+								"bail": $('#bail').val(), // Kaution
+								"provision": $('#provision').val(),
+								"utilities": $('#utilities').val(), // Nebenkosten
+								"startdate": $('#startdate').val(),
+								"enddate": $('#enddate').val(),
+								"HasFiles"		: msgHasFiles,
+								"IsLocal"		: local,
+								"Attachments"	: allFiles
+							}
+						),
+						success		: function (data)
+						{
+							console.log("SUCCESS-CB");
+							console.log(data);
+							if(data.created == "true") {
+								window.location.href = "/fa17g17/Dashboard/Offers";
+							} else {
+								$('#error-offer-submit').val(data.message);
+							}
+						},
+						error		: function (err)
+						{
+							console.log("ERROR-CB");
+							console.log(err);
+						}
+					}
+				).done
+				(
+					function ()
+					{
+						console.log("DONE-CB");
+					}
+				);
+			}
+		} else {
+			alert("No fields may be left blank!!!");
+		}
+	}
+
+	$('#new-offer').click(function (){
+
+	});
+
+</script>
+</html>

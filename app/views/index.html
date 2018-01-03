@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Real Estates - FA17G17</title>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-110932262-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-110932262-1');
+</script>
+
+<!-- bootstrap 3.3.7 -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!-- Bootstrap Js CDN -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<!-- Abgreifen der Cookies -->
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+
+<!-- AJAX URL Helper -->
+<script type="text/javascript" src="/fa17g17/js/handleAJAX.js"></script>
+<script type="text/javascript" src="/fa17g17/js/searchLogic.js"></script>
+
+<!--reveal-->
+	<script src="/fa17g17/lib/js/head.min.js"></script>
+	<script src="/fa17g17/js/reveal.js"></script>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" type="text/css" href="/fa17g17/css/singleOffer.css">
+
+
+<!-- reveal js -->
+<link rel="stylesheet" href="/fa17g17/css/reveal.css">
+		<link rel="stylesheet" href="/fa17g17/css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="/fa17g17/lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+</head>
+<style>
+
+.invisible {
+  visibility: hidden;
+}
+
+.loggedInDropdown {
+	background: transparent;
+	color: white;
+	border-color: transparent;
+}
+
+.loggedInDropdown:hover {
+	background: transparent;
+	color: white;
+	border-color: transparent;
+}
+
+.loggedInDropdown:focus {
+	background: #333;
+	color: white;
+	border-color: transparent;
+}
+
+.loggedInDropdown:active {
+	background: #333;
+	color: white;
+	border-color: transparent;
+}
+
+.controls {
+	position: fixed !important;
+}
+
+</style>
+<body>
+	<div>
+		<nav class="navbar navbar-inverse" role="navigation" style="padding-left:80px;">
+				<ul class="nav navbar-nav">
+				<li><a href="/fa17g17">Home<span class="sr-only">(current)</span></a></li>
+				<li>
+				<form id="searchbar_for_estates" class="navbar-form" role="search">
+					<div class="input-group add-on" style="display: flex; flex: 1 1 auto;">
+					<select id = "nav_angebot_art" class="form-control">
+						<option>Buy</option>
+						<option>Rent</option>
+					</select>
+					<select id = "nav_ort" class="form-control">
+						<option>Fulda</option>
+						<option>Hünfeld</option>
+						<option>Eichenzell</option>
+						<option>Neuhof</option>
+						<option>Petersberg</option>
+					</select>
+					<select id = "nav_objektart" class="form-control">
+						<option>Estate</option>
+						<option>House</option>
+						<option>Apartment</option>
+						<option>Villa/Townhouse</option>
+					</select>
+					<div class="col-md-2"><input id = "nav_qm" type="text" class="form-control" placeholder="Square meters..."></div>
+					<div class="col-md-2"><input id = "nav_preis" type="text" class="form-control" placeholder="Max Price..."></div>
+					<select id = "nav_zimmeranzahl" class="form-control">
+						<option value="0">-</option>
+						<option value="1">ab 1 Zimmer</option>
+						<option value="2">ab 2 Zimmer</option>
+						<option value="3">ab 3 Zimmer</option>
+						<option value="4">ab 4 Zimmer</option>
+						<option value="5">ab 5 Zimmer</option>
+					</select>
+
+					<div class="input-group-btn">
+						<button id="nav_bt_search" class="btn btn-default" type="button"><i class="glyphicon glyphicon-search"></i></button>
+					</div>
+				 </div>
+				</form>
+				</li>
+				<li id="logDropping">
+				<div class="navbar-form dropdown">
+				<button class="btn btn-primary dropdown-toggle loggedInDropdown" type="button" data-toggle="dropdown" >Manage
+				<span class="caret"></span></button>
+				<ul class="dropdown-menu">
+					<li><a href="/fa17g17/dashboard">Dashboard</a></li>
+					<li><a href="/fa17g17/dashboard/messages">Messages</a></li>
+					<li class="divider"></li>
+					<li><a href="/fa17g17/user/logout">Logout</a></li>
+				 <!-- <li id="logOut"><a style="cursor: pointer;">Logout</a></li>-->
+				</ul>
+				</div>
+				</li><!-- if logged in -->
+				<li id="nlogDropping" style="float: right;"><a href="/fa17g17/Login">Sign-In</a></li><!-- if logged out -->
+			</ul>
+		</nav>
+	</div>
+
+	<div class="reveal"><!-- Präsentation -->
+
+		<div class="slides">
+			<section>
+				<section>
+					<h1>Estates for you!</h1>
+					<p>Need a new home? Then you are on the right site!</p>
+					<p>We can teach you how to find a new home</p>
+					<p>just sweep left to get started (:</p>
+					<p>SFSU - Studentproject Fall 2017</p>
+				</section>
+				<section>
+					<h2>Hint</h1>
+					<p>To get the most out of it</p>
+					<p>Register <a href="/fa17g17/RegistryPage">Now</a></p>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2>Find Your Dreams</h2>
+					<p>To find your next home <strong><a href="/fa17g17/search">Here</strong></a></p>
+					<p>or Business Complex</p>
+				</section>
+				<section>
+					<h2>Customize your Search</h2>
+					<p>You can customize the search by</p>
+					<p>using the Params like rooms, floors or qm</p>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2>Buy the Estate</h2>
+					<p>You can Message any Seller of any Estate</p>
+					<p><small>If you are logged in of course</small></p>
+					<p>Tell them you want to meet and arrange an Appointment</p>
+				</section>
+				<section>
+					<h3>Topics of Messages</h3>
+					<p>Topics tell the sellers of which Intrest your Message is</p>
+					<p>so feel free to use them as you wish</p>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2>Sell the Estate</h2>
+					<p>Change your Profil to a Seller Account</p>
+					<p>or Contact a Seller to sell Estates for you</p>
+					<p>the process is easy</p>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2>No Time to Lose!</h2>
+					<p>What are you waiting for?</p>
+					<p>Register and get yourself a new home!</p>
+					<p>Start <a href="/fa17g17/RegistryPage">Now</a></p>
+				</section>
+			</section>
+		</div>
+	</div>
+	<script src="/fa17g17/lib/js/head.min.js"></script>
+	<script src="/fa17g17/js/reveal.js"></script>
+
+</body>
+<script>
+// RevealJs stuff
+// More info about config & dependencies:
+// - https://github.com/hakimel/reveal.js#configuration
+// - https://github.com/hakimel/reveal.js#dependencies
+Reveal.initialize({
+	controls: true,
+	progress: true,
+	history: true,
+	center: true,
+
+	transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+	// More info https://github.com/hakimel/reveal.js#dependencies
+	dependencies: [
+		{ src: '/fa17g17/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+		{ src: '/fa17g17/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+		{ src: '/fa17g17/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+		{ src: '/fa17g17/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+		{ src: '/fa17g17/plugin/search/search.js', async: true },
+		{ src: '/fa17g17/plugin/zoom-js/zoom.js', async: true },
+		{ src: '/fa17g17/plugin/notes/notes.js', async: true }
+	]
+});
+
+//document.getElementById("testbtnsend").addEventListener("click", sendMessage, false);
+
+function sendMessage()
+{
+	$.ajax
+	(
+		{
+			type		: "POST",
+			url			: "https://sfsuse.com/fa17g17/messaging/send",
+			contentType	: 'application/json',
+			data		: JSON.stringify
+			(
+				{
+					"UserID"	: "01",
+					"Message"	: "Steile Hood im Sonderangebot"
+				}
+			),
+			success		: function (data)
+			{
+				console.log("SUCCESS-CB");
+			},
+			error		: function (err)
+			{
+				console.log("ERROR-CB");
+				console.log(err);
+			}
+		}
+	).done
+	(
+		function ()
+		{
+			console.log("DONE-CB");
+		}
+	);
+}
+
+//document.getElementById("testbtndelete").addEventListener("click", deleteMessage, false);
+
+function deleteMessage()
+{
+	var msgId = document.getElementById("msgId").value;
+	console.log(msgId);
+
+	$.ajax
+	(
+		{
+			type		: "POST",
+			url			: "http://192.168.178.29:17017/fa17g17/messaging/delete",
+			contentType	: 'application/json',
+			data		: JSON.stringify
+			(
+				{
+					"MSGId"  : msgId,
+					"UserId" : "7",
+					"ReceiverId" : "9"
+				}
+			),
+			success		: function (data)
+			{
+				console.log("SUCCESS-CB");
+			},
+			error		: function (err)
+			{
+				console.log("ERROR-CB");
+				console.log(err);
+			}
+		}
+	).done
+	(
+		function ()
+		{
+			console.log("DONE-CB");
+		}
+	);
+}
+</script>
+</html>

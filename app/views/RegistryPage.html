@@ -1,0 +1,343 @@
+<html>
+<head>
+
+	<title>Registry Page</title>
+	
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-110932262-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-110932262-1');
+</script>
+
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+
+	<!-- AJAX URL Helper -->
+	<script type="text/javascript" src="js/handleAJAX.js"></script>
+	<script type="text/javascript" src="/fa17g17/js/searchLogic.js"></script>
+</head>
+<style>
+
+.backgroundContainer{
+	background-image: url(./img/background.jpeg);
+	background-image-size: auto;
+}
+
+.wrapper-registry {
+  margin-top: 80px;
+  margin-bottom: 80px;
+  color: white;
+}
+
+*[role="form"] {
+    max-width: 530px;
+    padding: 15px;
+    margin: 0 auto;
+    background-color: #222;
+    border-radius: 0.3em;
+}
+
+*[role="form"] h2 {
+    margin-left: 5em;
+    margin-bottom: 1em;
+}
+
+
+</style>
+<body class="backgroundContainer">
+	<div>
+		<nav class="navbar navbar-inverse" role="navigation" style="padding-left:80px;">
+				<ul class="nav navbar-nav">
+				<li><a href="/fa17g17">Home<span class="sr-only">(current)</span></a></li>
+				<li>
+				<form id="searchbar_for_estates" class="navbar-form" role="search">
+					<div class="input-group add-on" style="display: flex; flex: 1 1 auto;">
+					<select id = "nav_angebot_art" class="form-control">
+						<option>Buy</option>
+						<option>Rent</option>
+					</select>
+					<select id = "nav_ort" class="form-control">
+						<option>Fulda</option>
+						<option>Hünfeld</option>
+						<option>Eichenzell</option>
+						<option>Neuhof</option>
+						<option>Petersberg</option>
+					</select>
+					<select id = "nav_objektart" class="form-control">
+						<option>Estate</option>
+						<option>House</option>
+						<option>Apartment</option>
+						<option>Villa/Townhouse</option>
+					</select>
+					<div class="col-md-2"><input id = "nav_qm" type="text" class="form-control" placeholder="Square meters..."></div>
+					<div class="col-md-2"><input id = "nav_preis" type="text" class="form-control" placeholder="Max Price..."></div>
+					<select id = "nav_zimmeranzahl" class="form-control">
+						<option value="0">-</option>
+						<option value="1">ab 1 Zimmer</option>
+						<option value="2">ab 2 Zimmer</option>
+						<option value="3">ab 3 Zimmer</option>
+						<option value="4">ab 4 Zimmer</option>
+						<option value="5">ab 5 Zimmer</option>
+					</select>
+
+					<div class="input-group-btn">
+						<button id="nav_bt_search" class="btn btn-default" type="button"><i class="glyphicon glyphicon-search"></i></button>
+					</div>
+				 </div>
+				</form>
+				</li>
+				<li id="logDropping">
+				<div class="navbar-form dropdown">
+				<button class="btn btn-primary dropdown-toggle loggedInDropdown" type="button" data-toggle="dropdown" >Manage
+				<span class="caret"></span></button>
+				<ul class="dropdown-menu">
+					<li><a href="/fa17g17/dashboard">Dashboard</a></li>
+					<li><a href="/fa17g17/dashboard/messages">Messages</a></li>
+					<li class="divider"></li>
+					<li><a href="/fa17g17/user/logout">Logout</a></li>
+				 <!-- <li id="logOut"><a style="cursor: pointer;">Logout</a></li>-->
+				</ul>
+				</div>
+				</li><!-- if logged in -->
+				<li id="nlogDropping" style="float: right;"><a href="/fa17g17/Login">Sign-In</a></li><!-- if logged out -->
+			</ul>
+		</nav>
+	</div>
+	<!-- Registry Form -->
+	<div class="wrapper-registry">
+            <form id="registry-form" class="form-horizontal" role="form">
+                <h2>Registry</h2>
+                <div class="form-group">
+                    <label for="firstName" class="col-sm-3 control-label">First Name</label>
+                    <div class="col-sm-9">
+                        <input type="text" id="firstName" placeholder="Max" class="form-control" autofocus>
+                    </div>
+                </div>
+				<div class="form-group">
+                    <label for="lastName" class="col-sm-3 control-label">Last Name</label>
+                    <div class="col-sm-9">
+                        <input type="text" id="lastName" placeholder="Mustermann" class="form-control" autofocus>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="email" class="col-sm-3 control-label">Email</label>
+                    <div class="col-sm-9">
+                        <input type="email" id="email" placeholder="alice.bob@provider.com" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="col-sm-3 control-label">Password</label>
+                    <div class="col-sm-9" data-toggle="tooltip" title="no < or > allowed!">
+                        <input type="password" id="password" placeholder="Password" class="form-control">
+                    </div>
+                </div>
+				<div class="form-group">
+                    <label for="password" class="col-sm-3 control-label">Password repeat</label>
+                    <div class="col-sm-9" data-toggle="tooltip" title="no < or > allowed!">
+                        <input type="password" id="passwordRepeat" placeholder="Password" class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="street" class="col-sm-3 control-label">Street</label>
+                    <div class="col-sm-9">
+                        <input type="text" id="street" class="form-control" placeholder="Street and Number">
+                    </div>
+                </div>
+				<div class="form-group">
+                    <label for="city" class="col-sm-3 control-label">City</label>
+                    <div class="col-sm-9">
+                        <input type="text" id="city" class="form-control" placeholder="City">
+                    </div>
+                </div>
+				<div class="form-group">
+                    <label for="postalcode" class="col-sm-3 control-label">Postalcode</label>
+                    <div class="col-sm-9">
+                        <input type="text" id="postalcode" class="form-control" placeholder="Postalcode" data-toggle="tooltip" title="must be 5 numbers long">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="country" class="col-sm-3 control-label">Country</label>
+                    <div class="col-sm-9">
+                        <select id="country" class="form-control">
+                            <option>Germany</option>
+                            <option>USA</option>
+                            <option>Austria</option>
+                            <option>France</option>
+                            <option>Poland</option>
+                            <option>Sweden</option>
+                            <option>England</option>
+                            <option>Mexico</option>
+                        </select>
+                    </div>
+                </div>
+                <!--<div class="form-group">
+                    <label class="control-label col-sm-3">Gender</label>
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <label class="radio-inline">
+                                    <input type="radio" id="femaleRadio" value="Female">Female
+                                </label>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="radio-inline">
+                                    <input type="radio" id="maleRadio" value="Male">Male
+                                </label>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="radio-inline">
+                                    <input type="radio" id="uncknownRadio" value="Unknown">Unknown
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div> </.form-group -->
+                <div class="form-group">
+                    <div class="col-sm-9 col-sm-offset-3">
+                        <div class="checkbox">
+                            <label>
+                                <input id="agb" type="checkbox">I accept <a href="#">AGBs</a>
+                            </label>
+                        </div>
+                    </div>
+                </div> <!-- /.form-group -->
+                <div class="form-group">
+                    <div class="col-sm-9 col-sm-offset-3">
+                        <button id="registrationButton" type="button" class="btn btn-primary btn-block">Register</button>
+                    </div>
+                </div>
+            </form> <!-- /form -->
+        </div> <!-- ./container -->
+</body>
+<script>
+//Validierung
+//Form Valididätsprüfung
+function checkRegistryForm() {
+	var valid = 1;
+
+	// Text Felder Checken
+	$("form#registry-form input[type=text]").each(function() {
+		var input = $(this);
+		if(input.val() == '' || input.val() == undefined) {
+			$('#' + input.attr('id')).css("border", "2px solid red");
+			valid = 0;
+		}
+
+		if(input.id == 'postalcode') {
+			if( isNaN(input.val()) || input.val().length != 5 ) {
+				$('#' + input.attr('id')).css("border", "2px solid red");
+				valid = 0;
+			}
+		}
+	});
+
+	// Passwort Felder Checken
+	$("form#registry-form input[type=password]").each(function() {
+		var input = $(this);
+		console.log(input.text());
+		console.log(input.attr('id'));
+		if(input.val() == '' || input.val() == undefined) {
+			console.log(input.attr('id'));
+			$('#' + input.attr('id')).css("border", "2px solid red");
+			valid = 0;
+		}
+	});
+
+	return valid;
+}
+
+$(document).ready (function ()
+{
+	// Tooltip activation
+	$('[data-toggle="tooltip"]').tooltip();
+
+	// Helper-Object: set url to sfsuse or localhost
+	var ajaxURL = new AJAXSettings().getAJAXURL();
+
+	// Add eventlistener to registration button
+	document.getElementById("registrationButton").addEventListener("click", sendRegistration, true);
+
+	function sendRegistration()
+	{
+		// Get all parameters
+		var firstName 		= document.getElementById("firstName").value;
+		var lastName  		= document.getElementById("lastName").value;
+		var email  			= document.getElementById("email").value;
+		var password  		= document.getElementById("password").value;
+		var passwordRepeat  = document.getElementById("passwordRepeat").value;
+		var street  		= document.getElementById("street").value;
+		var city  			= document.getElementById("city").value;
+		var postalcode 	 	= document.getElementById("postalcode").value;
+		var country 		= document.getElementById("country").value;
+
+		var validate = 1;
+
+		validate = checkRegistryForm();
+
+		// Check pw and retyped pw
+		if(password != passwordRepeat)
+			alert("Passwords are not equal");
+
+		if (validate == 1 && document.getElementById("agb").checked) {
+			// Fire ajax
+			$.ajax
+			(
+				{
+					type		: "POST",
+					url			: ajaxURL + "/fa17g17/user/registration",
+					contentType	: 'application/json',
+					data		: JSON.stringify
+					(
+						{
+							"firstName"	: firstName,
+							"lastName"	: lastName,
+							"email"		: email,
+							"password"	: password,
+							"street"	: street,
+							"city"		: city,
+							"postalcode": postalcode,
+							"country"	: country
+
+						}
+					),
+					success		: function (data)
+					{
+						console.log("SUCCESS-CB");
+						if(data.created == "true"){
+							window.location.href = "/fa17g17";
+						} else {
+							alert(data.information);
+						}
+					},
+					error		: function (err)
+					{
+						console.log("ERROR-CB");
+						console.log(err);
+					}
+				}
+			).done
+			(
+				function ()
+				{
+					console.log("DONE-CB");
+				}
+			);
+		} else {
+			alert("Not all fields were filled in or the general terms and conditions were not accepted.");
+		}
+	}
+});
+</script>
+</html>

@@ -1,0 +1,445 @@
+<html>
+<head>
+
+	<title>Dashboard</title>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-110932262-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-110932262-1');
+</script>
+
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+
+	<!-- AJAX URL Helper -->
+	<script type="text/javascript" src="../js/handleAJAX.js"></script>
+	<script type="text/javascript" src="/fa17g17/js/searchLogic.js"></script>
+
+	<!-- Stylessheets -->
+	<link rel="stylesheet" type="text/css" href="../css/dashboardStyles.css">
+
+
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+</head>
+<style>
+
+.well {
+		background-color: #333;
+		border-color: #222;
+		color:white;
+	}
+
+</style>
+<body style="
+	background-image: url(.././img/background.jpeg);
+	background-image-size: 100%;
+">
+<div>
+	<nav class="navbar navbar-inverse" role="navigation" style="padding-left:80px;">
+			<ul class="nav navbar-nav">
+			<li><a href="/fa17g17">Home<span class="sr-only">(current)</span></a></li>
+			<li>
+			<form id="searchbar_for_estates" class="navbar-form" role="search">
+				<div class="input-group add-on" style="display: flex; flex: 1 1 auto;">
+				<select id = "nav_angebot_art" class="form-control">
+					<option>Buy</option>
+					<option>Rent</option>
+				</select>
+				<select id = "nav_ort" class="form-control">
+					<option>Fulda</option>
+					<option>Hünfeld</option>
+					<option>Eichenzell</option>
+					<option>Neuhof</option>
+					<option>Petersberg</option>
+				</select>
+				<select id = "nav_objektart" class="form-control">
+					<option>Estate</option>
+					<option>House</option>
+					<option>Apartment</option>
+					<option>Villa/Townhouse</option>
+				</select>
+				<div class="col-md-2"><input id = "nav_qm" type="text" class="form-control" placeholder="Square meters..."></div>
+				<div class="col-md-2"><input id = "nav_preis" type="text" class="form-control" placeholder="Max Price..."></div>
+				<select id = "nav_zimmeranzahl" class="form-control">
+					<option value="0">-</option>
+					<option value="1">ab 1 Zimmer</option>
+					<option value="2">ab 2 Zimmer</option>
+					<option value="3">ab 3 Zimmer</option>
+					<option value="4">ab 4 Zimmer</option>
+					<option value="5">ab 5 Zimmer</option>
+				</select>
+
+				<div class="input-group-btn">
+					<button id="nav_bt_search" class="btn btn-default" type="button"><i class="glyphicon glyphicon-search"></i></button>
+				</div>
+			 </div>
+			</form>
+			</li>
+			<li id="logDropping">
+					<a style="float: right;" href="/fa17g17/user/logout">Logout</a>
+			</li><!-- if logged in -->
+			<li id="nlogDropping" style="float: right;"><a href="/fa17g17/Login">Sign-In</a></li><!-- if logged out -->
+		</ul>
+	</nav>
+</div>
+<!-- Navbar left -->
+<div class="wrapper-form">
+	<div class="row content">
+		<div class="wrapper backgroundContainer col-sm-3">
+			<nav id="sidebar">
+				<!-- Sidebar Header -->
+				<div class="sidebar-header">
+				<h3>Dashboard</h3>
+				</div>
+				<ul class="list-unstyled components">
+					<li><a href="/fa17g17/Dashboard">User Settings</a></li>
+					<li><a href="/fa17g17/Dashboard/Messages">Messages</a></li>
+
+					<li><a href="/fa17g17/Dashboard/Favorits">Favorits</a></li>
+					<li><a href="/fa17g17/Dashboard/Offers">Offers</a></li>
+					<li class="active"><a href="/fa17g17/Dashboard/contacts">Contacts</a></li>
+				</ul>
+			</nav>
+		</div>
+<!-- Contact Info Form -->
+		<div class="col-sm-9">
+			<div class="row">
+				<!-- Contact Info Form -->
+				<div class="col-sm-9">
+						<form class="form-horizontal" role="form" style="color: white;">
+								<h2 id="contactTitel">New Contact</h2>
+									<div class="form-group">
+									<label for="Contacter" class="col-sm-3 control-label">User</label>
+									<div class="col-sm-9">
+											<Select id="remoteId" class="form-control">
+													<option>User1</option>
+													<option>User2</option>
+													<option>User3</option>
+											</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="Status" class="col-sm-3 control-label">State</label>
+									<div class="col-sm-9">
+											<Select id="status" class="form-control">
+													<option>New</option>
+													<option>In Process</option>
+													<option>Finish</option>
+											</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="Status" class="col-sm-3 control-label">Contact Description</label>
+									<div class="col-sm-9">
+										<input type="text" id="contactDesc" placeholder="Contact name" class="form-control"/>
+									</div>
+								</div>
+								<div class="form-group">
+										<div class="col-sm-9 col-sm-offset-3">
+											<button id="btSubmit" type="button" class="btn btn-primary btn-block">Submit</button>
+										</div>
+								</div>
+						</form>
+				</div>
+
+				<!-- End Contact Info Form -->
+
+		</div>
+
+				<!-- Result Form -->
+
+		<div id="result" class="col-sm-12" style = "margin:10px">
+
+		</div>
+
+			<!-- End Result Form -->
+</div>
+
+<!-- Abschluss der Seite-->
+<footer class="footer">
+      <div class="container">
+        <span class="text-muted"><a href="/fa17g17/about">About us</a>, Copyrights, Social Media</span>
+      </div>
+    </footer>
+</body>
+<script>
+
+// Helper-Object: set url to sfsuse or localhost
+var ajaxURL = new AJAXSettings().getAJAXURL();
+
+var cookieArray = Cookies.get('UserID');
+var userObject = null;
+
+if(typeof(cookieArray) != "undefined") {
+	userObject = JSON.parse(cookieArray.substring(2));
+}
+
+// global variable
+var userId = userObject.id;
+var obj; // obj return from server
+var bt_opt=0; // option for submit button : 0 = add, 1 = edit
+var kt_id; // kontakt_id for edit
+
+// --- function input Form ---
+
+function resetForm()
+{
+	$("#remoteId").val(obj.username[0].id);
+	$("#status").val(obj.kontakt[0].kontakt_status_id);
+	$("#contactDesc").val("");
+	$("#contactTitel").empty();
+	$("#contactTitel").append("New Contact");
+}
+// --- end function reset ---
+
+// Function show data from server
+function showData(){
+						var div_result = "";
+						$("#result").empty();
+						for (var i = 0; i<obj.kontakt.length; i++)
+						{
+							if (i%2==1)
+							{
+								div_result  = "<div class='row'>"
+								+ "<div class='col-sm-4 well'>"
+								+ "<div class='media'>"
+								+ "<div class='media-body'>"
+								+ "<h4 class='media-heading pull-right'><small>" + obj.kontakt[i].date.slice(0,10) + "</small></h4>"
+								+ "<h4 class='media-heading'>" + obj.kontakt[i].nickname + "</h4>"
+								+ obj.kontakt[i].beschreibung
+								+ "</div>"
+								+ "<h4 class='media-heading pull-right'>"
+								+ "<small> State: " + obj.kontakt[i].kontaktstatus + " <i class='glyphicon glyphicon-check'></i> "
+								+ "<a href='/fa17g17/Dashboard/Messages'>" + obj.kontakt[i].M_anzahl + " <i class='glyphicon glyphicon-envelope'></i></a>"
+								+ "</small>"
+								+ "<button type='button' onclick='f_upd(" + i + ")' class='btn btn btn-link'>Edit</button>"
+								+ "<button type='button' onclick='f_del("+ obj.kontakt[i].id +")' class='btn btn btn-link'>Delete</button>"
+								+ "</h4>"
+								+ "</div>"
+								+ "</div>"
+								+ "<div class='col-sm-2'></div>";
+								$("#result").append(div_result);
+							}
+							else
+							{
+								div_result = "<div class='col-sm-4 well'>"
+								+ "<div class='media'>"
+								+ "<div class='media-body'>"
+								+ "<h4 class='media-heading pull-right'><small>" + obj.kontakt[i].date.slice(0,10) + "</small></h4>"
+								+ "<h4 class='media-heading'>" + obj.kontakt[i].nickname + "</h4>"
+								+ obj.kontakt[i].beschreibung
+								+ "</div>"
+								+ "<h4 class='media-heading pull-right'>"
+								+ "<small> State: " + obj.kontakt[i].kontaktstatus + " <i class='glyphicon glyphicon-check'></i> "
+								+ "<a href='/fa17g17/Dashboard/Messages'>" + obj.kontakt[i].M_anzahl + " <i class='glyphicon glyphicon-envelope'></i></a>"
+								+ "</small>"
+								+ "<button type='button' onclick='f_upd(" + i + ")' class='btn btn btn-link'>Edit</button>"
+								+ "<button type='button' onclick='f_del(" + obj.kontakt[i].id + ")' class='btn btn btn-link'>Delete</button>"
+								+ "</h4>"
+								+ "</div>"
+								+ "</div>"
+								+ "</div>";
+								$("#result").append(div_result);
+							}
+						}
+						resetForm();
+}
+// End Function show data from server
+
+// Function get data from server
+function update()
+{
+	$.ajax
+			(
+				{
+					type		: "POST",
+					url			: ajaxURL + "/fa17g17/contact/render",
+					contentType	: 'application/json',
+					data		: JSON.stringify(
+					{
+						"userID"	: userId
+					}),
+					success		: function (res)
+					{
+						obj = JSON.parse(res);
+						// Get data for combox contacter on server
+						if (obj.username.length > 0)
+						{
+							div_result = "";
+							$("#remoteId").empty();
+							for (var i=0; i<obj.username.length;i++)
+							{
+								div_result = div_result + "<option value='" + obj.username[i].id +"'>" + obj.username[i].nickname + "</option>"
+							}
+							$("#remoteId").append(div_result);
+						}
+						// Get data for combox status on server
+						if (obj.status.length > 0)
+						{
+							div_result = "";
+							$("#status").empty();
+							for (var i=0; i<obj.status.length;i++)
+							{
+								div_result = div_result + "<option value='" + obj.status[i].id +"'>" + obj.status[i].beschreibung + "</option>"
+							}
+							$("#status").append(div_result);
+						}
+						// Get data and show data contact on server
+						if (obj.kontakt.length > 0)
+									{
+										showData ();
+									}
+							else
+									{
+										$("#result").empty();
+									}
+					},
+					error	: function (err)
+					{
+							alert ("error");
+					}
+		});
+}
+// End function get data from server
+
+// --- function change add Contact to edit form---
+function f_upd(i)
+{
+	kt_id = obj.kontakt[i].id;
+	$("#remoteId").val(obj.kontakt[i].remote_id);
+	$("#status").val(obj.kontakt[i].kontakt_status_id);
+	$("#contactDesc").val(obj.kontakt[i].beschreibung);
+	$("#contactTitel").empty();
+	$("#contactTitel").append("<strong style='color : rgb(32, 135, 175)'>Update Contact</strong>");
+	bt_opt = 1;
+} // End function change add Contact to edit form---
+
+// --- function delete Contact ---
+function f_del(kontaktID)
+{
+	$.ajax
+	({
+		type		: "POST",
+		url			: ajaxURL + "/fa17g17/contact/delete",
+		contentType	: 'application/json',
+		data		: JSON.stringify(
+		{
+			"kontaktID"	: kontaktID
+		}),
+		success		: function (res)
+		{
+			// alert (res);
+			// Show new data
+			update();
+		},
+		error		: function (err)
+		{
+			alert (err);
+		}
+	});
+} // end-function delete Contact
+
+ $(document).ready(function(){
+
+					// get data on server
+					update();
+
+					// action when Button Submit is clicked !
+					$("#btSubmit").click(function() {
+						var remoteId = $("#remoteId").val();
+						var status = $("#status").val();
+						var contactDesc = $("#contactDesc").val();
+						// check invalid characters
+						var regex = new RegExp("<|>");
+						results = regex.exec(contactDesc);
+						if(results != null ) {
+							contactDesc = contactDesc.replace('<','');
+							contactDesc = contactDesc.replace('>','');
+						}
+						// if ContactDesc is not blank
+						if (contactDesc.trim() != ""){
+						// --- if bt_opt=0, function add Contact ---
+						if (bt_opt == 0)
+						{
+							var todate = new Date();
+							var date = todate.getFullYear() + "-" + todate.getMonth() + "-" + todate.getDate() + " "
+							+ todate.getHours() + ":" + todate.getMinutes() + ":" + todate.getSeconds();
+							$.ajax
+							(
+								{
+									type		: "POST",
+									url			: ajaxURL + "/fa17g17/contact/create",
+									contentType	: 'application/json',
+									data		: JSON.stringify(
+									{
+										"local_id"	: userId,
+										"remote_id"	: remoteId,
+										"status"	: status,
+										"date" : date,
+										"beschreibung" : contactDesc
+									}),
+									success		: function (res)
+									{
+										// alert (res);
+										// Show new data
+										update();
+									},
+									error		: function (err)
+									{
+										alert ("error");
+									}
+								}
+							);
+						} // end-function add Contact
+
+						// --- else, function edit Contact ---
+						if (bt_opt == 1)
+						{
+							$.ajax
+							(
+								{
+									type		: "POST",
+									url			: ajaxURL + "/fa17g17/contact/edit",
+									contentType	: 'application/json',
+									data		: JSON.stringify(
+									{
+										"kontact_id" : kt_id,
+										"remote_id"	: remoteId,
+										"status"	: status,
+										"beschreibung" : contactDesc
+									}),
+									success		: function (res)
+									{
+										alert (res);
+										// Show new data
+										update();
+									},
+									error		: function (err)
+									{
+										alert ("error");
+									}
+								}
+							);
+							bt_opt=0;
+						} // end-function edit Contact
+					} else // if ContactDesc is not blank
+						{
+							alert ("Please write a description for your contact!");
+						}
+					});
+
+});
+</script>
+</html>

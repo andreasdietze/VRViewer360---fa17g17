@@ -1,0 +1,165 @@
+<html>
+<head>
+
+	<title>Dashboard</title>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-110932262-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-110932262-1');
+</script>
+
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+	<!-- Custom Scroller Js CDN -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
+	<!-- Scrollbar Custom CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+	<!-- Bootstrap Js CDN -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<!-- Funktion zum Auslesen der Cookie Values -->
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+
+	<!-- Stylessheets -->
+	<link rel="stylesheet" type="text/css" href="../css/dashboardStyles.css">
+	<!-- Styles der Offers -->
+	<link rel="stylesheet" type="text/css" href="../css/singleOffer.css">
+<script type="text/javascript" src="/fa17g17/js/searchLogic.js"></script>
+	<!-- External Script -->
+	<!-- AJAX URL Helper -->
+	<script type="text/javascript" src="../js/handleAJAX.js"></script>
+	<script src="../js/load-offers.js"></script>
+</head>
+<body style="
+	background-image: url(.././img/background.jpeg);
+	background-image-size: 100%;
+">
+<div>
+	<nav class="navbar navbar-inverse" role="navigation" style="padding-left:80px;">
+			<ul class="nav navbar-nav">
+			<li><a href="/fa17g17">Home<span class="sr-only">(current)</span></a></li>
+			<li>
+			<form id="searchbar_for_estates" class="navbar-form" role="search">
+				<div class="input-group add-on" style="display: flex; flex: 1 1 auto;">
+				<select id = "nav_angebot_art" class="form-control">
+					<option>Buy</option>
+					<option>Rent</option>
+				</select>
+				<select id = "nav_ort" class="form-control">
+					<option>Fulda</option>
+					<option>Hünfeld</option>
+					<option>Eichenzell</option>
+					<option>Neuhof</option>
+					<option>Petersberg</option>
+				</select>
+				<select id = "nav_objektart" class="form-control">
+					<option>Estate</option>
+					<option>House</option>
+					<option>Apartment</option>
+					<option>Villa/Townhouse</option>
+				</select>
+				<div class="col-md-2"><input id = "nav_qm" type="text" class="form-control" placeholder="Square meters..."></div>
+				<div class="col-md-2"><input id = "nav_preis" type="text" class="form-control" placeholder="Max Price..."></div>
+				<select id = "nav_zimmeranzahl" class="form-control">
+					<option value="0">-</option>
+					<option value="1">ab 1 Zimmer</option>
+					<option value="2">ab 2 Zimmer</option>
+					<option value="3">ab 3 Zimmer</option>
+					<option value="4">ab 4 Zimmer</option>
+					<option value="5">ab 5 Zimmer</option>
+				</select>
+
+				<div class="input-group-btn">
+					<button id="nav_bt_search" class="btn btn-default" type="button"><i class="glyphicon glyphicon-search"></i></button>
+				</div>
+			 </div>
+			</form>
+			</li>
+			<li id="logDropping">
+					<a style="float: right;" href="/fa17g17/user/logout">Logout</a>
+			</li><!-- if logged in -->
+			<li id="nlogDropping" style="float: right;"><a href="/fa17g17/Login">Sign-In</a></li><!-- if logged out -->
+		</ul>
+	</nav>
+</div>
+<!-- Navbar left -->
+<div class="wrapper backgroundContainer">
+
+	<nav id="sidebar" style="height: auto;">
+		<!-- Sidebar Header -->
+		<div class="sidebar-header">
+			<h3>Dashboard</h3>
+			</div>
+			<ul class="list-unstyled components">
+				<li><a href="/fa17g17/Dashboard">User Settings</a></li>
+				<li><a href="/fa17g17/Dashboard/Messages">Messages</a></li>
+
+				<li><a href="/fa17g17/Dashboard/Favorits">Favorits</a></li>
+				<li class="active"><a href="/fa17g17/Dashboard/Offers">Offers</a></li>
+				<li><a href="/fa17g17/Dashboard/Contacts">Contacts</a></li>
+			</ul>
+	</nav>
+
+	<div id="content" style="flex: 1; padding-top: 5px;">
+
+<!-- Offers Box -->
+<div class="searchResultBox">
+    <div class="container-fluid">
+        <div class="container container-pad" id="property-listings">
+
+            <div class="row">
+              <div class="col-md-12">
+                <h1 style="color: white;">Your Offers:</h1>
+              </div>
+            </div>
+
+            <div class="row">
+                <div id="estate-root" class="col-sm-8">
+					<div class="btn-group" role="group" aria-label="Basic example"><!-- Top Button bar -->
+						<a href="/fa17g17/dashboard/newOffer">
+							<button type="button" class="btn btn-default">New Offer</button>
+						</a>
+					</div><!-- Top Button bar End -->
+
+                </div>
+
+            </div><!-- End row -->
+        </div><!-- End container -->
+    </div>
+</div><!-- Offers Box End -->
+
+	</div>
+
+<!-- Abschluss der Seite-->
+<footer class="footer">
+      <div class="container">
+        <span class="text-muted"><a href="/fa17g17/about">About us</a>, Copyrights, Social Media</span>
+      </div>
+    </footer>
+</body>
+<script>
+$(document).ready(function () {
+
+    $("#sidebar").mCustomScrollbar({
+         theme: "minimal"
+    });
+
+    $('#sidebarCollapse').on('click', function () {
+        // open or close navbar
+        $('#sidebar').toggleClass('active');
+        // close dropdowns
+        $('.collapse.in').toggleClass('in');
+        // and also adjust aria-expanded attributes we use for the open/closed arrows
+        // in our CSS
+        $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+    });
+
+});
+</script>
+</html>

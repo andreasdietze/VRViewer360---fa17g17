@@ -1,0 +1,520 @@
+-- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
+--
+-- Host: localhost    Database: fa17g17
+-- ------------------------------------------------------
+-- Server version	5.7.20-0ubuntu0.16.04.1
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `angebot`
+--
+
+DROP TABLE IF EXISTS `angebot`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `angebot` (
+  `id` smallint(16) NOT NULL AUTO_INCREMENT,
+  `verkaufer_id` smallint(16) NOT NULL,
+  `immobilien_id` smallint(16) NOT NULL,
+  `angebots_art` varchar(100) NOT NULL,
+  `kaution` float NOT NULL DEFAULT '0',
+  `nebenkosten` float(10) NOT NULL DEFAULT '0',
+  `mietenpreis` float(10) NOT NULL DEFAULT '0',
+  `kaufpreis` float(10) NOT NULL DEFAULT '0',
+  `provision` float NOT NULL DEFAULT '0',
+  `beschreibung` varchar(600) DEFAULT NULL,
+  `angebot_wert` float DEFAULT '0',
+  `startdate` date DEFAULT NULL,
+  `enddate` date DEFAULT NULL,
+  `kontakt_info` varchar(120) DEFAULT NULL,
+  `active` tinyint(4) DEFAULT NULL,
+  `sonstiges` varchar(300) DEFAULT NULL,
+  `angebot_titel` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `angebot_user_fk_idx` (`verkaufer_id`),
+  KEY `angebot_immobilien_fk_idx` (`immobilien_id`),
+  CONSTRAINT `angebot_immobilien_fk` FOREIGN KEY (`immobilien_id`) REFERENCES `immobilien` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `angebot_user_fk` FOREIGN KEY (`verkaufer_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `angebot`
+--
+
+LOCK TABLES `angebot` WRITE;
+/*!40000 ALTER TABLE `angebot` DISABLE KEYS */;
+INSERT INTO `angebot` VALUES (1,1,8,'Rent',1200,250,650,650,3.34,'---',0,'2017-11-23 00:00:00','2018-11-23 00:00:00',NULL,1,NULL,'Spacious apartment with beautiful view'),
+(2,1,9,'Rent',2000,500,900,900,2.56,'---',0,'2017-11-23 00:00:00','2018-11-23 00:00:00',NULL,1,NULL,'Large apartment close to the city centre. Optimally suitable for a shared apartment'),
+(3,1,10,'Buy',0,760,340000,340000,2.78,'---',0,'2017-11-23 00:00:00','2018-11-23 00:00:00',NULL,1,NULL,'Town house for small family. Including garden, garage and pool'),
+(4,1,11,'Buy',0,900,560000,560000,3.34,'---',0,'2017-11-23 00:00:00','2018-11-23 00:00:00',NULL,1,NULL,'Old-fashioned city villa in an ideal location in the centre of Fulda.'),
+(5,1,12,'Buy',0,468,370000,370000,1.98,'---',0,'2017-11-23 00:00:00','2018-11-23 00:00:00',NULL,1,NULL,'Large detached house in new construction area.'),
+(6,1,13,'Rent',400,80,250,250,3.34,'---',0,'2017-11-23 00:00:00','2018-11-23 00:00:00',NULL,1,NULL,'Student flat with direct connection to the university by public transport'),
+(7,1,14,'Rent',3500,880,1600,1600,1.98,'---',0,'2017-11-23 00:00:00','2018-11-23 00:00:00',NULL,1,NULL,'High-yield city villa for several residential parties or for self-reference');
+/*!40000 ALTER TABLE `angebot` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `bewertung`
+--
+
+DROP TABLE IF EXISTS `bewertung`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `bewertung` (
+  `id` smallint(16) NOT NULL AUTO_INCREMENT,
+  `user_id` smallint(16) NOT NULL,
+  `wertung_id` smallint(16) NOT NULL,
+  `date` date DEFAULT NULL,
+  `beschreibung` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `bewertung_verkaufer_fk_idx` (`user_id`),
+  KEY `bewertung_wertung_fk_idx` (`wertung_id`),
+  CONSTRAINT `bewertung_verkaufer_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `bewertung_wertung_fk` FOREIGN KEY (`wertung_id`) REFERENCES `wertung` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `bewertung`
+--
+
+LOCK TABLES `bewertung` WRITE;
+/*!40000 ALTER TABLE `bewertung` DISABLE KEYS */;
+INSERT INTO `bewertung` VALUES (1,7,4,'2017-11-20',NULL),(2,7,3,'2018-03-11',NULL),(3,7,5,'2017-11-29',NULL),(4,8,5,'2017-11-28',NULL),(5,8,5,'2017-12-04',NULL),(6,8,5,'2018-01-12',NULL);
+/*!40000 ALTER TABLE `bewertung` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `default_image`
+--
+
+DROP TABLE IF EXISTS `default_image`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `default_image` (
+  `id` int(16) NOT NULL,
+  `beschreibung` varchar(100) DEFAULT NULL,
+  `path` tinytext NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `default_image`
+--
+
+LOCK TABLES `default_image` WRITE;
+/*!40000 ALTER TABLE `default_image` DISABLE KEYS */;
+/*!40000 ALTER TABLE `default_image` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `favorit`
+--
+
+DROP TABLE IF EXISTS `favorit`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `favorit` (
+  `user_id` smallint(16) NOT NULL,
+  `angebot_id` smallint(16) NOT NULL,
+  `notizen` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`user_id`,`angebot_id`),
+  KEY `user_id_UNIQUE` (`user_id`),
+  KEY `favorit_angebot_fk_idx` (`angebot_id`),
+  CONSTRAINT `favorit_angebot_fk` FOREIGN KEY (`angebot_id`) REFERENCES `angebot` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `favorit_user_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `favorit`
+--
+
+LOCK TABLES `favorit` WRITE;
+/*!40000 ALTER TABLE `favorit` DISABLE KEYS */;
+/*!40000 ALTER TABLE `favorit` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `immobilien`
+--
+
+DROP TABLE IF EXISTS `immobilien`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `immobilien` (
+  `id` smallint(16) NOT NULL AUTO_INCREMENT,
+  `immobilien_art` varchar(60) NOT NULL,
+  `immobilien_adress` varchar(45) NOT NULL,
+  `immobilien_ort` smallint(16) NOT NULL,
+  `zimmeranzahl` int(11) NOT NULL DEFAULT '1',
+  `qm` int(10) NOT NULL,
+  `etage` int(11) DEFAULT '1',
+  `etage_anzahl` int(11) DEFAULT '1',
+  `bauzustand` varchar(45) DEFAULT NULL,
+  `features` varchar(100) NOT NULL,
+  `nutzungszweck` varchar(100) NOT NULL,
+  `beschreibung` varchar(600) DEFAULT NULL,
+  `bewertung_wert` float NOT NULL DEFAULT '0',
+  `active` tinyint(4) DEFAULT NULL,
+  `verkaufer_id` smallint(16) NOT NULL,
+  `map_info` varchar(300) DEFAULT NULL,
+  `energieausweis` varchar(45) DEFAULT NULL,
+  `besitzer_id` smallint(16) NOT NULL,
+  `baujahr` smallint(10) NOT NULL,
+  `heizungs_art` varchar(45) NOT NULL,
+  `media` varchar(600) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `immobilien_user_fk_idx` (`verkaufer_id`),
+  KEY `immobilien_ort_fk_idx` (`immobilien_ort`),
+  KEY `immobilien_besitzer_fk_idx` (`besitzer_id`),
+  CONSTRAINT `immobilien_besitzer_fk` FOREIGN KEY (`besitzer_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `immobilien_ort_fk` FOREIGN KEY (`immobilien_ort`) REFERENCES `ort` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `immobilien_user_fk` FOREIGN KEY (`verkaufer_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `immobilien`
+--
+
+LOCK TABLES `immobilien` WRITE;
+/*!40000 ALTER TABLE `immobilien` DISABLE KEYS */;
+INSERT INTO `immobilien` VALUES 
+(8,'Apartment','Magdeburger Straße 16',1,2,28,1,1,'New','2 Beds,Bath','Private','Traditional architecture with gabled roofs and brick accents set the stage for these 2-bedroom apartment homes at Fulda. The generous floor plans offer separate dining rooms, oversized closets, large master suites with garden tub, and utility room with washer/dryer connections. Besides the beautiful landscaping and controlled access gates, community resident amenities include a business center, fitness center, playground, and picnic area with grill.',0,1,1,NULL,NULL,2, 2012, 'Centralized (Gas)', 'haus1.jpg,haus2.jpg,haus3.jpg'),
+(9,'Apartment','Leipzig Straße 34',1,4,120,1,1,'New','2 Beds,Bath,Kitchen','Private','Walk to Grant Park and Zoo Atlanta from this renovated duplex conveniently located just south of Fulda. New kitchen with stainless steel appliances, ceramic tile floors and backsplash. Laundry in unfinished basement with washer/dryer provided and additional storage space. Parking on street.',0,1,1,NULL,NULL,3, 2002, 'Wood Stove (Floor)', 'haus1.jpg,haus2.jpg,haus3.jpg'),
+(10,'House','Dalberg Straße 41',1,8,300,1,2,'House in Art Nouveau','5 Beds,Balcony,2 Baths,Kitchen,Garden,Garage,Pool','Private','24-Hour Emergency Maintenance, 42 inch Cabinets, Breakfast Bar in select home plans, Community Garden, Convenient Community Laundry Room, Dishwasher & Garbage Disposal, Expansive ',0,1,1,NULL,NULL,1, 1987, 'Centralized (Oil)', 'haus1.jpg,haus2.jpg,haus3.jpg'),
+(11,'Villa/Townhouse','Oberfelder Weg 14',3,12,800,1,3,'Old town villa renovated','Bungalow,Garage,Kitchen','Private','Absolutely charming one bedroom bungalow in the heart of Historic Fulda! Gorgeous original features including soaring ceilings, trim work, and heart pine floors throughout. Fantastic outdoor living with a rocking chair front porch, side deck, spacious wooden patio, and private fenced backyard with lush landscaping. Custom louver window shades throughout. Come enjoy the best of Marbachtown with easy access to Fulda',0,1,1,NULL,NULL,2, 1968, 'Wood Stove (Floor)', 'haus1.jpg,haus2.jpg,haus3.jpg'),
+(12,'House','Röhnhof 2',4,6,220,1,2,'House under construction','5 Beds,Balcony,2 Baths,1 Kitchen,Garage','Commercial','This Home For Rent is NOT Pet Friendly, For more information CALL xxx-xxxxxx',0,1,1,NULL,NULL,2, 2016, 'Centralized (Gas)', 'haus1.jpg,haus2.jpg,haus3.jpg'),
+(13,'Apartment','Fuldaer Straße 19',4,2,30,1,1,'Apartment in a newly built student dormitory','1 Bed,1 Bath','Private','Live in lovely renovated house featuring modern finishes, exceptional lightening. Kitchen has granite counters, all new stainless appliances. Bath vanities with quartz and marble tops. Living room features fire place, sitting room of the kitchen with door leading to large deck. Close to restaurants and city life. Lots of special touches all over...',0,1,1,NULL,NULL,1, 2015, 'Centralized (Oil)', 'haus1.jpg,haus2.jpg,haus3.jpg'),
+(14,'Villa/Townhouse','Petersberger Straße 56',2,11,900,1,3,'Old town villa in perfect condition','7 Beds,Balkon,3 Baths,1 Kitchen','Private','Location...Location..Location..Close to Restaurants and City life. - Live in lovely renovated house featuring modern finishes, exceptional lightening. Kitchen has granite counters, all new stainless appliances. Bath vanities with quartz and marble tops. Living room features fire place, sitting room of the kitchen with door leading to large deck. Close to restaurants and city life. Lots of special touches all over...',0,1,1,NULL,NULL,1, 1992, 'Centralized (Gas)', 'haus1.jpg,haus2.jpg,haus3.jpg');
+/*!40000 ALTER TABLE `immobilien` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `immobilien_foto`
+--
+
+DROP TABLE IF EXISTS `immobilien_foto`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `immobilien_foto` (
+  `foto_id` smallint(16) NOT NULL AUTO_INCREMENT,
+  `immobilien_id` smallint(16) NOT NULL,
+  `beschreibung` varchar(100) DEFAULT NULL,
+  `foto` longtext,
+  PRIMARY KEY (`foto_id`),
+  KEY `immobilienfoto_immobilien_fk_idx` (`immobilien_id`),
+  CONSTRAINT `immobilienfoto_immobilien_fk` FOREIGN KEY (`immobilien_id`) REFERENCES `immobilien` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `immobilien_foto`
+--
+
+LOCK TABLES `immobilien_foto` WRITE;
+/*!40000 ALTER TABLE `immobilien_foto` DISABLE KEYS */;
+INSERT INTO `immobilien_foto` VALUES (1,8,NULL,'haus1.jpg'),(2,8,NULL,'haus2.jpg'),(3,8,NULL,'haus3.jpg'),(4,9,NULL,'haus1.jpg'),(5,9,NULL,'haus2.jpg'),(6,9,NULL,'haus3.jpg'),(7,10,NULL,'haus1.jpg'),(8,10,NULL,'haus2.jpg'),(9,10,NULL,'haus3.jpg'),(10,11,NULL,'haus1.jpg'),(11,11,NULL,'haus2.jpg'),(12,11,NULL,'haus3.jpg'),(13,12,NULL,'haus1.jpg'),(14,12,NULL,'haus2.jpg'),(15,12,NULL,'haus3.jpg'),(16,13,NULL,'haus1.jpg'),(17,13,NULL,'haus2.jpg'),(18,13,NULL,'haus3.jpg'),(19,14,NULL,'haus1.jpg'),(20,14,NULL,'haus2.jpg'),(21,14,NULL,'haus3.jpg');
+/*!40000 ALTER TABLE `immobilien_foto` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `kommentar`
+--
+
+DROP TABLE IF EXISTS `kommentar`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `kommentar` (
+  `id` smallint(16) NOT NULL AUTO_INCREMENT,
+  `angebot_id` smallint(16) NOT NULL,
+  `user_id` smallint(16) NOT NULL,
+  `kommentar` varchar(300) DEFAULT NULL,
+  `date` date DEFAULT NULL,
+  `wert_id` smallint(16) NOT NULL DEFAULT '3',
+  PRIMARY KEY (`id`),
+  KEY `kommentar_user_fk_idx` (`user_id`),
+  KEY `kommentar_angebot_fk_idx` (`angebot_id`),
+  KEY `kommentar_wertung_fk_idx` (`wert_id`),
+  CONSTRAINT `kommentar_angebot_fk` FOREIGN KEY (`angebot_id`) REFERENCES `angebot` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `kommentar_user_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `kommentar_wertung_fk` FOREIGN KEY (`wert_id`) REFERENCES `wertung` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `kommentar`
+--
+
+LOCK TABLES `kommentar` WRITE;
+/*!40000 ALTER TABLE `kommentar` DISABLE KEYS */;
+INSERT INTO `kommentar` VALUES (1,8,8,'Too old House. Barebones (needs insulation, drywall, flooring, etc.)','2017-11-30',3),(2,9,7,'Good Place but the price is too hight','2017-12-03',4),(3,10,8,'Beautiful view and everything is good','2017-12-04',5),(4,11,7,'Wonderful Bungablow, I want always come back','2017-12-09',5),(5,12,7,'No Pets is difficult for me','2017-11-29',3);
+/*!40000 ALTER TABLE `kommentar` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `kontakt`
+--
+
+DROP TABLE IF EXISTS `kontakt`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `kontakt` (
+  `id` smallint(16) NOT NULL AUTO_INCREMENT,
+  `beschreibung` varchar(160) DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
+  `kontakt_status_id` smallint(16) NOT NULL,
+  `local_id` smallint(16) NOT NULL,
+  `remote_id` smallint(16) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `kontakt_localuser_fk_idx` (`local_id`),
+  KEY `kontakt_remoteuser_fk_idx` (`remote_id`),
+  KEY `kontakt_kontaktstatus_fk_idx` (`kontakt_status_id`),
+  CONSTRAINT `kontakt_kontaktstatus_fk` FOREIGN KEY (`kontakt_status_id`) REFERENCES `kontakt_status` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `kontakt_localuser_fk` FOREIGN KEY (`local_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `kontakt_remoteuser_fk` FOREIGN KEY (`remote_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `kontakt`
+--
+
+LOCK TABLES `kontakt` WRITE;
+/*!40000 ALTER TABLE `kontakt` DISABLE KEYS */;
+INSERT INTO `kontakt` VALUES (1,'Kontakt for Estate 1','2017-11-15 22:33:44',1,7,8),
+(2,'Kontakt for Estate 2','2017-11-20 10:15:27',2,8,7),
+(3,'Question for Estate 3','2017-11-22 23:11:10',1,7,8),
+(4,'Rent Estate 4','2017-11-16 17:23:00',2,8,7),
+(5,'Description Estate 3','2017-11-16 09:48:00',1,7,9);/*!40000 ALTER TABLE `kontakt` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `kontakt_status`
+--
+
+DROP TABLE IF EXISTS `kontakt_status`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `kontakt_status` (
+  `id` smallint(16) NOT NULL,
+  `status` varchar(45) NOT NULL,
+  `beschreibung` varchar(60) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `kontakt_status`
+--
+
+LOCK TABLES `kontakt_status` WRITE;
+/*!40000 ALTER TABLE `kontakt_status` DISABLE KEYS */;
+INSERT INTO `kontakt_status` VALUES (1,'1','neu'),(2,'2','im prozess'),(3,'3','geschlossen'),(4,'4','erfolgreich');
+/*!40000 ALTER TABLE `kontakt_status` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `nachricht`
+--
+
+DROP TABLE IF EXISTS `nachricht`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `nachricht` (
+  `id` smallint(16) NOT NULL AUTO_INCREMENT,
+  `absender_id` smallint(16) NOT NULL,
+  `empfanger_id` smallint(16) NOT NULL,
+   `absender_email` varchar(100) NOT NULL,
+  `empfanger_email` varchar(100) NOT NULL,
+  `date` datetime DEFAULT NULL,
+  `nachricht` varchar(300) DEFAULT NULL,
+  `nachricht_status_id` smallint(16) NOT NULL,
+  `kontakt_id` smallint(16) NOT NULL,
+  `nachricht_beschreibung` varchar(45) NOT NULL,
+  `attachfile` tinytext,
+  `Titel` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `nachricht_absender_fk_idx` (`absender_id`),
+  KEY `nachricht_empfanger_fk_idx` (`empfanger_id`),
+  KEY `nachricht_kontakt_fk_idx` (`kontakt_id`),
+  KEY `nachricht_nachrichtstatus_fk_idx` (`nachricht_status_id`),
+  CONSTRAINT `nachricht_absender_fk` FOREIGN KEY (`absender_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `nachricht_empfanger_fk` FOREIGN KEY (`empfanger_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `nachricht_kontakt_fk` FOREIGN KEY (`kontakt_id`) REFERENCES `kontakt` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `nachricht_nachrichtstatus_fk` FOREIGN KEY (`nachricht_status_id`) REFERENCES `nachricht_status` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `nachricht`
+--
+
+LOCK TABLES `nachricht` WRITE;
+/*!40000 ALTER TABLE `nachricht` DISABLE KEYS */;
+INSERT INTO `nachricht` VALUES 
+(1,2,3,'admin@admin2.de','admin@admin3.de','2017-11-21 12:12:14','Hi, I would like to join the meeting on monday.',2,1,'Besichtigung',NULL,'Question about House in Art Nouveau'),
+(2,3,2,'admin@admin3.de','admin@admin2.de','2017-11-22 21:14:18','Hello my friend, unfortunately we have to change time for out meeting. It is now at 5pm!',3,1,'Besichtigung',NULL,'Re: Question about House in Art Nouveau'),
+(3,3,2,'admin@admin3.de','admin@admin2.de','2017-11-22 08:10:27','All right, see you on frieday, 3pm should be a good time.',1,2,'Besichtigung',NULL,'House in Art Nouveau'),
+(4,2,3,'admin@admin2.de','admin@admin3.de','2017-11-18 15:38:45','I saw your offer on the side and want to request a inspection of the house. ',2,3,'Besichtigung',NULL,'House in Art Nouveau'),
+(5,2,3,'admin@admin2.de','admin@admin3.de','2017-11-23 11:22:44','I would like to complete the business about House in Art Nouveau.',1,5,'KaufenMieten',NULL,'House in Art Nouveau'),
+(6,3,2,'admin@admin3.de','admin@admin2.de','2017-11-18 20:28:26','Purchase interest in property house noted.',1,5,'KaufenMieten',NULL,'Want to buy the house'),
+(7,3,2,'admin@admin3.de','admin@admin2.de','2017-11-18 16:08:05','Inspection on saturday, 3pm, is it ok ?',2,5,'Besichtigung',NULL,'House inspection'),
+(8,2,3,'admin@admin2.de','admin@admin3.de','2017-11-18 17:21:38','Ok, 3pm on saturday, see you there.',2,5,'Besichtigung',NULL,'RE: Besichtigungstermin Immobilie XYZ'),
+(9,1,2,'admin@admin.de','admin@admin2.de','2017-11-18 10:17:17','Searching for a ghost house for my mother-in-law.',2,5,'Besichtigung',NULL,'Request Ghosthouse inspection'),
+(10,1,2,'admin@admin.de','admin@admin2.de','2017-11-18 22:10:30','Found ghost house for mother in law.',2,5,'Information',NULL,'Request Ghosthouse');
+/*!40000 ALTER TABLE `nachricht` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `nachricht_status`
+--
+
+DROP TABLE IF EXISTS `nachricht_status`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `nachricht_status` (
+  `id` smallint(16) NOT NULL,
+  `nachricht_status` varchar(45) NOT NULL,
+  `beschreibung` varchar(100) DEFAULT NULL,
+  `img` mediumtext,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `nachricht_status`
+--
+
+LOCK TABLES `nachricht_status` WRITE;
+/*!40000 ALTER TABLE `nachricht_status` DISABLE KEYS */;
+INSERT INTO `nachricht_status` VALUES (1,'1','noch nicht gelesen',NULL),(2,'2','gelesen',NULL),(3,'3','wichtig',NULL),(4,'4','ignoriert',NULL);
+/*!40000 ALTER TABLE `nachricht_status` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ort`
+--
+
+DROP TABLE IF EXISTS `ort`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ort` (
+  `id` smallint(16) NOT NULL AUTO_INCREMENT,
+  `ortname` varchar(45) NOT NULL,
+  `beschreibung` varchar(120) DEFAULT NULL,
+  `plz` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ort`
+--
+
+LOCK TABLES `ort` WRITE;
+/*!40000 ALTER TABLE `ort` DISABLE KEYS */;
+INSERT INTO `ort` VALUES (1,'Fulda','Fulda','36043'),(2,'Petersberg','Fulda Landkreis','36100'),(3,'Marbach','Fulda Landkreis','36100'),(4,'Eichenzell','Fulda Landkreis','36124'),(5,'Neuhof','Neuhof','36119'),(9,'Bad Brückenau','---','97769'),(10,'Adminstadt','---','12345'),(11,'Cloudstadt','---','12345'),(12,'horsttown','---','36037');
+/*!40000 ALTER TABLE `ort` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `user`
+--
+
+DROP TABLE IF EXISTS `user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user` (
+  `id` smallint(16) NOT NULL AUTO_INCREMENT,
+  `nickname` varchar(45) NOT NULL,
+  `password` varchar(120) NOT NULL DEFAULT 'password',
+  `firstname` varchar(45) NOT NULL,
+  `lastname` varchar(45) NOT NULL,
+  `telephone` varchar(45) DEFAULT NULL,
+  `email` varchar(45) NOT NULL,
+  `address` varchar(45) DEFAULT NULL,
+  `ort_id` smallint(16) NOT NULL,
+  `activedate` datetime DEFAULT NULL,
+  `lastlogin` datetime DEFAULT NULL,
+  `img` mediumtext,
+  `role` int(11) NOT NULL DEFAULT '2',
+  `agency` varchar(45) DEFAULT NULL,
+  `agent_id` varchar(45) DEFAULT NULL,
+  `active` tinyint(4) DEFAULT '0',
+  `bewertungswert` float DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `nickname_UNIQUE` (`nickname`),
+  UNIQUE KEY `email_UNIQUE` (`email`),
+  KEY `user_ort_fk_idx` (`ort_id`),
+  CONSTRAINT `user_ort_fk` FOREIGN KEY (`ort_id`) REFERENCES `ort` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user`
+--
+
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+INSERT INTO `user` VALUES (1,'admin@admin.de','$2a$10$77MPI4yWay.0i4KzRdHnEed/SZ3TL9PZNIiArZLrmG8VmcvqPYh42','David','Kane',NULL,'admin@admin.de','Cloudstreet 1',11,NULL,NULL,NULL,3,'CSURealEstate','49-97769-00001',0,NULL),(2,'admin@admin2.de','$2a$10$/Jc4CUoO8KArcXE8YlYYkOsAjjsM.qFmYnKjEKoj1Z0z8nCQshegS','David','Kane',NULL,'admin@admin2.de','Cloudstreet 1',11,NULL,NULL,NULL,2,NULL,NULL,0,NULL),(3,'admin@admin3.de','$2a$10$MCUiUvU3eVVC1gIKAT5IUuUTIB6RWc/Weep0ZQMY2sKQIYFJ47Rh6','David','Kane',NULL,'admin@admin3.de','Cloudstreet 1',11,NULL,NULL,NULL,2,NULL,NULL,0,NULL),(7,'admin@admin4.de','$2a$10$MCUiUvU3eVVC1gIKAT5IUuUTIB6RWc/Weep0ZQMY2sKQIYFJ47Rh6','David','Kane',NULL,'admin@admin4.de','Cloudstreet 1',11,NULL,NULL,NULL,2,NULL,NULL,0,NULL),(8,'admin@admin5.de','$2a$10$MCUiUvU3eVVC1gIKAT5IUuUTIB6RWc/Weep0ZQMY2sKQIYFJ47Rh6','David','Kane',NULL,'admin@admin5.de','Cloudstreet 1',11,NULL,NULL,NULL,2,NULL,NULL,0,NULL),(24,'admin@admin6.de','$2a$10$MCUiUvU3eVVC1gIKAT5IUuUTIB6RWc/Weep0ZQMY2sKQIYFJ47Rh6','David','Kane',NULL,'admin@admin6.de','Cloudstreet 1',11,NULL,NULL,NULL,2,NULL,NULL,0,NULL);
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `wertung`
+--
+
+DROP TABLE IF EXISTS `wertung`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `wertung` (
+  `id` smallint(16) NOT NULL,
+  `wert` int(11) NOT NULL,
+  `image` blob,
+  `beschreibung` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `wertung`
+--
+
+LOCK TABLES `wertung` WRITE;
+/*!40000 ALTER TABLE `wertung` DISABLE KEYS */;
+INSERT INTO `wertung` VALUES (1,1,NULL,NULL),(2,2,NULL,NULL),(3,3,NULL,NULL),(4,4,NULL,NULL),(5,5,NULL,NULL);
+/*!40000 ALTER TABLE `wertung` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping events for database 'fa17g17'
+--
+
+--
+-- Dumping routines for database 'fa17g17'
+--
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2017-11-24 13:54:12

@@ -1,0 +1,113 @@
+<html>
+<head>
+
+	<title>About</title>
+
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+	<!-- Stylesheet -->
+	<link rel="stylesheet" href="css/stylead.css">
+</head>
+<body>
+<nav class="navbar navbar-inverse" role="navigation" style="padding-left:130px;">
+       <ul class="nav navbar-nav">
+      <li><a href="/fa17g17">Home<span class="sr-only">(current)</span></a></li>
+      <li class="active"><a href="/fa17g17/about">About us</a></li>
+	  <li>
+		<form class="navbar-form" role="search">
+          <div class="input-group add-on">
+            <input class="form-control" placeholder="Search" name="srch-term" id="srch-term" type="text">
+            <div class="input-group-btn">
+              <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+            </div>
+         </div>
+        </form>
+	  </li>
+	  <li>
+	    <div class="navbar-form dropdown">
+	    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" style="background: white; color: black">Manage
+        <span class="caret"></span></button>
+        <ul class="dropdown-menu">
+          <li><a href="#">Signup</a></li>
+          <li><a href="#">Signin</a></li>
+	      <!-- Link zur User Area -->
+        </ul>
+        </div>
+	  </li>
+	  <li><a href="/fa17g17/contact">Contact us</a></li>
+    </ul>
+</nav>
+<!-- </div> -->
+  <!-- <br/> -->
+  <!-- <div class="jumbotron"> -->
+  <!-- <p> -->
+    <!-- Put detail description about you and your company. -->
+  <!-- </p> -->
+  <!-- </div> -->
+  <div class="container-fluid">
+	  <div class="row content" id="con">
+		<div class="col-sm-3 sidenav" id="sidenav">
+		  <h4>Project members</h4>
+		  <ul class="nav nav-pills nav-stacked">
+			<li class="active"><a href="/fa17g17/about">Home</a></li>
+			<li><a href="/fa17g17/aboutMax">Max Finsterbusch</a></li>
+			<li><a href="/fa17g17/aboutDavid">David Karimi</a></li>
+			<li><a href="/fa17g17/aboutPhan">Tuan Anh Phan</a></li>
+			<li><a href="/fa17g17/aboutAndreas">Andreas Dietze</a></li>
+		  </ul><br>
+		</div>
+
+		<div class="col-sm-9">
+		  <h4><small>RECENT POSTS</small></h4>
+		  <hr>
+		  <h2>Welcome to our project member overwiew :)</h2>
+		  <h5><span class="glyphicon glyphicon-time"></span> Post by Andreas Dietze, Oct 17, 2017.</h5>
+		  <h5><span class="label label-danger">Master</span> 
+			  <span class="label label-primary">Project</span>
+			  <span class="label label-success">2017</span></h5><br>
+		  <p>text text text text text text text text text text text text 
+			 text text text text text text text text text text text text 
+			 text text text text text text text text text text text text 
+			 text text text text text text text text text text text text 
+			 text text text text text text text text text text text text 
+			 text text text text text text text text text text text text 
+			 text text text text text text text text text text text text 
+			 text text text text text text text text text text text text 
+			 text text text text text text text text text text text text </p>
+		  <br><br>
+		</div>
+	  </div>
+	</div>
+
+	<footer class="container-fluid">
+	  <p>Master Project 2017</p>
+	</footer>
+	<script>
+	window.onresize = function (event)
+	{
+		if(window.innerWidth > 768)
+		{
+			var height = document.getElementById("con").clientHeight;
+			console.log(height);
+			var str = "height: " + height + "px";
+			document.getElementById("sidenav").style = str.toString();
+		}
+	}
+	
+	if(window.innerWidth > 768)
+	{
+		var height = document.getElementById("con").clientHeight;
+		console.log(height);
+		var str = "height: " + height + "px";
+		document.getElementById("sidenav").style = str.toString();
+	}
+	</script>
+</body>
+</html>

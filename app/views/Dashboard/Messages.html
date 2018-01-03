@@ -1,0 +1,318 @@
+<html>
+<head>
+
+	<title>Dashboard</title>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-110932262-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-110932262-1');
+</script>
+
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+	<!-- jQuery CDN -->
+	<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+	<!-- Latest compiled JavaScript -->
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<!-- Custom Scroller Js CDN -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
+
+	<!-- jQuery library UI-Extension for date picker -->
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<link rel="stylesheet" href="/resources/demos/style.css">
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+
+	<script type="text/javascript" src="../js/handleAJAX.js"></script>
+	<script type="text/javascript" src="../js/fileTypeChecker.js"></script>
+	<script type="text/javascript" src="../js/messaging.js"></script>
+
+	<!-- Stylessheets -->
+	<link rel="stylesheet" type="text/css" href="../css/dashboardStyles.css">
+	<link rel="stylesheet" type="text/css" href="../css/messaging.css">
+	<script type="text/javascript" src="/fa17g17/js/searchLogic.js"></script>
+	 <!-- Our Custom CSS -->
+        <link rel="stylesheet" href="style2.css">
+        <!-- Scrollbar Custom CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+</head>
+<body style="
+	background-image: url(.././img/background.jpeg);
+	background-image-size: 100%;
+">
+<div>
+	<nav class="navbar navbar-inverse" role="navigation" style="padding-left:80px;">
+			<ul class="nav navbar-nav">
+			<li><a href="/fa17g17">Home<span class="sr-only">(current)</span></a></li>
+			<li>
+			<form id="searchbar_for_estates" class="navbar-form" role="search">
+				<div class="input-group add-on" style="display: flex; flex: 1 1 auto;">
+				<select id = "nav_angebot_art" class="form-control">
+					<option>Buy</option>
+					<option>Rent</option>
+				</select>
+				<select id = "nav_ort" class="form-control">
+					<option>Fulda</option>
+					<option>Hünfeld</option>
+					<option>Eichenzell</option>
+					<option>Neuhof</option>
+					<option>Petersberg</option>
+				</select>
+				<select id = "nav_objektart" class="form-control">
+					<option>Estate</option>
+					<option>House</option>
+					<option>Apartment</option>
+					<option>Villa/Townhouse</option>
+				</select>
+				<div class="col-md-2"><input id = "nav_qm" type="text" class="form-control" placeholder="Square meters..."></div>
+				<div class="col-md-2"><input id = "nav_preis" type="text" class="form-control" placeholder="Max Price..."></div>
+				<select id = "nav_zimmeranzahl" class="form-control">
+					<option value="0">-</option>
+					<option value="1">ab 1 Zimmer</option>
+					<option value="2">ab 2 Zimmer</option>
+					<option value="3">ab 3 Zimmer</option>
+					<option value="4">ab 4 Zimmer</option>
+					<option value="5">ab 5 Zimmer</option>
+				</select>
+
+				<div class="input-group-btn">
+					<button id="nav_bt_search" class="btn btn-default" type="button"><i class="glyphicon glyphicon-search"></i></button>
+				</div>
+			 </div>
+			</form>
+			</li>
+			<li id="logDropping">
+					<a style="float: right;" href="/fa17g17/user/logout">Logout</a>
+			</li><!-- if logged in -->
+			<li id="nlogDropping" style="float: right;"><a href="/fa17g17/Login">Sign-In</a></li><!-- if logged out -->
+		</ul>
+	</nav>
+</div>
+<!-- Navbar left -->
+<div class="wrapper backgroundContainer">
+
+	<nav id="sidebar" style="position: relative;">
+		<!-- Sidebar Header -->
+		<div class="sidebar-header">
+			<h3>Dashboard</h3>
+			</div>
+			<ul class="list-unstyled components">
+				<li><a href="/fa17g17/Dashboard">User Settings</a></li>
+				<li class="active"><a href="/fa17g17/Dashboard/Messages">Messages</a></li>
+
+				<li><a href="/fa17g17/Dashboard/Favorits">Favorits</a></li>
+				<li><a href="/fa17g17/Dashboard/Offers">Offers</a></li>
+				<li><a href="/fa17g17/Dashboard/Contacts">Contacts</a></li>
+			</ul>
+	</nav>
+
+	<div id="content">
+		<!-- Send New Message Formular -->
+		<div class="container">
+			<div class="row">
+				<div class="wrapper">
+					<div class="contact-form-page">
+					<div class="form-head">
+						<div class="header-btn">
+							<a class="top-btn" href="#">
+								<i class="fa fa-times">
+									<span class="glyphicon glyphicon-envelope"></span>
+								</i>
+							</a>
+						</div>
+					</div>
+					<h1>Write a Message</h1>
+					<form>
+						<div class="form-group">
+							<label for="exampleInputText">Recipient</label>
+							<input type="text" class="form-control" id="exampleInputText" required="required">
+						</div>
+						<div class="form-group">
+							<label for="exampleInputEmail1">Subject</label>
+							<select name="filter_type" id="subject_type" class="form-control">
+								<option value="KaufenMieten">Buy or Rent Request</option>
+								<option value="Besichtigung">Inspection Date Request</option>
+								<option value="Information">Information Request</option>
+								<option value="Anderer">Other Subject</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="exampleInputEmail1">Topic</label>
+							<input type="text" class="form-control" id="exampleInputEmail1" required="required">
+						</div>
+						<div class="form-group">
+							<label for="exampleInputMessage">Message</label>
+							<textarea class="form-control" rows="3"  id="exampleInputMessage" required="required"></textarea>
+						</div>
+						<div class="btn-group" style="display: flex; flex: 1;">
+						<form method="post" enctype="multipart/form-data">
+							<input id="fileInputMSG" type="file" style="display:none;" name="file" accept=".pdf,.jpg,.jpeg,.png,.txt" multiple="multiple"/> <!-- multiple="multiple" -->
+							<button type="button" class="btn btn-default" style="margin-right: 5px;" onclick="document.getElementById('fileInputMSG').click();" id="uploadMessageButton">
+								<span class="glyphicon glyphicon-open-file"></span> Attachtments
+							</button>
+							<!--<button type="submit" class="submit-buttom">Send</button>-->
+							<button id="sendMSGButton" type="button" class="submit-buttom">Send</button>
+							</form>
+						</div>
+					</form>
+					</div>
+					<a class="buttom-btn" href="#" style="z-index: 1;"><i class="fa fa-times"><span class="glyphicon glyphicon-envelope"></span></i></a>
+				</div>
+			</div>
+		</div>
+		<!-- Filter Bar for Messages -->
+		<div id="wrapperfilter" class="navbar">
+			<div class="container">
+				<div class="navbar-collapse collapse" id="navbar-filter"></div>
+			</div>
+		</div>
+		<!-- Message Blocks -->
+		<div id="message-block-Content">
+		<div id="message-block-FOR" class="panel-group message-block">
+			<div class="panel message-group" style="text-align:center">
+				For User
+				<!--<span id="toggle_collapse_Button" class="glyphicon glyphicon-plus" style="float: right; cursor: pointer;" data-toggle="collapse" data-target="#wrapper-messages"></span>-->
+			</div>
+			<!--<div id="wrapper-messages-FOR" class="collapse">
+				<div class="panel message-group">
+					<div class="panel-heading message-heading" style="text-align:center">Buy - Rent Request</div>
+					<div class="panel message-group">
+							<div class="panel-heading message-heading">
+								<h2>
+									Eirmod tempor invidunt
+									<small>
+										by Sender
+									</small>
+								</h2>
+							</div>
+							<div class="panel-info">Recipients</div>
+							<div class="panel-info">
+								<span class="badge badge-pill badge-default">File1</span>
+								<span class="badge badge-pill badge-default">File2</span>
+								<span class="glyphicon glyphicon-download attatch-button"></span>
+								<span class="glyphicon glyphicon-upload attatch-button"></span>
+							</div>
+							<div class="panel-body message-body">
+								<div class="md-col-8">
+									Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et
+								</div>
+								<p><span class="glyphicon glyphicon-envelope buttom-btn-small"></span></p>
+							</div>
+					</div>
+					<div class="panel message-group">
+							<div class="panel-heading message-heading">This is a subject of second message</div>
+							<div class="panel-info">This is a message information, like sender</div>
+							<div class="panel-info">This is a message information, like receiver</div>
+							<div class="panel-body message-body">This is second massage</div>
+					</div>
+				</div>-->
+				<!-- other message -->
+				<!--<div class="panel message-group">
+					<div class="panel-heading message-heading" style="text-align:center">Buy - Rent Request</div>
+					<div class="panel message-group">
+							<div class="panel-heading message-heading">
+								<h2>
+									Lorem ipsum dolor sit amet,
+									<small>
+										by Sender
+									</small>
+								</h2>
+							</div>
+							<div class="panel-info">Recipients</div>
+							<div class="panel-info">
+								<span class="badge badge-pill badge-default">No Files</span>
+								<span class="glyphicon glyphicon-download attatch-button"></span>
+								<span class="glyphicon glyphicon-upload attatch-button"></span>
+							</div>
+							<div class="panel-body message-body">
+								<div class="md-col-8">
+									Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam
+								</div>
+								<div class="md-col-2">
+									<p><span class="glyphicon glyphicon-envelope buttom-btn-small"></span></p>
+								</div>
+							</div>
+
+					</div>
+					<div class="panel message-group">
+							<div class="panel-heading message-heading">This is a subject of second message</div>
+							<div class="panel-info">This is a message information, like sender</div>
+							<div class="panel-info">This is a message information, like receiver</div>
+							<div class="panel-body message-body">This is second massage</div>
+					</div>
+				</div>-->
+				<!-- other message end -->
+			<!-- </div> -->
+		</div>
+		<div id="message-block-FROM" class="panel-group message-block">
+			<div class="panel message-group" style="text-align:center">
+				From User
+				<!--<span id="toggle_collapse_Button" class="glyphicon glyphicon-plus" style="float: right; cursor: pointer;" data-toggle="collapse" data-target="#wrapper-messages-from"></span>-->
+			</div>
+
+			<!--<div id="wrapper-messages-FROM" class="collapse">
+				<div class="panel message-group">
+					<div class="panel-heading message-heading" style="text-align:center">Buy - Rent Request</div>
+					<div class="panel message-group">
+						<div class="panel-heading message-heading">
+							<h2>
+								Subject of the MSG
+								<small>
+									by Sender
+								</small>
+							</h2>
+						</div>
+						<div class="panel-info">This is a message information, like sender</div>
+						<div class="panel-info">This is a message information, like receiver</div>
+						<div class="panel-body message-body">
+							<div class="md-col-8">
+								Message Text
+							</div>
+							<div class="md-col-2">
+							<button class="buttom-btn-small">
+								Send Awnser
+							</button>
+							</div>
+						</div>
+					</div>
+					<div class="panel message-group">
+						<div class="panel-heading message-heading">This is a subject of second message</div>
+						<div class="panel-info">This is a message information, like sender</div>
+						<div class="panel-info">This is a message information, like receiver</div>
+						<div class="panel-body message-body">This is second massage</div>
+					</div>
+				</div>
+			</div>-->
+		</div>
+		</div>
+	</div> <!-- Content End -->
+</div>
+
+<!-- Toggle Button f�r die Sidebar -->
+<!--<div id="content">
+	<button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn" style="
+		color: white;
+		background: linear-gradient(to bottom, #b5bdc8 0%,#828c95 36%,#28343b 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+		border-color: black;
+	">
+		<span class="glyphicon glyphicon-th"></span></p>
+	</button>
+</div>-->
+
+<!-- Abschluss der Seite-->
+<footer class="footer">
+      <div class="container">
+        <span class="text-muted"><a href="/fa17g17/about">About us</a>, Copyrights, Social Media</span>
+      </div>
+    </footer>
+</body>
+</html>

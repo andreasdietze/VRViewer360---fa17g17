@@ -1,0 +1,491 @@
+<html>
+<head>
+
+	<title>Edit Offer</title>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-110932262-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-110932262-1');
+</script>
+
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<!-- Bootstrap Js CDN -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+	<!-- s js -->
+	<script type="text/javascript" src="/fa17g17/js/searchLogic.js"></script>
+
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap.tagsinput/0.4.2/bootstrap-tagsinput.css" />
+	<script src="//cdn.jsdelivr.net/bootstrap.tagsinput/0.4.2/bootstrap-tagsinput.min.js"></script>
+	<!-- Ajax Logik f�r die neuen Offers -->
+	<!--<script src="./js/new-offer-ajax.js"></script> -->
+	<!--<script src=".././js/new-offer-ajax.js"></script> -->
+
+	<!-- AJAX URL Helper -->
+	<script type="text/javascript" src="/fa17g17/js/handleAJAX.js"></script>
+
+</head>
+<style>
+.form-head {
+	padding: 5px 5px;
+}
+.form-body {
+	background-color: #222;
+	border-radius: 5px;
+	padding-bottom: 5px;
+}
+.label-info{
+	background-color: #222;
+}
+
+</style>
+<body style="
+	background-image: url(.././img/background.jpeg);
+	background-image-size: auto;
+	color: white;
+">
+<nav class="navbar navbar-inverse" role="navigation" style="padding-left:80px;">
+		<ul class="nav navbar-nav">
+		<li><a href="/fa17g17">Home<span class="sr-only">(current)</span></a></li>
+		<li>
+		<form id="searchbar_for_estates" class="navbar-form" role="search">
+			<div class="input-group add-on" style="display: flex; flex: 1 1 auto;">
+			<select id = "nav_angebot_art" class="form-control">
+				<option>Buy</option>
+				<option>Rent</option>
+			</select>
+			<select id = "nav_ort" class="form-control">
+				<option>Fulda</option>
+				<option>Hünfeld</option>
+				<option>Eichenzell</option>
+				<option>Neuhof</option>
+				<option>Petersberg</option>
+			</select>
+			<select id = "nav_objektart" class="form-control">
+				<option>Estate</option>
+				<option>House</option>
+				<option>Apartment</option>
+				<option>Villa/Townhouse</option>
+			</select>
+			<div class="col-md-2"><input id = "nav_qm" type="text" class="form-control" placeholder="Square meters..."></div>
+			<div class="col-md-2"><input id = "nav_preis" type="text" class="form-control" placeholder="Max Price..."></div>
+			<select id = "nav_zimmeranzahl" class="form-control">
+				<option value="0">-</option>
+				<option value="1">ab 1 Zimmer</option>
+				<option value="2">ab 2 Zimmer</option>
+				<option value="3">ab 3 Zimmer</option>
+				<option value="4">ab 4 Zimmer</option>
+				<option value="5">ab 5 Zimmer</option>
+			</select>
+
+			<div class="input-group-btn">
+				<button id="nav_bt_search" class="btn btn-default" type="button"><i class="glyphicon glyphicon-search"></i></button>
+			</div>
+		 </div>
+		</form>
+		</li>
+		<li id="logDropping">
+		<div class="navbar-form dropdown">
+		<button class="btn btn-primary dropdown-toggle loggedInDropdown" type="button" data-toggle="dropdown" >Manage
+		<span class="caret"></span></button>
+		<ul class="dropdown-menu">
+			<li><a href="/fa17g17/dashboard">Dashboard</a></li>
+			<li><a href="/fa17g17/dashboard/messages">Messages</a></li>
+			<li class="divider"></li>
+			<li><a href="/fa17g17/user/logout">Logout</a></li>
+		 <!-- <li id="logOut"><a style="cursor: pointer;">Logout</a></li>-->
+		</ul>
+		</div>
+		</li><!-- if logged in -->
+		<li id="nlogDropping" style="float: right;"><a href="/fa17g17/Login">Sign-In</a></li><!-- if logged out -->
+	</ul>
+</nav>
+	<div id="wrapper-forms" style="padding-top: 10px;" >
+
+	<form id="updateForm">
+		<div class="row"><!-- Double Column Form first Try -->
+            <div class="col-sm-1"></div>
+			<div class="col-sm-5">
+              <div class="form-horizontal form-body">
+					<h2 class="form-head">General Information</h2>
+					<div class="form-group">
+						<label for="title" class="col-sm-3 control-label">Title</label>
+						<div class="col-sm-8">
+							<input type="text" id="title" placeholder="Your Title" class="form-control" autofocus/>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="estateType" class="col-sm-3 control-label">Estate Type</label>
+						<div class="col-sm-8">
+							<select id="estateType" class="form-control">
+								<option>Estate</option>
+								<option>House</option>
+								<option>Apartment</option>
+								<option>Villa/Townhouse</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="offerPurpose" class="col-sm-3 control-label">Offer Purpose</label>
+						<div class="col-sm-8">
+							<select id="offerPurpose" class="form-control">
+								<option>Private</option>
+								<option>Commercial</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="desc" class="col-sm-3 control-label">Description</label>
+						<div class="col-sm-8">
+							<input type="text" id="desc" placeholder="Describe your Estate..." class="form-control" autofocus />
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="condition" class="col-sm-3 control-label">Condition</label>
+						<div class="col-sm-8">
+							<input type="text" id="condition" placeholder="Condition of the Estate..." class="form-control" autofocus />
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="features" class="col-sm-3 control-label">Features</label>
+						<div class="col-sm-8">
+							<input type="text" id="features" data-role="tagsinput" class="form-control" />
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="heatingType" class="col-sm-3 control-label">Type of heating</label>
+						<div class="col-sm-8">
+							<select id="heatingType" class="form-control">
+								<option>Centralized (Oil)</option>
+								<option>Centralized (Gas)</option>
+								<option>Wood Stove (Floor)</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="baujahr" class="col-sm-3 control-label">Year of Const.</label>
+						<div class="col-sm-8">
+							<input type="text" data-role="number" id="baujahr" placeholder="1993" class="form-control" />
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="address" class="col-sm-3 control-label">Address</label>
+						<div class="col-sm-4">
+							<input type="text" id="address" placeholder="Street" class="form-control" autofocus />
+						</div>
+						<div class="col-sm-2">
+							<input type="text" id="postal" placeholder="Postal" class="form-control" autofocus />
+						</div>
+						<div class="col-sm-2">
+							<input type="text" id="city" placeholder="City" class="form-control" autofocus />
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="size" class="col-sm-3 control-label">Size</label>
+						<div class="col-sm-2">
+							<input type="text" id="floors" placeholder="Floors" class="form-control" autofocus />
+						</div>
+						<div class="col-sm-2">
+							<input type="text" id="rooms" placeholder="Rooms" class="form-control" autofocus />
+						</div>
+						<div class="col-sm-4">
+							<input type="text" id="size" placeholder="qmeters" class="form-control" autofocus />
+						</div>
+					</div>
+					<!-- Condition, Features -->
+              </div>
+
+            </div>
+            <div class="col-sm-5">
+              <div class="form-horizontal form-body">
+				<h2 class="form-head">Pricing</h2>
+				<div class="form-group">
+					<label for="offerType" class="col-sm-3 control-label">Offer Type</label>
+					<div class="col-sm-8">
+						<select id="offerType" class="form-control">
+							<option>Rent</option>
+							<option>Buy</option>
+						</select>
+					</div>
+				</div>
+					<div class="form-group">
+						<label for="price" class="col-sm-3 control-label">Buy/Rent Price</label>
+						<div class="col-sm-8">
+							<input type="text" id="price" placeholder="$" class="form-control" autofocus />
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="bail" class="col-sm-3 control-label">Bail</label>
+						<div class="col-sm-8">
+							<input type="text" id="bail" placeholder="$" class="form-control" autofocus />
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="provision" class="col-sm-3 control-label">Provision</label>
+						<div class="col-sm-8">
+							<input type="text" id="provision" placeholder="%" class="form-control" autofocus />
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="utilities" class="col-sm-3 control-label">Utility costs</label>
+						<div class="col-sm-8">
+							<input type="text" id="utilities" placeholder="$" class="form-control" autofocus />
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="startdate" class="col-sm-3 control-label">Begin</label>
+						<div class="col-sm-8">
+							<input class="form-control" id="startdate" name="startdate" placeholder="YYYY-MM-DD" type="text">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="enddate" class="col-sm-3 control-label">End</label>
+						<div class="col-sm-8">
+							<input class="form-control" id="enddate" name="enddate" placeholder="YYYY-MM-DD" type="text">
+						</div>
+					</div>
+					<!-- Bail, Provision % start,  end utilities-->
+
+              </div>
+            </div>
+			<div class="col-sm-1"></div>
+          </div>
+		  <div class="row" style="padding-top: 5px;"><!-- Button Space -->
+		     <div class="col-sm-1"></div>
+			 <div class="col-sm-10">
+			    <div class="btn-group" role="group">
+				   <button id="change-offer" type="button" class="btn btn-primary">Submit</button>
+				   <a href="/fa17g17/Dashboard/Offers">
+					<button id="discard" type="button" class="btn btn-primary">Discard</button>
+				   </a>
+			    </div>
+			 </div>
+		  </div>
+		  <div class="row" style="padding-top: 5px; color: white;">
+		  <p id="error-offer-submit"></p>
+		  </div>
+	</form>
+	</div>
+</body>
+<script>
+// Function to get url params out of the url
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+// Helper-Object: set url to sfsuse or localhost
+var ajaxURL = new AJAXSettings().getAJAXURL();
+
+var cookieArray = Cookies.get('UserID');
+var userObject = null;
+
+if(typeof(cookieArray) != "undefined") {
+	userObject = JSON.parse(cookieArray.substring(2));
+}
+
+$('#features').tagsinput('refresh');
+
+$('document').ready(function() {
+	// Load the values from the Backend
+	// Ben�tigt noch eine M�glichkeit, die Estate zuzuordnen
+	$.ajax({
+			type		: "POST",
+			url			: ajaxURL + "/fa17g17/estatesearch/profile",
+			contentType	: 'application/json',
+			data		: JSON.stringify
+			(
+				{
+					"userID":userObject.id,
+					"immoID": getParameterByName('estate_id')
+				}
+			),
+			success		: function (data)
+			{
+				console.log("SUCCESS-CB");
+				if(data.result == "true"){
+					// get Data from the Ajax Call
+						$('#title').val(data.data.offer_title);
+						$('#desc').val(data.data.immo_desc);
+						$('#condition').val(data.data.immo_condition);
+						$('#estateType').val(data.data.immo_type);
+						//String Array
+						$('#features').tagsinput('add', data.data.immo_features);
+						$('#heatingType').val(data.data.immo_heating);
+						$('#baujahr').val(data.data.immo_baujahr);
+						//$('#features').val(data.data.immo_features);
+						$('#address').val(data.data.immo_address);
+						$('#postal').val(data.data.city_plz);
+						$('#city').val(data.data.city_name);
+						$('#floors').val(data.data.immo_floors);
+						$('#rooms').val(data.data.immo_rooms);
+						//Quadratmeter
+						$('#size').val(data.data.immo_qm);
+						$('#offerType').val(data.data.offer_type);
+						$('#offerPurpose').val(data.data.immo_purpose);
+						$('#price').val(data.data.offer_pricing);
+						//Kaution
+						$('#bail').val(data.data.offer_bail);
+						$('#provision').val(data.data.offer_provision);
+						//Nebenkosten
+						$('#utilities').val(data.data.offer_utilcosts);
+						$('#startdate').val(data.data.offer_startdate);
+						$('#enddate').val(data.data.offer_enddate);
+				} else {
+					console.log("Cannot get user data from server");
+				}
+			},
+			error		: function (err)
+			{
+				console.log("ERROR-CB");
+				console.log(err);
+			}
+		}).done(
+
+		);
+});
+
+$('#change-offer').click(function (){
+	//Form Valididätsprüfung
+	var valid = 1;
+	$("form#updateForm input[type=text]").each(function() {
+		var input = $(this);
+		//Hier gibt es ansonsten ein Problem bezüglich den Features
+		if(input.attr('id') != undefined){
+			if(input.val() == ""){
+				 $('#' + input.attr('id')).css("border", "5px solid red");
+				 console.log("Valid = 0 -> " + input.attr('id'));
+				 valid = 0;
+			 } else {
+				 $('#' + input.attr('id')).css("border", "5px solid green");
+			 }
+
+			if(input.attr('id') == "startdate" || input.attr('id') == "enddate"){
+				var dateRex = "([0-9]{4}-[0-9]{2}-[0-9]{2})";
+				var match = input.val().match(dateRex);
+				if(match == null){
+					$('#' + input.attr('id')).css("border", "5px solid red");
+					valid = 0;
+				}
+			}
+
+			if(input.attr('id') == "baujahr" || input.attr('id') == "postal"
+				|| input.attr('id') == "floors" || input.attr('id') == "rooms"
+				|| input.attr('id') == "size" || input.attr('id') == "price"
+				|| input.attr('id') == "bail" || input.attr('id') == "provision"
+				|| input.attr('id') == "utilities") {
+
+					input.val(input.val().split(' ').join(''));
+					input.val(input.val().split('€').join(''));
+					input.val(input.val().split('%').join(''));
+					input.val(input.val().split(',').join(''));
+
+					var testString = input.val();
+
+					if(isNaN(testString) || testString == "") {
+						$('#' + input.attr('id')).css("border", "5px solid red");
+						alert("The transferred value must correspond to a number");
+						valid = 0;
+					}
+
+					if(input.attr('id') == "postal"){
+						if(input.val().toString().length < 5 || input.val().toString().length > 5){
+							$('#' + input.attr('id')).css("border", "5px solid red");
+							alert("A postal code can only consist of five numbers.");
+							valid = 0;
+						}
+					}
+			}
+			
+			var regex = new RegExp("<|>");
+			results = regex.exec(input.val());
+			if (results != null) {
+				$('#' + input.attr('id')).css("border", "5px solid red");
+				alert("invalid character detected.");
+				valid = 0;
+			}
+		}
+	});
+
+	if(valid == 1) {
+		$.ajax
+	 (
+		 {
+			 type		: "POST",
+			 url			: ajaxURL + "/fa17g17/estatehandling/update",
+			 contentType	: 'application/json',
+			 data		: JSON.stringify
+			 (
+				 {
+					 "immoID": getParameterByName('estate_id'),
+					 "title": $('#title').val(),
+					 "desc": $('#desc').val(),
+					 "estateType": $('#estateType').val(),
+					 "offerPurpose": $('#offerPurpose').val(),
+					 "condition": $('#condition').val(), // Bau-zustand
+					 "heatingType": $('#heatingType').val(),
+					 "baujahr": $('#baujahr').val(),
+					 // Die Features sind ein Array aus strings
+					 "features": $('#features').val(),
+					 "address": $('#address').val(), // Stra�e
+					 "postal": $('#postal').val(),
+					 "city": $('#city').val(),
+					 "floors": $('#floors').val(),
+					 "rooms": $('#rooms').val(),
+					 "size": $('#size').val(),
+					 // Offer Information wie Pricing
+					 "offerType": $('#offerType').val(),
+					 "price": $('#price').val(),
+					 "bail": $('#bail').val(), // Kaution
+					 "provision": $('#provision').val(),
+					 "utilities": $('#utilities').val(), // Nebenkosten
+					 "startdate": $('#startdate').val(),
+					 "enddate": $('#enddate').val()
+				 }
+			 ),
+			 success		: function (data)
+			 {
+				 console.log("SUCCESS-CB");
+				 console.log(data);
+				 if(data.updated == "true") {
+					 window.location.href = "/fa17g17/Dashboard/Offers";
+				 } else {
+					 $('#error-offer-submit').val("Could not update your estate!!!");
+				 }
+			 },
+			 error		: function (err)
+			 {
+				 console.log("ERROR-CB");
+				 console.log(err);
+			 }
+		 }
+	 ).done
+	 (
+		 function ()
+		 {
+			 console.log("DONE-CB");
+		 }
+	 );
+	}
+});
+
+
+</script>
+</html>

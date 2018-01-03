@@ -1,0 +1,239 @@
+<html>
+<head>
+
+	<title>Login</title>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-110932262-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-110932262-1');
+</script>
+
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+
+	<!-- AJAX URL Helper -->
+	<script type="text/javascript" src="js/handleAJAX.js"></script>
+	<script type="text/javascript" src="js/inputChecker.js"></script>
+	<script type="text/javascript" src="/fa17g17/js/searchLogic.js"></script>
+
+</head>
+<style>
+.invisible {
+  visibility: hidden;
+}
+
+.backgroundContainer{
+	background-image: url(./img/background.jpeg);
+	background-image-size: auto;
+}
+
+.wrapper {
+  margin-top: 80px;
+  margin-bottom: 80px;
+  color: white;
+}
+
+.form-signin {
+  max-width: 380px;
+  padding: 15px 35px 45px;
+  margin: 0 auto;
+  background-color: #222;
+  border: 1px solid rgba(0,0,0,0.1);
+
+  .form-signin-heading,
+	.checkbox {
+	  margin-bottom: 30px;
+	}
+
+	.checkbox {
+	  font-weight: normal;
+	}
+
+	.form-control {
+	  position: relative;
+	  font-size: 16px;
+	  height: auto;
+	  padding: 10px;
+		@include box-sizing(border-box);
+
+		&:focus {
+		  z-index: 2;
+		}
+	}
+
+	input[type="text"] {
+	  margin-bottom: -1px;
+	  border-bottom-left-radius: 0;
+	  border-bottom-right-radius: 0;
+	}
+
+	input[type="password"] {
+	  margin-bottom: 20px;
+	  border-top-left-radius: 0;
+	  border-top-right-radius: 0;
+	}
+}
+
+</style>
+<body class="backgroundContainer">
+	<div>
+		<nav class="navbar navbar-inverse" role="navigation" style="padding-left:80px;">
+				<ul class="nav navbar-nav">
+				<li><a href="/fa17g17">Home<span class="sr-only">(current)</span></a></li>
+				<li>
+				<form id="searchbar_for_estates" class="navbar-form" role="search">
+					<div class="input-group add-on" style="display: flex; flex: 1 1 auto;">
+					<select id = "nav_angebot_art" class="form-control">
+						<option>Buy</option>
+						<option>Rent</option>
+					</select>
+					<select id = "nav_ort" class="form-control">
+						<option>Fulda</option>
+						<option>Hünfeld</option>
+						<option>Eichenzell</option>
+						<option>Neuhof</option>
+						<option>Petersberg</option>
+					</select>
+					<select id = "nav_objektart" class="form-control">
+						<option>Estate</option>
+						<option>House</option>
+						<option>Apartment</option>
+						<option>Villa/Townhouse</option>
+					</select>
+					<div class="col-md-2"><input id = "nav_qm" type="text" class="form-control" placeholder="Square meters..."></div>
+					<div class="col-md-2"><input id = "nav_preis" type="text" class="form-control" placeholder="Max Price..."></div>
+					<select id = "nav_zimmeranzahl" class="form-control">
+						<option value="0">-</option>
+						<option value="1">ab 1 Zimmer</option>
+						<option value="2">ab 2 Zimmer</option>
+						<option value="3">ab 3 Zimmer</option>
+						<option value="4">ab 4 Zimmer</option>
+						<option value="5">ab 5 Zimmer</option>
+					</select>
+
+					<div class="input-group-btn">
+						<button id="nav_bt_search" class="btn btn-default" type="button"><i class="glyphicon glyphicon-search"></i></button>
+					</div>
+				 </div>
+				</form>
+				</li>
+				<li id="logDropping">
+				<div class="navbar-form dropdown">
+				<button class="btn btn-primary dropdown-toggle loggedInDropdown" type="button" data-toggle="dropdown" >Manage
+				<span class="caret"></span></button>
+				<ul class="dropdown-menu">
+					<li><a href="/fa17g17/dashboard">Dashboard</a></li>
+					<li><a href="/fa17g17/dashboard/messages">Messages</a></li>
+					<li class="divider"></li>
+					<li><a href="/fa17g17/user/logout">Logout</a></li>
+				 <!-- <li id="logOut"><a style="cursor: pointer;">Logout</a></li>-->
+				</ul>
+				</div>
+				</li><!-- if logged in -->
+				<li id="nlogDropping" style="float: right;"><a href="/fa17g17/Login">Sign-In</a></li><!-- if logged out -->
+			</ul>
+		</nav>
+	</div>
+	<!-- Login Formular-->
+	<div class="wrapper">
+    <form class="form-signin">
+      <h2 class="form-signin-heading">Please login</h2>
+      <input type="text" class="form-control" id="username" name="username" placeholder="Email Address" required="" autofocus="" />
+      <input type="password" class="form-control" id="password" name="password" placeholder="Password" required=""/>
+			<div class="checkbox">
+					<label>
+							<input type="checkbox" value="remember-me" id="rememberMe" name="rememberMe"> Remember me
+					</label>
+			</div>
+      <button id="loginButton" class="btn btn-lg btn-primary" type="button">Login</button>
+	  <a href="/fa17g17/RegistryPage"><button class="btn btn-lg btn-primary" type="button">Sign-Up</button> </a>
+	  <div style="margin-top:10px;">
+		<p id="failedLogin"> </p>
+	  </div>
+    </form>
+  </div>
+</form>
+</div>
+<!-- Abschluss der Seite-->
+<footer class="footer">
+      <div class="container">
+        <span class="text-muted"><a href="/fa17g17/about">About us</a>, Copyrights, Social Media</span>
+      </div>
+</footer>
+</body>
+<script>
+$(document).ready (function ()
+{
+	// Helper-Object: set url to sfsuse or localhost
+	var ajaxURL = new AJAXSettings().getAJAXURL();
+
+	// Add eventlistener to registration button
+	document.getElementById("loginButton").addEventListener("click", sendRegistration, true);
+
+	function sendRegistration()
+	{
+		// Get all parameters
+		var valid = 1;
+		var email  			= document.getElementById("username").value;
+		var password  		= document.getElementById("password").value;
+		
+		valid = checkInputOnCharacters([email, password]);
+		
+		if(valid == 1) {
+		// Fire ajax
+			$.ajax
+			(
+				{
+					type		: "POST",
+					url			: ajaxURL + "/fa17g17/user/login",
+					contentType	: 'application/json',
+					data		: JSON.stringify
+					(
+						{
+							"user"		: email,
+							"password"	: password
+						}
+					),
+					success		: function (data)
+					{
+						console.log("SUCCESS-CB");
+						if(data.login == "true"){
+							//Nach erfolgreichem Login auf zuletzt aufgerufene Seite wechseln
+							window.location.href = data.lastURL;
+						} else {
+							$("#failedLogin").text(data.information);
+						}
+					},
+					error		: function (err)
+					{
+						console.log("ERROR-CB");
+						console.log(err);
+					}
+				}
+			).done
+			(
+			function ()
+			{
+				console.log("DONE-CB");
+			}
+		);
+	} else {
+		$('#failedLogin').text('Invalid characters');
+	}
+		
+
+	}
+});
+</script>
+</html>

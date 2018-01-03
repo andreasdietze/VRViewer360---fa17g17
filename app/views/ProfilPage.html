@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Real Estates - FA17G17 - Profilpage of a Seller</title>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-110932262-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-110932262-1');
+</script>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css">
+
+<link rel="stylesheet" type="text/css" href="./css/userProfil.css">
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+<!-- s css -->
+<link rel="stylesheet" type="text/css" href="css/singleOffer.css">
+<link rel="stylesheet" type="text/css" href="./css/starRating.css">
+<!-- s js-->
+<script type="text/javascript" src="./js/handleAJAX.js"></script>
+<script type="text/javascript" src="/fa17g17/js/searchLogic.js"></script>
+<script type="text/javascript" src="./js/favorit-logic.js"></script>
+<style>
+</style>
+</head>
+
+<body style="
+	background-image: url(./img/background.jpeg);
+	background-image-size: 100%;
+">
+<div>
+  <nav class="navbar navbar-inverse" role="navigation" style="padding-left:80px;">
+      <ul class="nav navbar-nav">
+      <li><a href="/fa17g17">Home<span class="sr-only">(current)</span></a></li>
+      <li>
+      <form id="searchbar_for_estates" class="navbar-form" role="search">
+        <div class="input-group add-on" style="display: flex; flex: 1 1 auto;">
+        <select id = "nav_angebot_art" class="form-control">
+          <option>Buy</option>
+          <option>Rent</option>
+        </select>
+        <select id = "nav_ort" class="form-control">
+          <option>Fulda</option>
+          <option>Hünfeld</option>
+          <option>Eichenzell</option>
+          <option>Neuhof</option>
+          <option>Petersberg</option>
+        </select>
+        <select id = "nav_objektart" class="form-control">
+          <option>Estate</option>
+          <option>House</option>
+          <option>Apartment</option>
+          <option>Villa/Townhouse</option>
+        </select>
+        <div class="col-md-2"><input id = "nav_qm" type="text" class="form-control" placeholder="Square meters..."></div>
+        <div class="col-md-2"><input id = "nav_preis" type="text" class="form-control" placeholder="Max Price..."></div>
+        <select id = "nav_zimmeranzahl" class="form-control">
+          <option value="0">-</option>
+          <option value="1">ab 1 Zimmer</option>
+          <option value="2">ab 2 Zimmer</option>
+          <option value="3">ab 3 Zimmer</option>
+          <option value="4">ab 4 Zimmer</option>
+          <option value="5">ab 5 Zimmer</option>
+        </select>
+
+        <div class="input-group-btn">
+          <button id="nav_bt_search" class="btn btn-default" type="button"><i class="glyphicon glyphicon-search"></i></button>
+        </div>
+       </div>
+      </form>
+      </li>
+      <li id="logDropping">
+      <div class="navbar-form dropdown">
+      <button class="btn btn-primary dropdown-toggle loggedInDropdown" type="button" data-toggle="dropdown" >Manage
+      <span class="caret"></span></button>
+      <ul class="dropdown-menu">
+        <li><a href="/fa17g17/dashboard">Dashboard</a></li>
+        <li><a href="/fa17g17/dashboard/messages">Messages</a></li>
+        <li class="divider"></li>
+        <li><a href="/fa17g17/user/logout">Logout</a></li>
+       <!-- <li id="logOut"><a style="cursor: pointer;">Logout</a></li>-->
+      </ul>
+      </div>
+      </li><!-- if logged in -->
+      <li id="nlogDropping" style="float: right;"><a href="/fa17g17/Login">Sign-In</a></li><!-- if logged out -->
+    </ul>
+  </nav>
+	</div>
+<!-- Profil Box -->
+<div class="container">
+	<div class="row">
+		<div class="col-md-offset-2 col-md-8 col-lg-offset-3 col-lg-6">
+    	 <div class="well profile" style="  color: white;
+											background-color: #333;
+											border-color: black;">
+            <div class="col-sm-12">
+                <div class="col-xs-12 col-sm-8">
+					<p id="rating_value" style = "text-align: right">Value: </p>
+                    <h2 id="agent_name"></h2>
+                    <p id="agent_phone"><strong>Phone: </strong></p>
+					<p id="agent_mail"><strong>Mail: </strong></p>
+                    <p><strong>Address Details: </strong></p>
+                    <p>
+						<span id="agent_street" class="tags"></span>
+                        <span id="agent_postal" class="tags"></span>
+						<span id="agent_city" class="tags"></span>
+                    </p>
+                </div>
+            </div>
+			<div class="col-xs-12 divider text-center">
+			</div>
+			<div class="col-xs-12 divider text-center">
+			</div>
+		 <div id = "div_comment" class="col-sm-12 text-center" style="padding : 10px">
+				<button type="button" id="w_rating" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Rating</button>
+
+				<div class="modal fade" id="myModal" role="dialog" style="color: black">
+					<div class="modal-dialog">
+							<!-- Modal content-->
+							  <div class="modal-content">
+								<div class="modal-header">
+									  <button type="button" class="close" data-dismiss="modal">&times;</button>
+										  <h4 class="modal-title">Rating for this Agent</h4>
+								</div>
+								<div class="modal-body">
+									<textarea style="width:100%; resize: none" class="form-control" rows="4" id="comment"></textarea>
+									<div class="container-fluid row">
+										<fieldset class="rating">
+												<input type="radio" id="star5" name="rating" value="5" /><label class = "full" for="star5"></label>
+												<input type="radio" id="star4" name="rating" value="4" /><label class = "full" for="star4"></label>
+												<input type="radio" id="star3" name="rating" value="3" /><label class = "full" for="star3"></label>
+												<input type="radio" id="star2" name="rating" value="2" /><label class = "full" for="star2"></label>
+												<input type="radio" id="star1" name="rating" value="1" /><label class = "full" for="star1"></label>
+										</fieldset>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button id="write-comment-button" class="btn btn-primary">
+									Submit
+									   </button>
+									<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+								</div>
+							  </div>
+						</div>
+					  </div>
+				</div>
+			</div>
+		</div><!-- Profil Box End-->
+	</div>
+	</div>
+<!-- Offers Box -->
+
+<div class="container"><!-- Comment Box -->
+	<div class="row">
+		<div class="col-md-8">
+			<div class="page-header">
+				<h1><small id = "commentCount" class="pull-right">45 comments</small> Ratings </h1>
+			</div>
+			<div id = "commentList" onmousedown="return false;" onselectstart="return false;" class="comments-list">
+			</div>
+		</div>
+	</div>
+</div><!-- End Comment Box -->
+
+<!-- Modal dialog-->
+<div class="modal fade" style="color: black" id="blankComment" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-body">
+				<p>Please write a comment for your rating!!</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- End Modal dialog-->
+
+<div id="offers" class="col-sm-12"><!-- Place for the Offers to be rendered  -->
+</div>
+<!-- Sticky Footer der Seite -->
+<footer class="footer">
+	<div class="container">
+		<span class="text-muted"><a href="/fa17g17/about">About us</a>, Copyrights, Social Media SFSU Student Project HS Fulda</span>
+	</div>
+</footer><!-- End Footer -->
+</body>
+</html>
+<script>
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+	// Helper-Object: set url to sfsuse or localhost
+	var ajaxURL = new AJAXSettings().getAJAXURL();
+
+	//Prüfe, ob User bereits angemeldet
+	var cookieArray = Cookies.get('UserID');
+	var userObject = null;
+
+	if(typeof(cookieArray) != "undefined") {
+		userObject = JSON.parse(cookieArray.substring(2));
+	}
+
+	if(userObject != null){
+		$("#logDropping").show();
+		$("#nlogDropping").hide();
+	} else {
+		$("#logDropping").hide();
+		$("#nlogDropping").show();
+	}
+	var seller_id = getParameterByName('seller_id');
+
+$(document).ready(function () {
+
+	// set default rating and modal
+	$("#star5").prop("checked",true);
+	$("#w_rating").hide();
+
+	// Check if there is a seller_id
+	if( seller_id != undefined || seller_id != null) {
+		// if seller_id is not null or undefined, load Profil Details
+		$.ajax(
+		{
+			type		: "POST",
+			url			: ajaxURL + "/fa17g17/user/profile",
+			contentType	: 'application/json',
+			data		: JSON.stringify
+			(
+				{
+					"id"	: seller_id
+				}
+			),
+			success		: function (data)
+			{
+				console.log("SUCCESS-CB");
+				$('#agent_name').text(data.data.lastname + ', '+ data.data.firstname );
+				$('#agent_city').text(data.data.city);
+				$('#agent_street').text(data.data.street);
+				$('#agent_postal').text(data.data.postalcode);
+				$('#agent_mail').text(data.data.mail);
+				$('#agent_phone').text(data.data.phone);
+				$('#rating_value').append(data.data.rating);
+			},
+			error		: function (err)
+			{
+				console.log("ERROR-CB");
+				console.log(err);
+			}
+		}
+	).done
+	(
+		function ()
+		{
+			console.log("DONE-CB");
+		}
+	);
+	} else {
+		$('#agent_name').text('An error has occurred');
+		$('#agent_name').css('color', 'red');
+	}
+
+	// Show Comment here //
+	showComment();
+	$("#write-comment-button").click(addComment);
+
+	// Load Offers
+	loadOffers();
+});
+
+///////////////// Comment Section //////////////////
+
+// --- function comment input Form ---
+function resetForm()
+{
+	$("#comment").val("");
+	$("#star5").prop("checked",true);
+}
+// --- end function reset ---
+
+// --- function add comment ---
+function addComment()
+{
+		var kommentar = $("#comment").val();
+		if (kommentar.trim()!="") // if comment is not blank
+		{
+		var wetung = 0;
+		var checkbox = document.getElementsByName("rating");
+      	for (var i = 0; i < checkbox.length; i++){
+        if (checkbox[i].checked == true){
+            		wertung=checkbox[i].value;
+            	}
+        	}
+		var todate = new Date();
+		var date = todate.getFullYear() + "-" + todate.getMonth() + "-" + todate.getDate();
+		
+		var regex = new RegExp("<|>");
+		results = regex.exec(kommentar);
+		if(results != null ) {
+			// invality detected
+			kommentar = kommentar.replace('<','');
+			kommentar = kommentar.replace('>','');
+		}
+		kommentar = kommentar.replace('\\','');
+		// Send data to server
+		$.ajax
+			(
+				{
+					type		: "POST",
+					url			: ajaxURL + "/fa17g17/rating/agent",
+					contentType	: 'application/json',
+					data		: JSON.stringify(
+					{
+						"userID": seller_id,
+						"beschreibung": kommentar,
+						"date": date,
+						"wertung_id": wertung
+					}),
+					success		: function (res)
+					{
+						alert (res);
+						showComment(); // reload interfaces
+						$("#myModal").modal('hide'); // close form comment
+						$("#w_rating").prop('disabled', true); // disable button rating
+					},
+					error	: function (err)
+					{
+						$("#myModal .close").click();
+						alert ("error");
+					}
+			});
+		// reset Form if Success
+		resetForm();
+		}
+		else // if comment is blank
+		{
+			$("#blankComment").modal('show');
+		}
+}
+// --- end function add comment ---
+
+// --- function show comment ---
+function showComment()
+{
+	$.ajax
+			(
+				{
+					type		: "POST",
+					url			: ajaxURL + "/fa17g17/showrating/agent",
+					contentType	: 'application/json',
+					data		: JSON.stringify(
+					{
+						"id"	: seller_id
+					}),
+					success		: function (res)
+					{
+						var obj = JSON.parse(res);
+						// if obj is not agent
+						if (obj.agent == "false")
+							{
+								$("#commentCount").empty();
+								$("#commentCount").append(obj.comment);
+								$("#rating_value").empty();
+								$("#rating_value").append(obj.rating);
+							}
+						else // obj is agent
+							{
+								if (userObject!= null) // user is login
+									{
+										if (userObject.id != seller_id) { $("#w_rating").show();} // if user is not agent himself, then show rating button
+									}
+								if (obj.comment.length > 0) // agent have comment
+								{
+									var div_result = ""; // show Comment
+									for (var i=0; i<obj.comment.length; i++)
+									{
+										div_result += "<div class='media'>"
+													+ "<p class='pull-right'><small>" + obj.comment[i].date.slice(0,10) + "</small></p>"
+													+ "<p class='pull-right'><small>" + showStarComment(obj.comment[i].wert) + "</small></p>"
+													+ "<div class='media-body'>"
+													+ "<h4 class='media-heading user_name'>"
+													+ obj.comment[i].beschreibung
+													+ "</h4>"
+													+ "</div>"
+													+ "</div>";
+
+									}
+									$("#commentList").empty();
+									$("#commentList").append(div_result); // show Comment list
+									$("#commentCount").empty();
+									$("#commentCount").append(obj.rating[0].numberofcomment + " ratings"); // show number of comment
+									var rating = Math.round(parseFloat(obj.rating[0].rating)/parseFloat(obj.rating[0].numberofcomment)*10)/10;
+
+									div_result = "";
+									var k = rating;
+       						  		div_result = rating + "/5 ";
+        							while (k > 0) //show the stars for rating
+											{
+            									if (k - 1 >= 0){
+                								div_result += "<span class='glyphicon glyphicon-star'></span>";
+            									}
+            									else
+            									{
+                									if (k - 0.5 > 0){
+                   						 			div_result+= "<span class='glyphicon glyphicon-star t75-star'></span>";
+                									}
+                									else
+                									{
+                    									if (k - 0.5 == 0){
+                        								div_result+= "<span class='glyphicon glyphicon-star t50-star'></span>";
+                    								}
+                    									else {
+                        									if ( k - 0.5 > - 0.5){
+                            							div_result+= "<span class='glyphicon glyphicon-star t25-star'></span>";
+                        										}
+                    										}
+                									}
+            									}
+            									k--
+											}
+									$('#rating_value').empty();
+									$("#rating_value").append(div_result);
+								}
+								else // agent doesn't have any comment
+								{
+									$("#commentCount").empty();
+									$("#commentCount").append("0");
+									$("#rating_value").empty();
+									$("#rating_value").append("0 Rating");
+								}
+							}
+					},
+					error	: function (err)
+					{
+							alert ("error");
+					}
+		});
+}
+// --- end function show comment ---
+function showStarComment(wert)
+{
+	var starComment = "";
+	while (wert > 0)
+			{
+				starComment += "<span class='glyphicon glyphicon-star'></span>";
+				wert--
+			}
+	return starComment;
+}
+/////////////////////////comment Section ////////////////////////////////
+function loadOffers() {
+	$.ajax(
+	{
+		type		: "POST",
+		url			: ajaxURL + "/fa17g17/estatesearch/user/profiles",
+		contentType	: 'application/json',
+		data		: JSON.stringify
+		(
+			{
+				"agent_id"	: getParameterByName('seller_id')
+			}
+		),
+		success		: function (data)
+		{
+			console.log("SUCCESS-CB");
+			// render offers
+			// console.log(data)
+			if(data.return == 'true') {
+
+				renderOffers(data.data);
+			}
+		},
+		error		: function (err)
+		{
+			console.log("ERROR-CB");
+		}
+	}
+	).done
+	(
+		function ()
+		{
+			console.log("DONE-CB");
+		}
+	);
+}
+
+function renderOffers (obj, mode) {
+		if (obj.length > 0) {
+			for (var i = 0; i<obj.length; i++)
+			{
+				var imgs = [];
+				console.log(obj[i]);
+				if(obj[i].media){
+					imgs = obj[i].media.split(",");
+					console.log(imgs[0]);
+				}
+				
+				var source = ajaxURL + "/fa17g17/img/" + imgs[0];
+				
+				var div_result = "<div class='col-sm-9 well'>"
+				+ "<h3 class='estate-heading' style='color: darkgray; padding: 0px 0px; margin: 0px 0px;'>"+ obj[i].angebot_titel
+				+ "<span id="+obj[i].id + 'toFav'+" style='float: right; cursor: pointer; color: lightgray;' class='glyphicon glyphicon-star add_to_favorits'></span>"
+				+ "</h3>"
+				+ "<div class='row'>"
+				+ "<div class='col-sm-5'>"
+				+ "<a href='/fa17g17/singleOffer?estate_id="+ obj[i].id +"' target='_parent'><img alt='image' class='img-responsive' src='" + source + "'></a>"
+				+ "</div>"
+				+ "<div class='col-sm-7'>"
+				+ "<h4 class='media-heading' style = 'color: red'><i class='glyphicon glyphicon-eur'></i> "+ obj[i].kaufpreis +" <small class='pull-right'>" + obj[i].immobilien_adress + "</small></h4>"
+				+ "<h5> <i class='glyphicon glyphicon-home'></i> " + obj[i].qm + " m² | " + obj[i].zimmeranzahl + " Rooms | " + obj[i].ortname + " | " + obj[i].plz + "</h5>"
+				+ "<p class='hidden-xs' style='color: darkgray;'>"+ obj[i].beschreibung +"</p>"
+				+ "</div>"
+				+ "</div>"
+				+ "</div>";
+				$("#offers").append(div_result);
+				// obj[i].id + 'toFav'
+				addFavoritListeners(obj[i].id, obj[i].angebot_id);
+			}
+		checkFavoritStatus();
+		} else {
+			//Keine Elemente gefunden
+
+		}
+}
+
+</script>
