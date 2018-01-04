@@ -1,8 +1,5 @@
-window.onload = function(){
-
-    var that = this;
-    console.log("FFFFFOOOOO");
-    
+window.onload = function()
+{
     // Init three renderer.
     var ren = new ThreeRenderer();
 }

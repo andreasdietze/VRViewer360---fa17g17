@@ -1,5 +1,9 @@
 var ThreeRenderer = function()
 {
+	// INFO:
+	// Klasse für Sphere erstellen (Room, -> enthält mehrere Marker (array) / MarkerManager möglich, hält array einzelne
+	// Marker -> Estate enhält array von Rooms -> Room enthält MarkerHandler (DoorMarkerFactory) -> DoorMarkerFactory enthält array von DoorMarkers
+	// http://www.dofactory.com/javascript/factory-method-design-pattern
 	// Renderer
 	console.log("Init Renderer");
 	this.canvas 	= null;
@@ -45,18 +49,19 @@ var ThreeRenderer = function()
 	this.onPointerDownLon = 0;
 	this.onPointerDownLat = 0;
 
+	// Set controls
+	this.isOrbitActive = true;
+
+	// Raycaster
+	this.mouse = new THREE.Vector2();
+	this.lastMove = Date.now();
+	this.raycaster = new THREE.Raycaster();
+
 	// Init Three.js
 	this.initTJS();
 
-	// Init Spheres
-	this.initSpheres();
-
-	// Set controls
-	this.isOrbitActive = false;
-	if(this.isOrbitActive)
-	{
-		this.setOrbitControls();
-	}
+	// Init Rooms
+	this.initRooms();
 
 	var that = this;
 
@@ -83,10 +88,6 @@ var ThreeRenderer = function()
 	document.addEventListener('DOMMouseScroll', function (event){
 		that.onDocumentMouseWheel(event)
 	}, false );
-	
-
-	this.mouse = new THREE.Vector2();
-	this.raycaster = new THREE.Raycaster();
 
 	// Set update callback
 	this.animate();
@@ -111,9 +112,6 @@ ThreeRenderer.prototype.initTJS = function()
 		1, 
 		10000 
 	);
-	this.camera.position.y = 150;
-	this.camera.position.z = 350;
-	this.camera.target 		= new THREE.Vector3( 0, 0, 0 );
 
 	// Init renderer
 	this.renderer = new THREE.WebGLRenderer
@@ -123,6 +121,28 @@ ThreeRenderer.prototype.initTJS = function()
 	});
 	this.renderer.setSize(this.cSizeX, this.cSizeY);
 	this.renderer.setClearColor(0xFFFFFF);
+
+	// Set inspectors (camera) position (to be on eye hight)
+	if(this.isOrbitActive)
+	{
+		this.setOrbitControls();
+	
+		this.bodyPosition  		= new THREE.Vector3(0, 0, 350);
+		this.camera.position.set( this.bodyPosition.x, this.bodyPosition.y, this.bodyPosition.z );
+	}
+	else 
+	{
+		this.bodyPosition  		= new THREE.Vector3(0, 15, 0);
+		this.camera.position.set( this.bodyPosition.x, this.bodyPosition.y, this.bodyPosition.z );
+		
+		// TODO: Look at specific target when lauchning
+		this.camera.target 		= new THREE.Vector3( 0, 0, -1 );
+		this.camera.lookAt(this.camera.position, this.camera.target, new THREE.Vector3(1000,1,0));
+		// console.log(this.camera.target);
+	}
+
+	// Hey may jump (later in VR ^^)
+	this.velocity      		= new THREE.Vector3();
 
 	// Set a light
 	var dirLight = new THREE.DirectionalLight
@@ -155,42 +175,17 @@ ThreeRenderer.prototype.initTJS = function()
 		lineWidth 	: 10
 	};
 
-	this.grid = new GridGenerator(this);
-	// Grid interferes with raycaster
-	//this.scene.add(this.grid.createGrid(gridSettings));
+	// Grid interferes with raycaster fps cam
+	if(this.isOrbitActive)
+	{
+		this.grid = new GridGenerator(this);
+		this.scene.add(this.grid.createGrid(gridSettings));
+	}
 }
 
-ThreeRenderer.prototype.initSpheres = function ()
+ThreeRenderer.prototype.initRooms = function ()
 {
-	// Load panorama file path into string array
-	for( var i = 0; i < 7; i++){
-		this.panoramas[i] = "img/pano/pano" + i + ".jpg";
-		console.log("Loaded into " + i + " " + this.panoramas[i]);
-	}
-
-	this.bodyPosition  		= new THREE.Vector3(0, 15, 0);
-	this.velocity      		= new THREE.Vector3();
-
-	// Small panorama sphere - world inside world
-	this.innerspheregeometry = new THREE.SphereGeometry(200, 320, 320);//(20, 32, 32);
-	this.innerspherematerial = new THREE.MeshBasicMaterial
-	(
-		{
-			map: THREE.ImageUtils.loadTexture("img/pano/pano0.jpg"), side:THREE.DoubleSide //, wireframe:true
-			//("http://www.html5canvastutorials.com/demos/assets/crate.jpg")  // Test URL 
-		} 
-	);
-	
-	this.innerspheremesh 	= new THREE.Mesh(this.innerspheregeometry, this.innerspherematerial);
-
-	// Invert the geometry on the x-axis so that all of the faces point inward
-	this.innerspheregeometry.applyMatrix( new THREE.Matrix4().makeScale(-1,1,1));  
-
-	this.innerspheremesh.position.copy(new THREE.Vector3(0,15,0));
-
-	this.scene.add(this.innerspheremesh); 
-
-	this.camera.position.set(this.bodyPosition.x, this.bodyPosition.y, this.bodyPosition.z);
+	this.room = new Room(this.scene);
 
 	this.doorMarker = new DoorMarker
 	(
@@ -199,8 +194,14 @@ ThreeRenderer.prototype.initSpheres = function ()
 		new THREE.Vector3(2.5,3,1),			// Scale
 		this.scene							// Scene
 	);	
-	
-	console.log(this.scene);
+
+	this.doorMarker1 = new DoorMarker
+	(
+		new THREE.Vector3(180, -35, -45),	// Position
+		new THREE.Vector3(0, 104 , 0),	// Orientation
+		new THREE.Vector3(5.5,5,1),			// Scale
+		this.scene							// Scene
+	);	
 }
 
 ThreeRenderer.prototype.animate = function()
@@ -230,13 +231,27 @@ ThreeRenderer.prototype.animate = function()
 	this.camera.updateProjectionMatrix();
 	this.renderer.setSize(this.cSizeX, this.cSizeY);
 
+	// Update the picking ray with the camera and mouse position
+	this.raycaster.setFromCamera( this.mouse, this.camera );
+	
+	// Calculate objects intersecting the picking ray
+	this.intersects = this.raycaster.intersectObjects( this.scene.children, false );
+	
+	if(this.intersects.length > 0)
+	{
+		if(this.intersects[0].object.geometry.type === 'PlaneGeometry')
+			document.body.style.cursor = 'pointer';
+		else 
+			document.body.style.cursor = 'default';
+	}
+
 	requestAnimationFrame( ThreeRenderer.prototype.animate.bind (this) );
 
 	this.render();
 }
 
 ThreeRenderer.prototype.render = function()
-{
+{	
 	this.renderer.render( this.scene, this.camera );
 }
 
@@ -291,14 +306,14 @@ ThreeRenderer.prototype.onDocumentMouseDown = function ( event )
 			this.raycaster.setFromCamera( this.mouse, this.camera );
 
 			// Calculate objects intersecting the picking ray
-			var intersects = this.raycaster.intersectObjects( this.scene.children, true );
+			this.intersects = this.raycaster.intersectObjects( this.scene.children, true );
 			
-			if(intersects.length > 0)
+			if(this.intersects.length > 0)
 			{
-				if(intersects[0].object.geometry.type === 'PlaneGeometry')
+				if(this.intersects[0].object.geometry.type === 'PlaneGeometry')
 				{
-					console.log(intersects[0]);
-					intersects[0].object.material.color.set( 0xff0000 );
+					console.log(this.intersects[0]);
+					this.intersects[0].object.material.color.set( 0xff0000 );
 					this.panocounter++;
 		
 					if(this.panocounter > 6) 
@@ -306,13 +321,14 @@ ThreeRenderer.prototype.onDocumentMouseDown = function ( event )
 		
 					// Switch panoramas
 					console.log(this.innerspheremesh);
-					this.innerspheremesh.material.map = THREE.ImageUtils.loadTexture(this.panoramas[this.panocounter]);
-					this.innerspheremesh.material.needUpdate = true;
+					this.room.sphereMat.map = THREE.ImageUtils.loadTexture(this.room.panoramas[this.panocounter]);
+					this.room.sphereMat.needUpdate = true;
 		
-					console.log('Src in panoramas : ' + this.panoramas[this.panocounter]);
+					console.log('Src in panoramas : ' + this.room.panoramas[this.panocounter]);
 					console.log('Panocounter: ' + this.panocounter);
 				}
 			}
+			
 			break;
 
 		case 1: // middle
@@ -325,10 +341,10 @@ ThreeRenderer.prototype.onDocumentMouseDown = function ( event )
 
 			// Switch panoramas
 			console.log(this.innerspheremesh);
-			this.innerspheremesh.material.map = THREE.ImageUtils.loadTexture(this.panoramas[this.panocounter]);
-			this.innerspheremesh.material.needUpdate = true;
+			this.room.sphereMat.map = THREE.ImageUtils.loadTexture(this.room.panoramas[this.panocounter]);
+			this.room.sphereMat.needUpdate = true;
 
-			console.log('Src in panoramas : ' + this.panoramas[this.panocounter]);
+			console.log('Src in panoramas : ' + this.room.panoramas[this.panocounter]);
 			console.log('Panocounter: ' + this.panocounter);
 			break;
 
@@ -347,12 +363,21 @@ ThreeRenderer.prototype.onDocumentMouseUp = function( event )
 // While lift mouse button is pressed, update mouse user input
 ThreeRenderer.prototype.onDocumentMouseMove = function( event )
 {
+	// if (Date.now() - this.lastMove < 60) { // 32 frames a second
+    //     return;
+    // } else {
+    //     this.lastMove = Date.now();
+	// }
+
 	// Update non THREE mouse controls on mouse move
 	if (this.isUserInteracting && !this.isOrbitActive) 
 	{
 		this.lon = ( this.onPointerDownPointerX - event.clientX ) * 0.1 + this.onPointerDownLon;
 		this.lat = ( event.clientY - this.onPointerDownPointerY ) * 0.1 + this.onPointerDownLat;
 	}
+
+	// Get mouse position between -1 and 1 for both axis
+	this.mouse = this.updateMouseVector(event);
 }
 
 // Update user input from mouse wheel
@@ -362,6 +387,7 @@ ThreeRenderer.prototype.onDocumentMouseWheel = function( event )
 	if ( event.wheelDeltaY ) 
 	{
 		this.camera.fov -= event.wheelDeltaY * 0.05;
+		console.log(this.camera.fov);
 		// fovrange -= event.wheelDeltaY * 0.05;
 		// fovscale -= event.wheelDeltaY * 0.0005;
 		// console.log("Increased RiftFOV by : " + fovscale);
