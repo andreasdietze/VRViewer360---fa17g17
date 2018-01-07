@@ -6,11 +6,14 @@
 * by clicking at one of the doors inside the 360 degree panorama
 * of a room.
 *
+* @param {int}              id
+* The unique name or id for a door marker entity.
+*
 * @param {THREE.Vector3}    position
-* The position of a door marker object
+* The position of a door marker object.
 *
 * @param {THREE.Vector3}    orientation
-* The orientation of a door marker object given in degrees
+* The orientation of a door marker object given in degrees.
 *
 * @param {THREE.Vector3}    scale
 * The scale of the door marker object
@@ -20,8 +23,11 @@
 * has to be added to the a THREE.Scene object to be interactive
 * (intersection with THREE.Raycaster) and renderable.
 */
-var DoorMarker = function(position, orientation, scale, scene)
+var DoorMarker = function(id, position, orientation, scale, scene)
 {
+    // The name or identification for a door marker entity
+    this.id = id; 
+
     // Set position
     this.position = position;
 
@@ -41,6 +47,9 @@ var DoorMarker = function(position, orientation, scale, scene)
 
     // Set scene
     this.scene = scene;
+
+    // Plane
+    this.plane = null;
 
     // Create the visible marker object
     this.createMarker(scene);
@@ -72,17 +81,31 @@ DoorMarker.prototype.createMarker = function(scene)
     );
 
     // Create the mesh
-    var plane = new THREE.Mesh( geometry, material );
+    this.plane  = new THREE.Mesh( geometry, material );
 
-    // Setup mesh transformation
-    plane.position.copy(this.position);
+    // Setup mesh translation
+    this.plane.position.copy(this.position);
     
-    plane.rotation.x = this.orientation.x;
-    plane.rotation.y = this.orientation.y;
-    plane.rotation.z = this.orientation.z;
+    // Setup mesh orientation
+    this.plane.rotation.x = this.orientation.x;
+    this.plane.rotation.y = this.orientation.y;
+    this.plane.rotation.z = this.orientation.z;
 
-    plane.scale.copy(this.scale);
+    // Setup mesh scale
+    this.plane.scale.copy(this.scale);
+
+    // Every room has the same name: Room
+    // Note: at present, the max amount of concurrent rooms at 
+    //       any time is ONE! This saves memory and performance
+    //       on less powerful devices.
+    this.plane.name = this.id;
 
     // Add mesh to scene
-    this.scene.add( plane );
+    this.scene.add( this.plane );
+}
+
+ // Remove single plane objects from the scene
+DoorMarker.prototype.removeFromScene = function()
+{
+    this.scene.remove(this.plane);
 }

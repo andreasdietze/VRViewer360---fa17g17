@@ -6,6 +6,7 @@ var ThreeRenderer = function()
 	// http://www.dofactory.com/javascript/factory-method-design-pattern
 	// Renderer
 	console.log("Init Renderer");
+	this.test 		= false;
 	this.canvas 	= null;
 	this.scene 		= null; 
 	this.camera 	= null;
@@ -17,12 +18,6 @@ var ThreeRenderer = function()
 	this.cSizeX		= null;
 	this.cSizeY 	= null;
 	this.grid 		= null;
-
-	// Scene Objects
-	// Inner world sphere - switches texture
-	this.innerspheregeometry = null;
-	this.innerspherematerial = null;
-	this.innerspheremesh = null;
 
 	// Parameter for jump animation
 	this.bodyPosition = null; 
@@ -93,6 +88,7 @@ var ThreeRenderer = function()
 	this.animate();
 }
 
+// Init canvas, scene, renderer, grid and camera inclusive controls
 ThreeRenderer.prototype.initTJS = function()
 {
 	// Get canvas
@@ -183,27 +179,21 @@ ThreeRenderer.prototype.initTJS = function()
 	}
 }
 
+// Init a Estate (just rooms for now)
+// TODO: Estate class and RoomFactory
 ThreeRenderer.prototype.initRooms = function ()
 {
-	this.room = new Room(this.scene);
-
-	this.doorMarker = new DoorMarker
+	// We start with the demo launch room
+	this.room = new Room
 	(
-		new THREE.Vector3(-80, -20, -175),	// Position
-		new THREE.Vector3(-10, 30, 0), 		// Orientation
-		new THREE.Vector3(2.5,3,1),			// Scale
-		this.scene							// Scene
-	);	
-
-	this.doorMarker1 = new DoorMarker
-	(
-		new THREE.Vector3(180, -35, -45),	// Position
-		new THREE.Vector3(0, 104 , 0),	// Orientation
-		new THREE.Vector3(5.5,5,1),			// Scale
-		this.scene							// Scene
-	);	
+		this.scene,				// THREE scene
+		"img/pano/pano0.jpg",	// Sphere texture (room texture)
+		0						// Marker setup
+	);
 }
 
+// Updates the logic of the graphical application and triggers
+// rendering of scene content.
 ThreeRenderer.prototype.animate = function()
 {
 	if(!this.isOrbitActive)
@@ -250,6 +240,7 @@ ThreeRenderer.prototype.animate = function()
 	this.render();
 }
 
+// Draw function - Render scene content
 ThreeRenderer.prototype.render = function()
 {	
 	this.renderer.render( this.scene, this.camera );
@@ -273,16 +264,14 @@ ThreeRenderer.prototype.setOrbitControls = function()
 	this.activeControls.autoRotateSpeed 	= 0.5;
 };
 
-// Update user input (mouse) if left or right mouse button is pressed
-// Update user input (mouse) once if middle mouse button is pressed
-// and switch panorama
+// Mouse-Down-Event: Raycast intersection and room handling (for now)
 ThreeRenderer.prototype.onDocumentMouseDown = function ( event ) 
 {
 	event.preventDefault();
 	//console.log(event);
 	//console.log(that);
 	//console.log(this);
-
+	console.log(this.scene);
 	//console.log(that.onPointerDownPointerX);
 	switch(event.button)
 	{
@@ -307,45 +296,97 @@ ThreeRenderer.prototype.onDocumentMouseDown = function ( event )
 
 			// Calculate objects intersecting the picking ray
 			this.intersects = this.raycaster.intersectObjects( this.scene.children, true );
-			
+
+			console.log(this);
 			if(this.intersects.length > 0)
 			{
 				if(this.intersects[0].object.geometry.type === 'PlaneGeometry')
 				{
 					console.log(this.intersects[0]);
 					this.intersects[0].object.material.color.set( 0xff0000 );
-					this.panocounter++;
-		
-					if(this.panocounter > 6) 
-						this.panocounter = 0; 
-		
-					// Switch panoramas
-					console.log(this.innerspheremesh);
-					this.room.sphereMat.map = THREE.ImageUtils.loadTexture(this.room.panoramas[this.panocounter]);
-					this.room.sphereMat.needUpdate = true;
-		
-					console.log('Src in panoramas : ' + this.room.panoramas[this.panocounter]);
-					console.log('Panocounter: ' + this.panocounter);
+					
+					if(!this.text)
+					{
+						if(this.intersects[0].object.name == 0)
+						{
+							this.room.removeRoomFromScene();
+							this.room = new Room
+							(
+								this.scene,				// THREE scene
+								"img/pano/pano1.jpg",	// sphere texture (room texture)
+								1						// Marker Setup
+							);
+							this.room.sphereMat.needUpdate = true;
+							console.log(this.room);
+						}
+
+						if(this.intersects[0].object.name == 1)
+						{
+							this.room.removeRoomFromScene();
+							this.room = new Room
+							(
+								this.scene,				// THREE scene
+								"img/pano/pano2.jpg",	// sphere texture (room texture)
+								2						// Marker Setup
+							);
+							this.scene.add(this.room);
+							this.room.sphereMat.needUpdate = true;
+						}
+
+						if( this.intersects[0].object.name == 2 ||
+							this.intersects[0].object.name == 3 ||
+							this.intersects[0].object.name == 4 || 
+							this.intersects[0].object.name == 5 )
+						{
+							this.room.removeRoomFromScene();
+							this.room = new Room
+							(
+								this.scene,				// THREE scene
+								"img/pano/pano0.jpg",	// sphere texture (room texture)
+								0						// Marker Setup
+							);
+							this.scene.add(this.room);
+							this.room.sphereMat.needUpdate = true;
+						}
+					}
+					
+					if(this.test)
+					{
+						// For test room
+						this.panocounter++;
+			
+						if(this.panocounter > 6) 
+							this.panocounter = 0; 
+			
+						// Switch panoramas
+						this.room.sphereMat.map = THREE.ImageUtils.loadTexture(this.room.panoramas[this.panocounter]);
+						this.room.sphereMat.needUpdate = true;
+			
+						console.log('Src in panoramas : ' + this.room.panoramas[this.panocounter]);
+						console.log('Panocounter: ' + this.panocounter); 
+					}
 				}
 			}
 			
 			break;
 
 		case 1: // middle
-			// Switch between panoramas
-			console.log(this.camera);
-			this.panocounter++;
+			if(this.test)
+			{
+				// Switch between panoramas
+				console.log(this.camera);
+				this.panocounter++;
 
-			if(this.panocounter > 6) 
-				this.panocounter = 0; 
+				if(this.panocounter > 6) 
+					this.panocounter = 0; 
 
-			// Switch panoramas
-			console.log(this.innerspheremesh);
-			this.room.sphereMat.map = THREE.ImageUtils.loadTexture(this.room.panoramas[this.panocounter]);
-			this.room.sphereMat.needUpdate = true;
+				// Switch panoramas
+				this.room.sphereMat.map = THREE.ImageUtils.loadTexture(this.room.panoramas[this.panocounter]);
+				this.room.sphereMat.needUpdate = true;
 
-			console.log('Src in panoramas : ' + this.room.panoramas[this.panocounter]);
-			console.log('Panocounter: ' + this.panocounter);
+				console.log('Src in panoramas : ' + this.room.panoramas[this.panocounter]);
+				console.log('Panocounter: ' + this.panocounter);
+			}
 			break;
 
 		case 2: // right
@@ -354,13 +395,13 @@ ThreeRenderer.prototype.onDocumentMouseDown = function ( event )
 	}
 }
 
-// Lock user input (mouse) once if button was released
+// Mouse-Up-Event: Lock user input (mouse) once if button was released
 ThreeRenderer.prototype.onDocumentMouseUp = function( event ) 
 {
 	this.isUserInteracting = false;
 }
 
-// While lift mouse button is pressed, update mouse user input
+// Mouse-Move-Event: While lift mouse button is pressed, update mouse user input
 ThreeRenderer.prototype.onDocumentMouseMove = function( event )
 {
 	// if (Date.now() - this.lastMove < 60) { // 32 frames a second
@@ -380,7 +421,8 @@ ThreeRenderer.prototype.onDocumentMouseMove = function( event )
 	this.mouse = this.updateMouseVector(event);
 }
 
-// Update user input from mouse wheel
+// Mouse-Wheel-Event: Update user input from mouse wheel (zoom)
+// Also handles DOMMouseScroll for different browser support
 ThreeRenderer.prototype.onDocumentMouseWheel = function( event ) 
 {
 	// WebKit
@@ -423,6 +465,9 @@ ThreeRenderer.prototype.onDocumentMouseWheel = function( event )
 	//riftCam = new THREE.OculusRiftEffect(renderer);
 }
 
+// Compute 2D mouse vector for 3D raycast picking. The mouse
+// vector is normalized and then mapped from [0, 1] to [-1, 1].
+// It also respects the browser scroll offset and the canvas position
 ThreeRenderer.prototype.updateMouseVector = function( event )
 {
 	// Init vector2D for mouse
