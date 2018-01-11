@@ -55,8 +55,10 @@ var ThreeRenderer = function()
 	// Init Three.js
 	this.initTJS();
 
-	// Init Rooms
-	this.initRooms();
+	// Init Estate/Rooms
+	this.estate = new Estate(this.scene);
+	this.estate.loadEstateOne();
+	//this.initEstate();
 
 	var that = this;
 
@@ -179,63 +181,39 @@ ThreeRenderer.prototype.initTJS = function()
 	}
 }
 
-// Init a Estate (just rooms for now)
-// TODO: Estate class and RoomFactory
-ThreeRenderer.prototype.initRooms = function ()
-{
-	// We start with the demo launch room
-	this.room = new Room
-	(
-		this.scene,				// THREE scene
-		"img/pano/pano0.jpg",	// Sphere texture (room texture)
-		0						// Marker setup
-	);
-}
-
 // Updates the logic of the graphical application and triggers
 // rendering of scene content.
 ThreeRenderer.prototype.animate = function()
 {
-	if(!this.isOrbitActive)
-	{
-		this.lat = Math.max( -85, Math.min( 85, this.lat ) );
-		this.phi = THREE.Math.degToRad( 90 - this.lat );
-		this.theta = THREE.Math.degToRad( this.lon );
-
-		// Set target to look at
-		if(this.camera != 'undefined')
-		{
-			this.camera.target.x = 500 * Math.sin( this.phi ) * Math.cos( this.theta );
-			this.camera.target.y = 500 * Math.cos( this.phi );
-			this.camera.target.z = 500 * Math.sin( this.phi ) * Math.sin( this.theta );
-		}
-
-		this.camera.lookAt( this.camera.target );
-	}
+	// Update first person controls
+	this.updateFPSControls();
 
 	// Resize
-	this.cSizeX 		= 800; //(this.uploadPan.clientHeight / 3) * 4;
-	this.cSizeY 		= 600; //this.uploadPan.clientHeight;
-	this.camera.aspect 	= this.cSizeX / this.cSizeY;
+	this.resize();
 
-	this.camera.updateProjectionMatrix();
-	this.renderer.setSize(this.cSizeX, this.cSizeY);
-
-	// Update the picking ray with the camera and mouse position
-	this.raycaster.setFromCamera( this.mouse, this.camera );
+	// Update raycaster and intersected objects
+	this.updateRaycaster();
 	
-	// Calculate objects intersecting the picking ray
-	this.intersects = this.raycaster.intersectObjects( this.scene.children, false );
-	
-	if(this.intersects.length > 0)
-	{
-		if(this.intersects[0].object.geometry.type === 'PlaneGeometry')
-			document.body.style.cursor = 'pointer';
-		else 
-			document.body.style.cursor = 'default';
-	}
+	// Set the mouse curser if a marker is intersected
+	this.handleMouseCurserState();
 
-	requestAnimationFrame( ThreeRenderer.prototype.animate.bind (this) );
+	// Save instance to the class
+	var that = this;
+
+	// Handle update
+	requestAnimationFrame
+	(
+		// Update callback 
+		function() 
+		{
+			// Trigger update function
+			that.animate ();
+		} 
+	);
+
+	// BInd is slow in chrome
+	// https://stackoverflow.com/questions/10697748/how-do-i-use-requestanimationframe-to-call-my-js-prototype
+	//requestAnimationFrame( ThreeRenderer.prototype.animate.bind (this) );
 
 	this.render();
 }
@@ -244,6 +222,17 @@ ThreeRenderer.prototype.animate = function()
 ThreeRenderer.prototype.render = function()
 {	
 	this.renderer.render( this.scene, this.camera );
+}
+
+ThreeRenderer.prototype.resize = function()
+{
+	// Resize
+	this.cSizeX 		= 800; //(this.uploadPan.clientHeight / 3) * 4;
+	this.cSizeY 		= 600; //this.uploadPan.clientHeight;
+	this.camera.aspect 	= this.cSizeX / this.cSizeY;
+
+	this.camera.updateProjectionMatrix();
+	this.renderer.setSize(this.cSizeX, this.cSizeY);
 }
 
 ThreeRenderer.prototype.setOrbitControls = function()
@@ -268,102 +257,36 @@ ThreeRenderer.prototype.setOrbitControls = function()
 ThreeRenderer.prototype.onDocumentMouseDown = function ( event ) 
 {
 	event.preventDefault();
-	//console.log(event);
-	//console.log(that);
-	//console.log(this);
-	console.log(this.scene);
-	//console.log(that.onPointerDownPointerX);
+
 	switch(event.button)
 	{
 		case 0: // left
-		this.isUserInteracting = true;
+			this.isUserInteracting = true;
 
 			// Update non THREE mouse controls on button press
-			if(!this.isOrbitActive)
-			{
-				this.onPointerDownPointerX = event.clientX;
-				this.onPointerDownPointerY = event.clientY;
+			// if(!this.isOrbitActive)
+			// {
+			// 	this.onPointerDownPointerX = event.clientX;
+			// 	this.onPointerDownPointerY = event.clientY;
 			
-				this.onPointerDownLon = this.lon;
-				this.onPointerDownLat = this.lat;
-			}
+			// 	this.onPointerDownLon = this.lon;
+			// 	this.onPointerDownLat = this.lat;
+			// }
 
-			// Get mouse position between -1 and 1 for both axis
-			this.mouse = this.updateMouseVector(event);
-
-			// Update the picking ray with the camera and mouse position
-			this.raycaster.setFromCamera( this.mouse, this.camera );
-
-			// Calculate objects intersecting the picking ray
-			this.intersects = this.raycaster.intersectObjects( this.scene.children, true );
-
-			console.log(this);
 			if(this.intersects.length > 0)
 			{
 				if(this.intersects[0].object.geometry.type === 'PlaneGeometry')
 				{
-					console.log(this.intersects[0]);
-					this.intersects[0].object.material.color.set( 0xff0000 );
-					
-					if(!this.text)
-					{
-						if(this.intersects[0].object.name == 0)
-						{
-							this.room.removeRoomFromScene();
-							this.room = new Room
-							(
-								this.scene,				// THREE scene
-								"img/pano/pano1.jpg",	// sphere texture (room texture)
-								1						// Marker Setup
-							);
-							this.room.sphereMat.needUpdate = true;
-							console.log(this.room);
-						}
-
-						if(this.intersects[0].object.name == 1)
-						{
-							this.room.removeRoomFromScene();
-							this.room = new Room
-							(
-								this.scene,				// THREE scene
-								"img/pano/pano2.jpg",	// sphere texture (room texture)
-								2						// Marker Setup
-							);
-							this.scene.add(this.room);
-							this.room.sphereMat.needUpdate = true;
-						}
-
-						if( this.intersects[0].object.name == 2 ||
-							this.intersects[0].object.name == 3 ||
-							this.intersects[0].object.name == 4 || 
-							this.intersects[0].object.name == 5 )
-						{
-							this.room.removeRoomFromScene();
-							this.room = new Room
-							(
-								this.scene,				// THREE scene
-								"img/pano/pano0.jpg",	// sphere texture (room texture)
-								0						// Marker Setup
-							);
-							this.scene.add(this.room);
-							this.room.sphereMat.needUpdate = true;
-						}
-					}
+					//console.log(this.intersects[0]);
+					//this.intersects[0].object.material.color.set( 0xff0000 );
 					
 					if(this.test)
 					{
-						// For test room
-						this.panocounter++;
-			
-						if(this.panocounter > 6) 
-							this.panocounter = 0; 
-			
-						// Switch panoramas
-						this.room.sphereMat.map = THREE.ImageUtils.loadTexture(this.room.panoramas[this.panocounter]);
-						this.room.sphereMat.needUpdate = true;
-			
-						console.log('Src in panoramas : ' + this.room.panoramas[this.panocounter]);
-						console.log('Panocounter: ' + this.panocounter); 
+						this.estate.updateTestEstate();
+					}
+					else 
+					{
+						this.estate.updateEstateOne(this.intersects);
 					}
 				}
 			}
@@ -372,21 +295,7 @@ ThreeRenderer.prototype.onDocumentMouseDown = function ( event )
 
 		case 1: // middle
 			if(this.test)
-			{
-				// Switch between panoramas
-				console.log(this.camera);
-				this.panocounter++;
-
-				if(this.panocounter > 6) 
-					this.panocounter = 0; 
-
-				// Switch panoramas
-				this.room.sphereMat.map = THREE.ImageUtils.loadTexture(this.room.panoramas[this.panocounter]);
-				this.room.sphereMat.needUpdate = true;
-
-				console.log('Src in panoramas : ' + this.room.panoramas[this.panocounter]);
-				console.log('Panocounter: ' + this.panocounter);
-			}
+				this.estate.updateTestEstate();
 			break;
 
 		case 2: // right
@@ -413,8 +322,8 @@ ThreeRenderer.prototype.onDocumentMouseMove = function( event )
 	// Update non THREE mouse controls on mouse move
 	if (this.isUserInteracting && !this.isOrbitActive) 
 	{
-		this.lon = ( this.onPointerDownPointerX - event.clientX ) * 0.1 + this.onPointerDownLon;
-		this.lat = ( event.clientY - this.onPointerDownPointerY ) * 0.1 + this.onPointerDownLat;
+		this.lon = ( this.onPointerDownPointerX - event.clientX ) * 0.1; // + this.onPointerDownLon;
+		this.lat = ( event.clientY - this.onPointerDownPointerY ) * 0.1; // + this.onPointerDownLat;
 	}
 
 	// Get mouse position between -1 and 1 for both axis
@@ -471,12 +380,15 @@ ThreeRenderer.prototype.onDocumentMouseWheel = function( event )
 ThreeRenderer.prototype.updateMouseVector = function( event )
 {
 	// Init vector2D for mouse
-	var mouse = new THREE.Vector2(0,0,0);
+	var mouse = new THREE.Vector2(0,0);
 
 	// Get scroll offset by the different browsers
-	var scrollOffsetX = (window.pageXOffset ||
-						 window.scrollX     ||
-						 document.documentElement.scrollLeft);
+	var scrollOffsetX = 
+	(
+		window.pageXOffset ||
+		window.scrollX     ||
+		document.documentElement.scrollLeft
+	);
 
 	var scrollOffsetY = (window.pageYOffset ||
 						 window.scrollY     || 
@@ -497,3 +409,51 @@ ThreeRenderer.prototype.updateMouseVector = function( event )
 	return mouse;
 }
 
+ThreeRenderer.prototype.updateRaycaster = function()
+{
+	// Update the picking ray with the camera and mouse position
+	this.raycaster.setFromCamera( this.mouse, this.camera );
+
+	// Calculate objects intersecting the picking ray
+	this.intersects = this.raycaster.intersectObjects( this.scene.children, true );
+}
+
+// If the mouse is over an doormarker, the mouse curser should 
+// change to a pointer. Else the curser should be default
+ThreeRenderer.prototype.handleMouseCurserState = function() 
+{
+	// If there are intersections
+	if(this.intersects.length > 0)
+	{
+		// Handle only plane geometries (door markers)
+		if(this.intersects[0].object.geometry.type === 'PlaneGeometry')
+			document.body.style.cursor = 'pointer';	
+		else 
+			document.body.style.cursor = 'default';
+	}
+}
+
+// Update the first person controls
+ThreeRenderer.prototype.updateFPSControls = function()
+{
+	// If orbit camera is not active
+	if(!this.isOrbitActive)
+	{
+		// Update rotation
+		this.lat = Math.max( -85, Math.min( 85, this.lat ) );
+		this.phi = THREE.Math.degToRad( 90 - this.lat );
+		this.theta = THREE.Math.degToRad( this.lon );
+
+		// Set target to look at
+		if(this.camera != 'undefined')
+		{
+			// Update target vector
+			this.camera.target.x = 500 * Math.sin( this.phi ) * Math.cos( this.theta );
+			this.camera.target.y = 500 * Math.cos( this.phi );
+			this.camera.target.z = 500 * Math.sin( this.phi ) * Math.sin( this.theta );
+		}
+
+		// Set look at target
+		this.camera.lookAt( this.camera.target );
+	}
+}
