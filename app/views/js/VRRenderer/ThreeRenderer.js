@@ -15,8 +15,8 @@ var ThreeRenderer = function()
 	// Additional Objects
 	this.loader		= null;
 	this.dirLight 	= null;
-	this.cSizeX		= null;
-	this.cSizeY 	= null;
+	this.cSizeX		= window.innerWidth;  //null;
+	this.cSizeY 	= window.innerHeight; //null;
 	this.grid 		= null;
 
 	// Parameter for jump animation
@@ -52,8 +52,19 @@ var ThreeRenderer = function()
 	this.lastMove = Date.now();
 	this.raycaster = new THREE.Raycaster();
 
-	// Init Three.js
-	this.initTJS();
+	// Init Three.js (cb: detectAndSetVRRenderer)
+	this.initTJS(function(renderer){
+		//  This button is important. It toggles between normal in-browser view
+		//  and the brand new WebVR in-your-goggles view!
+		WEBVR.getVRDisplay( function( display ){
+			//console.log(renderer);
+			renderer.vr.setDevice( display )
+			document.body.appendChild( WEBVR.getButton( display, renderer.domElement ))
+		})
+	});
+
+	// Try to connect VR-Controller and setup dat GUI
+	this.connectVRController(this.scene, this.renderer, this);
 
 	// Init Estate/Rooms
 	this.estate = new Estate(this.scene);
@@ -90,8 +101,13 @@ var ThreeRenderer = function()
 	this.animate();
 }
 
+WEBVR.checkAvailability().catch( function( message ){
+	console.log("Checking VR-Avaibility");
+	document.body.appendChild( WEBVR.getMessageContainer( message ))
+})
+
 // Init canvas, scene, renderer, grid and camera inclusive controls
-ThreeRenderer.prototype.initTJS = function()
+ThreeRenderer.prototype.initTJS = function(detectAndSetVRRenderer)
 {
 	// Get canvas
 	this.canvas = document.getElementById('myCanvasElement');
@@ -100,14 +116,14 @@ ThreeRenderer.prototype.initTJS = function()
 	this.scene = new THREE.Scene();
 
 	// Init camera - standard perspective camera if rift is disabled
-	this.cSizeX = 800;
-	this.cSizeY = 600;
+	this.cSizeX		= window.innerWidth;  //800;
+	this.cSizeY 	= window.innerHeight; //600;
 	this.camera = new THREE.PerspectiveCamera
 	( 
 		75, 
 		//window.innerWidth / window.innerHeight,
 		this.cSizeX / this.cSizeY, 
-		1, 
+		0.1, 
 		10000 
 	);
 
@@ -119,6 +135,10 @@ ThreeRenderer.prototype.initTJS = function()
 	});
 	this.renderer.setSize(this.cSizeX, this.cSizeY);
 	this.renderer.setClearColor(0xFFFFFF);
+	
+	// VR settings
+	this.renderer.vr.enabled = true;
+	this.renderer.vr.standing = true;
 
 	// Set inspectors (camera) position (to be on eye hight)
 	if(this.isOrbitActive)
@@ -179,6 +199,36 @@ ThreeRenderer.prototype.initTJS = function()
 		this.grid = new GridGenerator(this);
 		this.scene.add(this.grid.createGrid(gridSettings));
 	}
+
+	// Callback
+	detectAndSetVRRenderer(this.renderer);
+
+
+	var torus = new THREE.Mesh(
+		
+		new THREE.TorusKnotGeometry( 0.4, 0.15, 256, 32 ),
+		new THREE.MeshStandardMaterial({ roughness: 0.01, metalness: 0.2 })
+	)
+	torus.position.set( -0.25, 1.4, -1.5 )
+	torus.castShadow    = true
+	torus.receiveShadow = true
+	this.scene.add( torus )
+
+	//  DAT GUI for WebVR is just one of the coolest things ever.
+	//  Huge, huge thanks to Jeff Nusz / http://custom-logic.com
+	//  and Michael Chang / http://minmax.design for making this!!
+	//  https://github.com/dataarts/dat.guiVR
+
+	dat.GUIVR.enableMouse( this.camera )
+	console.log(dat.GUIVR);
+	var gui = dat.GUIVR.create( 'Settings' )
+	gui.position.set( 0.2, 0.8, -1 )
+	gui.rotation.set( Math.PI / -6, 0, 0 )
+	this.scene.add( gui )
+	gui.add( torus.position, 'x', -1, 1 ).step( 0.001 ).name( 'Position X' )
+	gui.add( torus.position, 'y', -1, 2 ).step( 0.001 ).name( 'Position Y' )
+	gui.add( torus.rotation, 'y', -Math.PI, Math.PI ).step( 0.001 ).name( 'Rotation' ).listen()
+	//castShadows( gui )
 }
 
 // Updates the logic of the graphical application and triggers
@@ -200,6 +250,11 @@ ThreeRenderer.prototype.animate = function()
 	// Save instance to the class
 	var that = this;
 
+	//  Here’s VRController’s UPDATE goods right here:
+	//  This one command in your animation loop is going to handle
+	//  all the VR controller business you need to get done!
+	THREE.VRController.update();
+
 	// Handle update
 	requestAnimationFrame
 	(
@@ -211,9 +266,9 @@ ThreeRenderer.prototype.animate = function()
 		} 
 	);
 
-	// BInd is slow in chrome
+	// Blind is slow in chrome
 	// https://stackoverflow.com/questions/10697748/how-do-i-use-requestanimationframe-to-call-my-js-prototype
-	//requestAnimationFrame( ThreeRenderer.prototype.animate.bind (this) );
+	//requestAnimationFrame( ThreeRenderer.prototype.animate.blind (this) );
 
 	this.render();
 }
@@ -227,8 +282,10 @@ ThreeRenderer.prototype.render = function()
 ThreeRenderer.prototype.resize = function()
 {
 	// Resize
-	this.cSizeX 		= 800; //(this.uploadPan.clientHeight / 3) * 4;
-	this.cSizeY 		= 600; //this.uploadPan.clientHeight;
+	//this.cSizeX 		= 800; //(this.uploadPan.clientHeight / 3) * 4;
+	//this.cSizeY 		= 600; //this.uploadPan.clientHeight;
+	this.cSizeX		= window.innerWidth;  //800;
+	this.cSizeY 	= window.innerHeight; //600;
 	this.camera.aspect 	= this.cSizeX / this.cSizeY;
 
 	this.camera.updateProjectionMatrix();
@@ -456,4 +513,127 @@ ThreeRenderer.prototype.updateFPSControls = function()
 		// Set look at target
 		this.camera.lookAt( this.camera.target );
 	}
+}
+
+ThreeRenderer.prototype.connectVRController = function(scene, renderer, that){
+	// Check this out: When THREE.VRController finds a new controller
+	// it will emit a custom “vr controller connected” event on the
+	// global window object. It uses this to pass you the controller
+	// instance and from there you do what you want with it.
+	window.addEventListener( 'vr controller connected', function( event ){
+		
+		// Here it is, your VR controller instance.
+		// It’s really a THREE.Object3D so you can just add it to your scene:
+		var controller = event.detail;
+		scene.add( controller );
+
+		// For standing experiences (not seated) we need to set the standingMatrix
+		// otherwise you’ll wonder why your controller appears on the floor
+		// instead of in your hands! And for seated experiences this will have no
+		// effect, so safe to do either way:
+		controller.standingMatrix = renderer.vr.getStandingMatrix();
+
+		// And for 3DOF (seated) controllers you need to set the controller.head
+		// to reference your camera. That way we can make an educated guess where
+		// your hand ought to appear based on the camera’s rotation.
+		controller.head = window.camera;
+
+		// Right now your controller has no visual.
+		// It’s just an empty THREE.Object3D.
+		// Let’s fix that!
+		var
+		meshColorOff = 0xDB3236, // Red
+		meshColorOn  = 0xF4C20D, // Yellow
+		controllerMaterial = new THREE.MeshStandardMaterial({
+
+			color: meshColorOff
+		}),
+		controllerMesh = new THREE.Mesh(
+
+			new THREE.CylinderGeometry( 0.005, 0.05, 0.1, 6 ),
+			controllerMaterial
+		),
+		handleMesh = new THREE.Mesh(
+
+			new THREE.BoxGeometry( 0.03, 0.1, 0.03 ),
+			controllerMaterial
+		)
+
+		controllerMaterial.flatShading = true;
+		controllerMesh.rotation.x = -Math.PI / 2;
+		handleMesh.position.y = -0.05;
+		controllerMesh.add( handleMesh );
+		controller.userData.mesh = controllerMesh;//  So we can change the color later.
+		controller.add( controllerMesh );
+		//castShadows( controller )
+		//receiveShadows( controller )
+
+		var lineMat = new THREE.LineBasicMaterial({
+			color: 0x0000ff
+		});
+		
+		var lineGeo = new THREE.Geometry();
+		lineGeo.vertices.push(
+			new THREE.Vector3( -10, 0, 0 ),
+			new THREE.Vector3( 10, 0, 0 )
+		);
+	
+		var line = new THREE.Line( lineGeo, lineMat );
+		line.position.x = controllerMesh.position.x;
+		line.position.y = controllerMesh.position.y;
+		line.position.z = controllerMesh.position.z;
+	
+		line.rotation.x = controllerMesh.rotation.x;
+		line.rotation.y = controllerMesh.rotation.y;
+		line.rotation.z = controllerMesh.rotation.z + (-Math.PI / 2);
+		line.rotation.w = controllerMesh.rotation.w;
+		controller.add(line);
+		//this.initVRIntersectionRay(controller);
+
+		// Allow this controller to interact with DAT GUI.
+		var guiInputHelper = dat.GUIVR.addInputObject( controller );
+		scene.add( guiInputHelper );
+
+		// Button events. How easy is this?!
+		// We’ll just use the “primary” button -- whatever that might be ;)
+		// Check out the THREE.VRController.supported{} object to see
+		// all the named buttons we’ve already mapped for you!
+		controller.addEventListener( 'primary press began', function( event ){
+			event.target.userData.mesh.material.color.setHex( meshColorOn );
+			guiInputHelper.pressed( true );
+		})
+
+		controller.addEventListener( 'primary press ended', function( event ){
+			event.target.userData.mesh.material.color.setHex( meshColorOff );
+			guiInputHelper.pressed( false );
+		})
+
+		// Disconnect
+		controller.addEventListener( 'disconnected', function( event ){
+			controller.parent.remove( controller );
+		})
+	})
+}
+
+ThreeRenderer.prototype.initVRIntersectionRay = function(controller) {
+	var lineMat = new THREE.LineBasicMaterial({
+		color: 0x0000ff
+	});
+	
+	var lineGeo = new THREE.Geometry();
+	lineGeo.vertices.push(
+		new THREE.Vector3( -10, 0, 0 ),
+		new THREE.Vector3( 10, 0, 0 )
+	);
+
+	var line = new THREE.Line( lineGeo, lineMat );
+	line.position.x = controllerMesh.position.x;
+	line.position.y = controllerMesh.position.y;
+	line.position.z = controllerMesh.position.z;
+
+	line.rotation.x = controllerMesh.rotation.x;
+	line.rotation.y = controllerMesh.rotation.y;
+	line.rotation.z = controllerMesh.rotation.z + (-Math.PI / 2);
+	line.rotation.w = controllerMesh.rotation.w;
+	controller.add(line);
 }

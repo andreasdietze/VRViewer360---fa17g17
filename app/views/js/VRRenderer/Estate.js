@@ -26,7 +26,7 @@ Estate.prototype.loadEstateOne = function ()
 	this.actualRoom = new Room
 	(
 		this.scene,				// THREE scene
-		"img/pano/pano0.jpg",	// Sphere texture (room texture)
+		"img/pano/pano10.jpg",	// Sphere texture (room texture)
 		0						// Marker setup
 	);
 }
