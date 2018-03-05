@@ -18,108 +18,35 @@ var Estate = function(scene)
     this.panocounter = null;
 }
 
-// Init a Estate (just rooms for now)
-// TODO: Estate class and RoomFactory
+// Init the initial room for a estate
 Estate.prototype.loadEstateOne = function ()
 {
 	// We start with the demo launch room
 	this.actualRoom = new Room
 	(
 		this.scene,				// THREE scene
-		"img/pano/i4.jpg",	// Sphere texture (room texture)
-		4						// Marker setup
+		"img/pano/i0.jpg",	    // Sphere texture (room texture)
+		0						// Marker setup
 	);
 }
 
-Estate.prototype.updateEstateOne = function(intersects)
+Estate.prototype.updateEstateOne = function(object)
 {
-    // To mid (from entrence)
-    if(intersects[0].object.name == 1)
+    // To entrence (from outside)
+    if(object.name == 0)
     {
         this.actualRoom.removeRoomFromScene();
         this.actualRoom = new Room
         (
             this.scene,				// THREE scene
-            "img/pano/i2.jpg",	// sphere texture (room texture)
-            2						// Marker Setup
+            "img/pano/i1.jpg",	    // sphere texture (room texture)
+            1						// Marker Setup
         );
         this.actualRoom.sphereMat.needUpdate = true;
         console.log(this.actualRoom);
     }
 
-    // Back to entrence
-    if(intersects[0].object.name == 2)
-    {
-        this.actualRoom.removeRoomFromScene();
-        this.actualRoom = new Room
-        (
-            this.scene,				// THREE scene
-            "img/pano/i1.jpg",	// sphere texture (room texture)
-            1						// Marker Setup
-        );
-        this.scene.add(this.actualRoom);
-        this.actualRoom.sphereMat.needUpdate = true;
-    }
-
-    // To living
-    if( intersects[0].object.name == 3)
-    {
-        this.actualRoom.removeRoomFromScene();
-        this.actualRoom = new Room
-        (
-            this.scene,				// THREE scene
-            "img/pano/i3.jpg",	// sphere texture (room texture)
-            3						// Marker Setup
-        );
-        this.scene.add(this.actualRoom);
-        this.actualRoom.sphereMat.needUpdate = true;
-    }
-
-    // Back to mid
-    if( intersects[0].object.name == 4)
-    {
-        this.actualRoom.removeRoomFromScene();
-        this.actualRoom = new Room
-        (
-            this.scene,				// THREE scene
-            "img/pano/i2.jpg",	// sphere texture (room texture)
-            2						// Marker Setup
-        );
-        this.scene.add(this.actualRoom);
-        this.actualRoom.sphereMat.needUpdate = true;
-    }
-
-    // To kitchen
-    if( intersects[0].object.name == 5)
-    {
-        this.actualRoom.removeRoomFromScene();
-        this.actualRoom = new Room
-        (
-            this.scene,				// THREE scene
-            "img/pano/i4.jpg",	// sphere texture (room texture)
-            4						// Marker Setup
-        );
-        this.scene.add(this.actualRoom);
-        this.actualRoom.sphereMat.needUpdate = true;
-    }
-
-    // Back to living
-    if( intersects[0].object.name == 6)
-    {
-        this.actualRoom.removeRoomFromScene();
-        this.actualRoom = new Room
-        (
-            this.scene,				// THREE scene
-            "img/pano/i3.jpg",	// sphere texture (room texture)
-            3						// Marker Setup
-        );
-        this.scene.add(this.actualRoom);
-        this.actualRoom.sphereMat.needUpdate = true;
-    }
-}
-
-Estate.prototype.updateEstateOneVR = function(object)
-{
+    // To mid (from entrence)
     if(object.name == 1)
     {
         this.actualRoom.removeRoomFromScene();
@@ -133,7 +60,92 @@ Estate.prototype.updateEstateOneVR = function(object)
         console.log(this.actualRoom);
     }
 
+    // Back to outside
     if(object.name == 2)
+    {
+        this.actualRoom.removeRoomFromScene();
+        this.actualRoom = new Room
+        (
+            this.scene,				// THREE scene
+            "img/pano/i0.jpg",	    // sphere texture (room texture)
+            0						// Marker Setup
+        );
+        this.scene.add(this.actualRoom);
+        this.actualRoom.sphereMat.needUpdate = true;
+    }
+
+    // Back to entrence
+    if(object.name == 3)
+    {
+        this.actualRoom.removeRoomFromScene();
+        this.actualRoom = new Room
+        (
+            this.scene,				// THREE scene
+            "img/pano/i1.jpg",	    // sphere texture (room texture)
+            1						// Marker Setup
+        );
+        this.scene.add(this.actualRoom);
+        this.actualRoom.sphereMat.needUpdate = true;
+    }
+
+    // To living
+    if(object.name == 4)
+    {
+        this.actualRoom.removeRoomFromScene();
+        this.actualRoom = new Room
+        (
+            this.scene,				// THREE scene
+            "img/pano/i3.jpg",	    // sphere texture (room texture)
+            3					    // Marker Setup
+        );
+        this.scene.add(this.actualRoom);
+        this.actualRoom.sphereMat.needUpdate = true;
+    }
+
+     // To second floor / stage
+     if(object.name == 5)
+    {
+        this.actualRoom.removeRoomFromScene();
+        this.actualRoom = new Room
+        (
+            this.scene,			    // THREE scene
+            "img/pano/i5.jpg",	    // sphere texture (room texture)
+            5					    // Marker Setup
+        );
+        this.scene.add(this.actualRoom);
+        this.actualRoom.sphereMat.needUpdate = true;
+    }
+
+    // Back to mid
+    if(object.name == 6)
+    {
+        this.actualRoom.removeRoomFromScene();
+        this.actualRoom = new Room
+        (
+            this.scene,				// THREE scene
+            "img/pano/i2.jpg",	    // sphere texture (room texture)
+            2						// Marker Setup
+        );
+        this.scene.add(this.actualRoom);
+        this.actualRoom.sphereMat.needUpdate = true;
+    }
+
+    // To kitchen
+    if(object.name == 7)
+    {
+        this.actualRoom.removeRoomFromScene();
+        this.actualRoom = new Room
+        (
+            this.scene,				// THREE scene
+            "img/pano/i4.jpg",	    // sphere texture (room texture)
+            4						// Marker Setup
+        );
+        this.scene.add(this.actualRoom);
+        this.actualRoom.sphereMat.needUpdate = true;
+    }
+
+    // Back to living
+    if(object.name == 8)
     {
         this.actualRoom.removeRoomFromScene();
         this.actualRoom = new Room
@@ -146,23 +158,62 @@ Estate.prototype.updateEstateOneVR = function(object)
         this.actualRoom.sphereMat.needUpdate = true;
     }
 
-    if( object.name == 3 ||
-        object.name == 4 ||
-        object.name == 5 || 
-        object.name == 6 )
+    // --- second floor / stage
+    if(object.name == 9)
     {
         this.actualRoom.removeRoomFromScene();
         this.actualRoom = new Room
         (
             this.scene,				// THREE scene
-            "img/pano/i1.jpg",	    // sphere texture (room texture)
-            1						// Marker Setup
+            "img/pano/i2.jpg",	    // sphere texture (room texture)
+            2						// Marker Setup
+        );
+        this.scene.add(this.actualRoom);
+        this.actualRoom.sphereMat.needUpdate = true;
+    }
+
+    // To bath
+    if(object.name == 10)
+    {
+        this.actualRoom.removeRoomFromScene();
+        this.actualRoom = new Room
+        (
+            this.scene,				// THREE scene
+            "img/pano/i7.jpg",	    // sphere texture (room texture)
+            7						// Marker Setup
+        );
+        this.scene.add(this.actualRoom);
+        this.actualRoom.sphereMat.needUpdate = true;
+    }
+
+    // To guest room
+    if(object.name == 11)
+    {
+        this.actualRoom.removeRoomFromScene();
+        this.actualRoom = new Room
+        (
+            this.scene,				// THREE scene
+            "img/pano/i6.jpg",	    // sphere texture (room texture)
+            6						// Marker Setup
+        );
+        this.scene.add(this.actualRoom);
+        this.actualRoom.sphereMat.needUpdate = true;
+    }
+
+    // Back to floor
+    if(object.name == 12 || object.name == 13)
+    {
+        this.actualRoom.removeRoomFromScene();
+        this.actualRoom = new Room
+        (
+            this.scene,				// THREE scene
+            "img/pano/i5.jpg",	    // sphere texture (room texture)
+            5						// Marker Setup
         );
         this.scene.add(this.actualRoom);
         this.actualRoom.sphereMat.needUpdate = true;
     }
 }
-
 
 Estate.prototype.updateTestEstate = function()
 {

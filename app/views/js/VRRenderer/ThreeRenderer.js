@@ -11,6 +11,7 @@ var ThreeRenderer = function()
 	this.scene 		= null; 
 	this.camera 	= null;
 	this.renderer 	= null;
+	this.vrIsActive = false;
 
 	// Additional Objects
 	this.loader		= null;
@@ -53,16 +54,28 @@ var ThreeRenderer = function()
 	this.raycaster = new THREE.Raycaster();
 
 	this.controller = null;
+	var that = this;
+
+	// If we use vr, check for availability
+	if(this.vrIsActive)
+	{
+		WEBVR.checkAvailability().catch( function( message ){
+			console.log("Checking VR-Avaibility");
+			document.body.appendChild( WEBVR.getMessageContainer( message ))
+		})
+	}
 
 	// Init Three.js (cb: detectAndSetVRRenderer)
 	this.initTJS(function(renderer){
 		//  This button is important. It toggles between normal in-browser view
 		//  and the brand new WebVR in-your-goggles view!
-		/*WEBVR.getVRDisplay( function( display ){
-			//console.log(renderer);
-			renderer.vr.setDevice( display )
-			document.body.appendChild( WEBVR.getButton( display, renderer.domElement ))
-		})*/
+		if(that.vrIsActive) {
+			WEBVR.getVRDisplay( function( display ){
+				//console.log(renderer);
+				renderer.vr.setDevice( display )
+				document.body.appendChild( WEBVR.getButton( display, renderer.domElement ))
+			})
+		}
 	});
 
 	// Try to connect VR-Controller and setup dat GUI
@@ -72,8 +85,6 @@ var ThreeRenderer = function()
 	this.estate = new Estate(this.scene);
 	this.estate.loadEstateOne();
 	//this.initEstate();
-
-	var that = this;
 
 	// document.addEventListener('mousedown', function (event){
 	// 	that.onDocumentMouseDown(event, that)
@@ -102,11 +113,6 @@ var ThreeRenderer = function()
 	// Set update callback
 	this.animate();
 }
-
-WEBVR.checkAvailability().catch( function( message ){
-	console.log("Checking VR-Avaibility");
-	document.body.appendChild( WEBVR.getMessageContainer( message ))
-})
 
 // Init canvas, scene, renderer, grid and camera inclusive controls
 ThreeRenderer.prototype.initTJS = function(detectAndSetVRRenderer)
@@ -205,16 +211,15 @@ ThreeRenderer.prototype.initTJS = function(detectAndSetVRRenderer)
 	// Callback
 	detectAndSetVRRenderer(this.renderer);
 
-
-	var torus = new THREE.Mesh(
+	//var torus = new THREE.Mesh(
 		
-		new THREE.TorusKnotGeometry( 0.4, 0.15, 256, 32 ),
-		new THREE.MeshStandardMaterial({ roughness: 0.01, metalness: 0.2 })
-	)
-	torus.position.set( -0.25, 1.4, -1.5 )
-	torus.castShadow    = true
-	torus.receiveShadow = true
-	this.scene.add( torus )
+		//new THREE.TorusKnotGeometry( 0.4, 0.15, 256, 32 ),
+		//new THREE.MeshStandardMaterial({ roughness: 0.01, metalness: 0.2 })
+	//)
+	//torus.position.set( -0.25, 1.4, -1.5 )
+	//torus.castShadow    = true
+	//torus.receiveShadow = true
+	//this.scene.add( torus )
 
 	//  DAT GUI for WebVR is just one of the coolest things ever.
 	//  Huge, huge thanks to Jeff Nusz / http://custom-logic.com
@@ -223,13 +228,13 @@ ThreeRenderer.prototype.initTJS = function(detectAndSetVRRenderer)
 
 	dat.GUIVR.enableMouse( this.camera )
 	console.log(dat.GUIVR);
-	var gui = dat.GUIVR.create( 'Settings' )
-	gui.position.set( 0.2, 0.8, -1 )
-	gui.rotation.set( Math.PI / -6, 0, 0 )
-	this.scene.add( gui )
-	gui.add( torus.position, 'x', -1, 1 ).step( 0.001 ).name( 'Position X' )
-	gui.add( torus.position, 'y', -1, 2 ).step( 0.001 ).name( 'Position Y' )
-	gui.add( torus.rotation, 'y', -Math.PI, Math.PI ).step( 0.001 ).name( 'Rotation' ).listen()
+	//var gui = dat.GUIVR.create( 'Settings' )
+	//gui.position.set( 0.2, 0.8, -1 )
+	//gui.rotation.set( Math.PI / -6, 0, 0 )
+	//this.scene.add( gui )
+	//gui.add( torus.position, 'x', -1, 1 ).step( 0.001 ).name( 'Position X' )
+	//gui.add( torus.position, 'y', -1, 2 ).step( 0.001 ).name( 'Position Y' )
+	//gui.add( torus.rotation, 'y', -Math.PI, Math.PI ).step( 0.001 ).name( 'Rotation' ).listen()
 	//castShadows( gui )
 }
 
@@ -345,7 +350,7 @@ ThreeRenderer.prototype.onDocumentMouseDown = function ( event )
 					}
 					else 
 					{
-						this.estate.updateEstateOne(this.intersects);
+						this.estate.updateEstateOne(this.intersects[0].object);
 					}
 				}
 			}
@@ -641,7 +646,7 @@ ThreeRenderer.prototype.connectVRController = function(scene, renderer, that){
 						}
 						else 
 						{
-							that.estate.updateEstateOneVR(that.intersectsVR[i].object);
+							that.estate.updateEstateOne(that.intersectsVR[i].object);
 						}
 					}
 				}

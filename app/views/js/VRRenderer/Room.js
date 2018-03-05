@@ -184,47 +184,47 @@ Room.prototype.doMarkerSetup = function(markerSetup)
 
     switch(markerSetup)
     {
-        /*case 0: // Add markers for setup 0 (i0)
-        // Goto i1
+        case 0: // Add markers for setup 0 (i0 - outside)
+        // Goto i1 - entrence
         this.doorMarkerFactory.addMarker
         (
-            new DoorMarker
+            new DoorMarker                          // Door to entrence
             (
                 0,                                  // ID
-                new THREE.Vector3(180, -35, -45),	// Position
-                new THREE.Vector3(0, 104 , 0),	    // Orientation
+                new THREE.Vector3(20, 35, 160),	    // Position
+                new THREE.Vector3(0, 0 , 0),	    // Orientation
                 new THREE.Vector3(5.5,5,1),			// Scale
                 this.scene							// Scene
             )
         );
-        break; */
+        break; 
 
-        case 1: // Add markers for setup 1 (i1)
-        // Goto i2
+        case 1: // Add markers for setup 1 (i1 - entrence)
+        // Goto i2 - mid
         this.doorMarkerFactory.addMarker
         (
-            new DoorMarker
+            new DoorMarker                          // Door to mid
             (
                 1,                                  // ID
                 new THREE.Vector3(-150, -20, 75),	// Position
                 new THREE.Vector3(0, 115, 0), 		// Orientation
-                new THREE.Vector3(20, 8, 1),			// Scale
+                new THREE.Vector3(20, 8, 1),		// Scale
                 this.scene							// Scene
             )
         );
 
-        // Goto i0 (not done yet)
-        /*this.doorMarkerFactory.addMarker
+        // Goto i0  - outside
+        this.doorMarkerFactory.addMarker
         (
-            new DoorMarker
+            new DoorMarker                          // Door to outside
             (
-                0,                                  // ID
+                2,                                  // ID
                 new THREE.Vector3(180, -35, -45),	// Position
                 new THREE.Vector3(0, 104 , 0),	    // Orientation
                 new THREE.Vector3(5.5,5,1),			// Scale
                 this.scene							// Scene
             )
-        );*/
+        );
         break;
 
         case 2: // Add some markers for setup 2 (i2)
@@ -233,7 +233,7 @@ Room.prototype.doMarkerSetup = function(markerSetup)
         (
             new DoorMarker
             (
-                2,                                  // ID
+                3,                                  // ID
                 new THREE.Vector3(-160, -70, -20),	// Position
                 new THREE.Vector3(0, 90, 0), 		// Orientation
                 new THREE.Vector3(20,15,1),			// Scale
@@ -246,8 +246,21 @@ Room.prototype.doMarkerSetup = function(markerSetup)
         (
             new DoorMarker
             (
-                3,                                  // ID
+                4,                                  // ID
                 new THREE.Vector3(40, -70, -150),	// Position
+                new THREE.Vector3(0, 0 , 0),	    // Orientation
+                new THREE.Vector3(20,15,1),			// Scale
+                this.scene							// Scene
+            )
+        );
+
+        // Goto i5 (second floor)
+        this.doorMarkerFactory.addMarker
+        (
+            new DoorMarker
+            (
+                5,                                  // ID
+                new THREE.Vector3(-40, -70, 150),	// Position
                 new THREE.Vector3(0, 0 , 0),	    // Orientation
                 new THREE.Vector3(20,15,1),			// Scale
                 this.scene							// Scene
@@ -261,7 +274,7 @@ Room.prototype.doMarkerSetup = function(markerSetup)
         (
             new DoorMarker
             (
-                4,                                  // ID
+                6,                                  // ID
                 new THREE.Vector3(100, -35, -140),	// Position
                 new THREE.Vector3(0, 0, 0), 		// Orientation
                 new THREE.Vector3(10,8,1),			// Scale
@@ -274,7 +287,7 @@ Room.prototype.doMarkerSetup = function(markerSetup)
         (
             new DoorMarker
             (
-                5,                                  // ID
+                7,                                  // ID
                 new THREE.Vector3(180, -35, -45),	// Position
                 new THREE.Vector3(0, 104 , 0),	    // Orientation
                 new THREE.Vector3(5.5,5,1),			// Scale
@@ -289,8 +302,79 @@ Room.prototype.doMarkerSetup = function(markerSetup)
         (
             new DoorMarker
             (
-                6,                                  // ID
+                8,                                  // ID
                 new THREE.Vector3(140, -35, 100),	// Position
+                new THREE.Vector3(0, 55, 0), 		// Orientation
+                new THREE.Vector3(15,8,1),			// Scale
+                this.scene							// Scene
+            )
+        );
+        break;
+
+        case 5: // Add some markers for setup 5 (i5)
+        // Goto i2
+        this.doorMarkerFactory.addMarker
+        (
+            new DoorMarker
+            (
+                9,                                  // ID
+                new THREE.Vector3(-160, -70, -20),	// Position
+                new THREE.Vector3(0, 90, 0), 		// Orientation
+                new THREE.Vector3(20,15,1),			// Scale
+                this.scene							// Scene
+            )
+        );
+
+        // Goto i7
+        this.doorMarkerFactory.addMarker
+        (
+            new DoorMarker
+            (
+                10,                                 // ID
+                new THREE.Vector3(40, -70, -150),	// Position
+                new THREE.Vector3(0, 0 , 0),	    // Orientation
+                new THREE.Vector3(20,15,1),			// Scale
+                this.scene							// Scene
+            )
+        );
+
+        // Goto i6
+        this.doorMarkerFactory.addMarker
+        (
+            new DoorMarker
+            (
+                11,                                 // ID
+                new THREE.Vector3(-40, -70, 150),	// Position
+                new THREE.Vector3(0, 0 , 0),	    // Orientation
+                new THREE.Vector3(20,15,1),			// Scale
+                this.scene							// Scene
+            )
+        );
+        break;
+
+        case 6: // Add markers for setup 6 (i6)
+        // Goto i5
+        this.doorMarkerFactory.addMarker
+        (
+            new DoorMarker
+            (
+                12,                                 // ID
+                new THREE.Vector3(150, -35, 70),	// Position
+                new THREE.Vector3(0, 55, 0), 		// Orientation
+                new THREE.Vector3(15,8,1),			// Scale
+                this.scene							// Scene
+            )
+        );
+        break;
+
+        case 7: // Add markers for setup 7 (i7)
+        // Goto i5
+        this.doorMarkerFactory.addMarker
+        (
+            new DoorMarker
+            (
+                13,                                 // ID
+                new THREE.Vector3(150, -35, -70),	// Position
                 new THREE.Vector3(0, 55, 0), 		// Orientation
                 new THREE.Vector3(15,8,1),			// Scale
                 this.scene							// Scene
