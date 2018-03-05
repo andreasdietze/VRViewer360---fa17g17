@@ -52,15 +52,17 @@ var ThreeRenderer = function()
 	this.lastMove = Date.now();
 	this.raycaster = new THREE.Raycaster();
 
+	this.controller = null;
+
 	// Init Three.js (cb: detectAndSetVRRenderer)
 	this.initTJS(function(renderer){
 		//  This button is important. It toggles between normal in-browser view
 		//  and the brand new WebVR in-your-goggles view!
-		WEBVR.getVRDisplay( function( display ){
+		/*WEBVR.getVRDisplay( function( display ){
 			//console.log(renderer);
 			renderer.vr.setDevice( display )
 			document.body.appendChild( WEBVR.getButton( display, renderer.domElement ))
-		})
+		})*/
 	});
 
 	// Try to connect VR-Controller and setup dat GUI
@@ -524,19 +526,19 @@ ThreeRenderer.prototype.connectVRController = function(scene, renderer, that){
 		
 		// Here it is, your VR controller instance.
 		// It’s really a THREE.Object3D so you can just add it to your scene:
-		var controller = event.detail;
-		scene.add( controller );
+		that.controller = event.detail;
+		scene.add( that.controller );
 
 		// For standing experiences (not seated) we need to set the standingMatrix
 		// otherwise you’ll wonder why your controller appears on the floor
 		// instead of in your hands! And for seated experiences this will have no
 		// effect, so safe to do either way:
-		controller.standingMatrix = renderer.vr.getStandingMatrix();
+		that.controller.standingMatrix = renderer.vr.getStandingMatrix();
 
 		// And for 3DOF (seated) controllers you need to set the controller.head
 		// to reference your camera. That way we can make an educated guess where
 		// your hand ought to appear based on the camera’s rotation.
-		controller.head = window.camera;
+		that.controller.head = window.camera;
 
 		// Right now your controller has no visual.
 		// It’s just an empty THREE.Object3D.
@@ -563,77 +565,132 @@ ThreeRenderer.prototype.connectVRController = function(scene, renderer, that){
 		controllerMesh.rotation.x = -Math.PI / 2;
 		handleMesh.position.y = -0.05;
 		controllerMesh.add( handleMesh );
-		controller.userData.mesh = controllerMesh;//  So we can change the color later.
-		controller.add( controllerMesh );
+		that.controller.userData.mesh = controllerMesh;//  So we can change the color later.
+		that.controller.add( controllerMesh );
 		//castShadows( controller )
 		//receiveShadows( controller )
 
-		var lineMat = new THREE.LineBasicMaterial({
-			color: 0x0000ff
-		});
-		
-		var lineGeo = new THREE.Geometry();
-		lineGeo.vertices.push(
-			new THREE.Vector3( -10, 0, 0 ),
-			new THREE.Vector3( 10, 0, 0 )
-		);
-	
-		var line = new THREE.Line( lineGeo, lineMat );
-		line.position.x = controllerMesh.position.x;
-		line.position.y = controllerMesh.position.y;
-		line.position.z = controllerMesh.position.z;
-	
-		line.rotation.x = controllerMesh.rotation.x;
-		line.rotation.y = controllerMesh.rotation.y;
-		line.rotation.z = controllerMesh.rotation.z + (-Math.PI / 2);
-		line.rotation.w = controllerMesh.rotation.w;
-		controller.add(line);
-		//this.initVRIntersectionRay(controller);
+		that.initVRIntersectionRay(that.controller, controllerMesh, that);
 
 		// Allow this controller to interact with DAT GUI.
-		var guiInputHelper = dat.GUIVR.addInputObject( controller );
+		var guiInputHelper = dat.GUIVR.addInputObject( that.controller );
 		scene.add( guiInputHelper );
 
 		// Button events. How easy is this?!
 		// We’ll just use the “primary” button -- whatever that might be ;)
 		// Check out the THREE.VRController.supported{} object to see
 		// all the named buttons we’ve already mapped for you!
-		controller.addEventListener( 'primary press began', function( event ){
+		that.controller.addEventListener( 'primary press began', function( event ){
 			event.target.userData.mesh.material.color.setHex( meshColorOn );
 			guiInputHelper.pressed( true );
+
+			that.isUserInteracting = true;
+			//console.log(that.controller);
+
+			// Controller position
+			var conVec = new THREE.Vector3(0,0,0);
+			conVec.x = that.controller.gamepad.pose.position[0];
+			conVec.y = that.controller.gamepad.pose.position[1];
+			conVec.z = that.controller.gamepad.pose.position[2];
+
+			// Controller orientation 
+			var quad = new THREE.Quaternion
+			(
+				that.controller.gamepad.pose.orientation[0],	// x
+				that.controller.gamepad.pose.orientation[1],	// y
+				that.controller.gamepad.pose.orientation[2],	// z
+				that.controller.gamepad.pose.orientation[3]		// w
+			);
+
+			// Set rotation (direction) matrix by controller orientation
+			var matrix = new THREE.Matrix4();
+			matrix.setRotationFromQuaternion(quad);
+
+			// Mult mat with vec which aims at z neg (view direction)
+			var conDir = new THREE.Vector3( 0, 0, -1 );
+			conDir = matrix.multiplyVector3(conDir);
+
+			// Init the raycaster which handels intersections by the vr controller ray
+			that.raycasterVR = new THREE.Raycaster(conVec, conDir);
+
+			// Get the intersections with vr controller ray
+			that.intersectsVR = that.raycasterVR.intersectObjects( that.scene.children, true );
+
+			// Draw a helper arrow to be sure that ray has correct postition and direction
+			var helperArrow = new THREE.ArrowHelper
+			(
+				that.raycasterVR.ray.direction,		// Direction
+				that.raycasterVR.ray.origin,		// Position - Origin
+				100,								// Length
+				0xffffff							// Color
+			);
+
+			// Add arrow to scene
+			//that.scene.add(helperArrow);
+
+			//console.log(that.intersectsVR);
+			if(that.intersectsVR.length > 0)
+			{
+				for(var i = 0; i < that.intersectsVR.length; i++)
+				{
+					if(that.intersectsVR[i].object.geometry.type === 'PlaneGeometry')
+					{
+						if(that.test)
+						{
+							that.estate.updateTestEstate();
+						}
+						else 
+						{
+							that.estate.updateEstateOneVR(that.intersectsVR[i].object);
+						}
+					}
+				}
+			}
 		})
 
-		controller.addEventListener( 'primary press ended', function( event ){
+		that.controller.addEventListener( 'primary press ended', function( event ){
 			event.target.userData.mesh.material.color.setHex( meshColorOff );
 			guiInputHelper.pressed( false );
+			that.isUserInteracting = false;
 		})
 
 		// Disconnect
-		controller.addEventListener( 'disconnected', function( event ){
-			controller.parent.remove( controller );
+		that.controller.addEventListener( 'disconnected', function( event ){
+			that.controller.parent.remove( controller );
 		})
 	})
 }
 
-ThreeRenderer.prototype.initVRIntersectionRay = function(controller) {
+ThreeRenderer.prototype.initVRIntersectionRay = function(controller, controllerMesh, that) {
+	// Create material for the aiming direction line / ray
 	var lineMat = new THREE.LineBasicMaterial({
 		color: 0x0000ff
 	});
-	
+
+	// Geometry for the line
 	var lineGeo = new THREE.Geometry();
 	lineGeo.vertices.push(
-		new THREE.Vector3( -10, 0, 0 ),
-		new THREE.Vector3( 10, 0, 0 )
+		new THREE.Vector3( -1000, 0, 0 ),	// -1000 -> length
+		new THREE.Vector3( 0, 0, 0 )
 	);
 
-	var line = new THREE.Line( lineGeo, lineMat );
-	line.position.x = controllerMesh.position.x;
-	line.position.y = controllerMesh.position.y;
-	line.position.z = controllerMesh.position.z;
+	// Init the line
+	that.line = new THREE.Line( lineGeo, lineMat );
 
-	line.rotation.x = controllerMesh.rotation.x;
-	line.rotation.y = controllerMesh.rotation.y;
-	line.rotation.z = controllerMesh.rotation.z + (-Math.PI / 2);
-	line.rotation.w = controllerMesh.rotation.w;
-	controller.add(line);
+	// Set name
+	that.line.name = "intersectionRayController"
+
+	// Set position / origin
+	that.line.position.x = controllerMesh.position.x;
+	that.line.position.y = controllerMesh.position.y;
+	that.line.position.z = controllerMesh.position.z;
+
+	// Set orientation and rotate by z 90°
+	that.line.rotation.x = controllerMesh.rotation.x;
+	that.line.rotation.y = controllerMesh.rotation.y;
+	that.line.rotation.z = controllerMesh.rotation.z + (-Math.PI / 2);
+	that.line.rotation.w = controllerMesh.rotation.w;
+
+	// Add the line to the vr controller
+	controller.add(that.line);
 }

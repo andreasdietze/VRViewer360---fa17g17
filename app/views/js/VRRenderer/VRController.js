@@ -460,7 +460,7 @@ THREE.VRController.prototype.update = function(){
 		//  If this is our first go-round with a 3DOF this then we’ll need to
 		//  create the arm model.
 
-		if( this.armModel === undefined ){
+		/*if( this.armModel === undefined ){
 
 			if( THREE.VRController.verbosity >= 0.5 ) console.log( '> #'+ gamepad.index +' '+ gamepad.id +' (Handedness: '+ this.getHandedness() +') adding OrientationArmModel' )
 			this.armModel = new OrientationArmModel()
@@ -480,7 +480,7 @@ THREE.VRController.prototype.update = function(){
 			this.armModel.getPose().position,
 			this.armModel.getPose().orientation,
 			this.scale
-		)
+		)*/
 	}
 
 

@@ -26,50 +26,137 @@ Estate.prototype.loadEstateOne = function ()
 	this.actualRoom = new Room
 	(
 		this.scene,				// THREE scene
-		"img/pano/pano10.jpg",	// Sphere texture (room texture)
-		0						// Marker setup
+		"img/pano/i4.jpg",	// Sphere texture (room texture)
+		4						// Marker setup
 	);
 }
 
 Estate.prototype.updateEstateOne = function(intersects)
 {
-    if(intersects[0].object.name == 0)
-    {
-        this.actualRoom.removeRoomFromScene();
-        this.actualRoom = new Room
-        (
-            this.scene,				// THREE scene
-            "img/pano/pano8.jpg",	// sphere texture (room texture)
-            1						// Marker Setup
-        );
-        this.actualRoom.sphereMat.needUpdate = true;
-        console.log(this.actualRoom);
-    }
-
+    // To mid (from entrence)
     if(intersects[0].object.name == 1)
     {
         this.actualRoom.removeRoomFromScene();
         this.actualRoom = new Room
         (
             this.scene,				// THREE scene
-            "img/pano/pano2.jpg",	// sphere texture (room texture)
+            "img/pano/i2.jpg",	// sphere texture (room texture)
+            2						// Marker Setup
+        );
+        this.actualRoom.sphereMat.needUpdate = true;
+        console.log(this.actualRoom);
+    }
+
+    // Back to entrence
+    if(intersects[0].object.name == 2)
+    {
+        this.actualRoom.removeRoomFromScene();
+        this.actualRoom = new Room
+        (
+            this.scene,				// THREE scene
+            "img/pano/i1.jpg",	// sphere texture (room texture)
+            1						// Marker Setup
+        );
+        this.scene.add(this.actualRoom);
+        this.actualRoom.sphereMat.needUpdate = true;
+    }
+
+    // To living
+    if( intersects[0].object.name == 3)
+    {
+        this.actualRoom.removeRoomFromScene();
+        this.actualRoom = new Room
+        (
+            this.scene,				// THREE scene
+            "img/pano/i3.jpg",	// sphere texture (room texture)
+            3						// Marker Setup
+        );
+        this.scene.add(this.actualRoom);
+        this.actualRoom.sphereMat.needUpdate = true;
+    }
+
+    // Back to mid
+    if( intersects[0].object.name == 4)
+    {
+        this.actualRoom.removeRoomFromScene();
+        this.actualRoom = new Room
+        (
+            this.scene,				// THREE scene
+            "img/pano/i2.jpg",	// sphere texture (room texture)
             2						// Marker Setup
         );
         this.scene.add(this.actualRoom);
         this.actualRoom.sphereMat.needUpdate = true;
     }
 
-    if( intersects[0].object.name == 2 ||
-        intersects[0].object.name == 3 ||
-        intersects[0].object.name == 4 || 
-        intersects[0].object.name == 5 )
+    // To kitchen
+    if( intersects[0].object.name == 5)
     {
         this.actualRoom.removeRoomFromScene();
         this.actualRoom = new Room
         (
             this.scene,				// THREE scene
-            "img/pano/pano0.jpg",	// sphere texture (room texture)
-            0						// Marker Setup
+            "img/pano/i4.jpg",	// sphere texture (room texture)
+            4						// Marker Setup
+        );
+        this.scene.add(this.actualRoom);
+        this.actualRoom.sphereMat.needUpdate = true;
+    }
+
+    // Back to living
+    if( intersects[0].object.name == 6)
+    {
+        this.actualRoom.removeRoomFromScene();
+        this.actualRoom = new Room
+        (
+            this.scene,				// THREE scene
+            "img/pano/i3.jpg",	// sphere texture (room texture)
+            3						// Marker Setup
+        );
+        this.scene.add(this.actualRoom);
+        this.actualRoom.sphereMat.needUpdate = true;
+    }
+}
+
+Estate.prototype.updateEstateOneVR = function(object)
+{
+    if(object.name == 1)
+    {
+        this.actualRoom.removeRoomFromScene();
+        this.actualRoom = new Room
+        (
+            this.scene,				// THREE scene
+            "img/pano/i2.jpg",	    // sphere texture (room texture)
+            2						// Marker Setup
+        );
+        this.actualRoom.sphereMat.needUpdate = true;
+        console.log(this.actualRoom);
+    }
+
+    if(object.name == 2)
+    {
+        this.actualRoom.removeRoomFromScene();
+        this.actualRoom = new Room
+        (
+            this.scene,				// THREE scene
+            "img/pano/i3.jpg",	    // sphere texture (room texture)
+            3						// Marker Setup
+        );
+        this.scene.add(this.actualRoom);
+        this.actualRoom.sphereMat.needUpdate = true;
+    }
+
+    if( object.name == 3 ||
+        object.name == 4 ||
+        object.name == 5 || 
+        object.name == 6 )
+    {
+        this.actualRoom.removeRoomFromScene();
+        this.actualRoom = new Room
+        (
+            this.scene,				// THREE scene
+            "img/pano/i1.jpg",	    // sphere texture (room texture)
+            1						// Marker Setup
         );
         this.scene.add(this.actualRoom);
         this.actualRoom.sphereMat.needUpdate = true;
