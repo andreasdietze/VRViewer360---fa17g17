@@ -11,7 +11,8 @@ var ThreeRenderer = function()
 	this.scene 		= null; 
 	this.camera 	= null;
 	this.renderer 	= null;
-	this.vrIsActive = false;
+	this.vrIsActive = true;
+	this.FOV 		= 75;
 
 	// Additional Objects
 	this.loader		= null;
@@ -126,9 +127,13 @@ ThreeRenderer.prototype.initTJS = function(detectAndSetVRRenderer)
 	// Init camera - standard perspective camera if rift is disabled
 	this.cSizeX		= window.innerWidth;  //800;
 	this.cSizeY 	= window.innerHeight; //600;
+	if(this.vrIsActive)
+		this.FOV = 120;
+	else 
+		this.FOV = 75;
 	this.camera = new THREE.PerspectiveCamera
 	( 
-		75, 
+		this.FOV, 
 		//window.innerWidth / window.innerHeight,
 		this.cSizeX / this.cSizeY, 
 		0.1, 
