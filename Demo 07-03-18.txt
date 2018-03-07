@@ -1,0 +1,7 @@
+Am 07.03.18 brachte Oculus ein neues Update für ihre Software "Oculus-Client" heraus. Dieses Update bewirkte einen
+Totalausfall ALLER Clients weltweit.
+
+https://www.reddit.com/r/oculus/comments/82nuzi/cant_reach_oculus_runtime_service/
+
+Grund ist ein abgelaufenes Zertifikat für eine .dll.
+
