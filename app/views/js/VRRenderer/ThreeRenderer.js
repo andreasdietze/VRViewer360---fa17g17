@@ -6,12 +6,19 @@ var ThreeRenderer = function()
 	// http://www.dofactory.com/javascript/factory-method-design-pattern
 	// Renderer
 	console.log("Init Renderer");
-	this.test 		= false;
+
+	// Launch settings
+	this.isVRActive 	= false;
+	this.isOrbitActive 	= true;
+	this.isGridVisible	= true;
+	this.isDoorMarkerVisible = true;
+	this.test 			= true;
+
+	// Renderer, scene and camera
 	this.canvas 	= null;
 	this.scene 		= null; 
 	this.camera 	= null;
 	this.renderer 	= null;
-	this.vrIsActive = true;
 	this.FOV 		= 75;
 
 	// Additional Objects
@@ -46,9 +53,6 @@ var ThreeRenderer = function()
 	this.onPointerDownLon = 0;
 	this.onPointerDownLat = 0;
 
-	// Set controls
-	this.isOrbitActive = true;
-
 	// Raycaster
 	this.mouse = new THREE.Vector2();
 	this.lastMove = Date.now();
@@ -58,7 +62,7 @@ var ThreeRenderer = function()
 	var that = this;
 
 	// If we use vr, check for availability
-	if(this.vrIsActive)
+	if(this.isVRActive)
 	{
 		WEBVR.checkAvailability().catch( function( message ){
 			console.log("Checking VR-Avaibility");
@@ -70,7 +74,7 @@ var ThreeRenderer = function()
 	this.initTJS(function(renderer){
 		//  This button is important. It toggles between normal in-browser view
 		//  and the brand new WebVR in-your-goggles view!
-		if(that.vrIsActive) {
+		if(that.isVRActive) {
 			WEBVR.getVRDisplay( function( display ){
 				//console.log(renderer);
 				renderer.vr.setDevice( display )
@@ -83,7 +87,7 @@ var ThreeRenderer = function()
 	this.connectVRController(this.scene, this.renderer, this);
 
 	// Init Estate/Rooms
-	this.estate = new Estate(this.scene);
+	this.estate = new Estate(this.scene, this.isDoorMarkerVisible);
 	this.estate.loadEstateOne();
 	//this.initEstate();
 
@@ -127,7 +131,7 @@ ThreeRenderer.prototype.initTJS = function(detectAndSetVRRenderer)
 	// Init camera - standard perspective camera if rift is disabled
 	this.cSizeX		= window.innerWidth;  //800;
 	this.cSizeY 	= window.innerHeight; //600;
-	if(this.vrIsActive)
+	if(this.isVRActive)
 		this.FOV = 120;
 	else 
 		this.FOV = 75;
@@ -207,7 +211,7 @@ ThreeRenderer.prototype.initTJS = function(detectAndSetVRRenderer)
 	};
 
 	// Grid interferes with raycaster fps cam
-	if(this.isOrbitActive)
+	if(this.isGridVisible)
 	{
 		this.grid = new GridGenerator(this);
 		this.scene.add(this.grid.createGrid(gridSettings));
@@ -333,32 +337,32 @@ ThreeRenderer.prototype.onDocumentMouseDown = function ( event )
 			this.isUserInteracting = true;
 
 			// Update non THREE mouse controls on button press
-			// if(!this.isOrbitActive)
-			// {
-			// 	this.onPointerDownPointerX = event.clientX;
-			// 	this.onPointerDownPointerY = event.clientY;
-			
-			// 	this.onPointerDownLon = this.lon;
-			// 	this.onPointerDownLat = this.lat;
-			// }
-
-			if(this.intersects.length > 0)
+			if(!this.isOrbitActive)
 			{
-				if(this.intersects[0].object.geometry.type === 'PlaneGeometry')
-				{
-					//console.log(this.intersects[0]);
-					//this.intersects[0].object.material.color.set( 0xff0000 );
-					
-					if(this.test)
-					{
-						this.estate.updateTestEstate();
-					}
-					else 
-					{
-						this.estate.updateEstateOne(this.intersects[0].object);
-					}
-				}
+				this.onPointerDownPointerX = event.clientX;
+				this.onPointerDownPointerY = event.clientY;
+			
+				this.onPointerDownLon = this.lon;
+				this.onPointerDownLat = this.lat;
 			}
+
+			// if(this.intersects.length > 0)
+			// {
+			// 	if(this.intersects[0].object.geometry.type === 'PlaneGeometry')
+			// 	{
+			// 		//console.log(this.intersects[0]);
+			// 		//this.intersects[0].object.material.color.set( 0xff0000 );
+					
+			// 		if(this.test)
+			// 		{
+			// 			this.estate.updateTestEstate();
+			// 		}
+			// 		else 
+			// 		{
+			// 			this.estate.updateEstateOne(this.intersects[0].object);
+			// 		}
+			// 	}
+			// }
 			
 			break;
 
@@ -376,6 +380,23 @@ ThreeRenderer.prototype.onDocumentMouseDown = function ( event )
 // Mouse-Up-Event: Lock user input (mouse) once if button was released
 ThreeRenderer.prototype.onDocumentMouseUp = function( event ) 
 {
+	if(this.intersects.length > 0)
+	{
+		if(this.intersects[0].object.geometry.type === 'PlaneGeometry')
+		{
+			//console.log(this.intersects[0]);
+			//this.intersects[0].object.material.color.set( 0xff0000 );
+			
+			if(this.test)
+			{
+				this.estate.updateTestEstate();
+			}
+			else 
+			{
+				this.estate.updateEstateOne(this.intersects[0].object);
+			}
+		}
+	}
 	this.isUserInteracting = false;
 }
 
@@ -391,8 +412,8 @@ ThreeRenderer.prototype.onDocumentMouseMove = function( event )
 	// Update non THREE mouse controls on mouse move
 	if (this.isUserInteracting && !this.isOrbitActive) 
 	{
-		this.lon = ( this.onPointerDownPointerX - event.clientX ) * 0.1; // + this.onPointerDownLon;
-		this.lat = ( event.clientY - this.onPointerDownPointerY ) * 0.1; // + this.onPointerDownLat;
+		this.lon = ( this.onPointerDownPointerX - event.clientX ) * 0.1 + this.onPointerDownLon;
+		this.lat = ( event.clientY - this.onPointerDownPointerY ) * 0.1 + this.onPointerDownLat;
 	}
 
 	// Get mouse position between -1 and 1 for both axis

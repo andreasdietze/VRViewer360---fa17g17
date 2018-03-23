@@ -6,7 +6,7 @@
 * @param {THREE.Scene}      scene
 * To add and remove rooms from the scene.
 */
-var Estate = function(scene)
+var Estate = function(scene, isDoorMarkerVisible)
 {
     // Params
     this.scene = scene;
@@ -16,6 +16,8 @@ var Estate = function(scene)
 
     // Test scene
     this.panocounter = null;
+
+    this.isDoorMarkerVisible = isDoorMarkerVisible;
 }
 
 // Init the initial room for a estate
@@ -26,7 +28,8 @@ Estate.prototype.loadEstateOne = function ()
 	(
 		this.scene,				// THREE scene
 		"img/pano/i0.jpg",	    // Sphere texture (room texture)
-		0						// Marker setup
+        0,						// Marker setup
+        this.isDoorMarkerVisible    // Visibility
 	);
 }
 
@@ -40,7 +43,8 @@ Estate.prototype.updateEstateOne = function(object)
         (
             this.scene,				// THREE scene
             "img/pano/i1.jpg",	    // sphere texture (room texture)
-            1						// Marker Setup
+            1,						// Marker Setup
+            this.isDoorMarkerVisible    // Visibility
         );
         this.actualRoom.sphereMat.needUpdate = true;
         console.log(this.actualRoom);
@@ -54,7 +58,8 @@ Estate.prototype.updateEstateOne = function(object)
         (
             this.scene,				// THREE scene
             "img/pano/i2.jpg",	    // sphere texture (room texture)
-            2						// Marker Setup
+            2,						// Marker Setup
+            this.isDoorMarkerVisible    // Visibility
         );
         this.actualRoom.sphereMat.needUpdate = true;
         console.log(this.actualRoom);
@@ -68,7 +73,8 @@ Estate.prototype.updateEstateOne = function(object)
         (
             this.scene,				// THREE scene
             "img/pano/i0.jpg",	    // sphere texture (room texture)
-            0						// Marker Setup
+            0,						// Marker Setup
+            this.isDoorMarkerVisible    // Visibility
         );
         this.scene.add(this.actualRoom);
         this.actualRoom.sphereMat.needUpdate = true;
@@ -82,7 +88,8 @@ Estate.prototype.updateEstateOne = function(object)
         (
             this.scene,				// THREE scene
             "img/pano/i1.jpg",	    // sphere texture (room texture)
-            1						// Marker Setup
+            1,						// Marker Setup
+            this.isDoorMarkerVisible    // Visibility
         );
         this.scene.add(this.actualRoom);
         this.actualRoom.sphereMat.needUpdate = true;
@@ -96,7 +103,8 @@ Estate.prototype.updateEstateOne = function(object)
         (
             this.scene,				// THREE scene
             "img/pano/i3.jpg",	    // sphere texture (room texture)
-            3					    // Marker Setup
+            3,					    // Marker Setup
+            this.isDoorMarkerVisible    // Visibility
         );
         this.scene.add(this.actualRoom);
         this.actualRoom.sphereMat.needUpdate = true;
@@ -110,7 +118,8 @@ Estate.prototype.updateEstateOne = function(object)
         (
             this.scene,			    // THREE scene
             "img/pano/i5.jpg",	    // sphere texture (room texture)
-            5					    // Marker Setup
+            5,					    // Marker Setup
+            this.isDoorMarkerVisible    // Visibility
         );
         this.scene.add(this.actualRoom);
         this.actualRoom.sphereMat.needUpdate = true;
@@ -124,7 +133,8 @@ Estate.prototype.updateEstateOne = function(object)
         (
             this.scene,				// THREE scene
             "img/pano/i2.jpg",	    // sphere texture (room texture)
-            2						// Marker Setup
+            2,						// Marker Setup
+            this.isDoorMarkerVisible    // Visibility
         );
         this.scene.add(this.actualRoom);
         this.actualRoom.sphereMat.needUpdate = true;
@@ -138,7 +148,8 @@ Estate.prototype.updateEstateOne = function(object)
         (
             this.scene,				// THREE scene
             "img/pano/i4.jpg",	    // sphere texture (room texture)
-            4						// Marker Setup
+            4,						// Marker Setup
+            this.isDoorMarkerVisible    // Visibility
         );
         this.scene.add(this.actualRoom);
         this.actualRoom.sphereMat.needUpdate = true;
@@ -152,7 +163,8 @@ Estate.prototype.updateEstateOne = function(object)
         (
             this.scene,				// THREE scene
             "img/pano/i3.jpg",	    // sphere texture (room texture)
-            3						// Marker Setup
+            3,						// Marker Setup
+            this.isDoorMarkerVisible    // Visibility
         );
         this.scene.add(this.actualRoom);
         this.actualRoom.sphereMat.needUpdate = true;
@@ -166,7 +178,8 @@ Estate.prototype.updateEstateOne = function(object)
         (
             this.scene,				// THREE scene
             "img/pano/i2.jpg",	    // sphere texture (room texture)
-            2						// Marker Setup
+            2,						// Marker Setup
+            this.isDoorMarkerVisible    // Visibility
         );
         this.scene.add(this.actualRoom);
         this.actualRoom.sphereMat.needUpdate = true;
@@ -180,7 +193,8 @@ Estate.prototype.updateEstateOne = function(object)
         (
             this.scene,				// THREE scene
             "img/pano/i7.jpg",	    // sphere texture (room texture)
-            7						// Marker Setup
+            7,						// Marker Setup
+            this.isDoorMarkerVisible    // Visibility
         );
         this.scene.add(this.actualRoom);
         this.actualRoom.sphereMat.needUpdate = true;
@@ -194,7 +208,8 @@ Estate.prototype.updateEstateOne = function(object)
         (
             this.scene,				// THREE scene
             "img/pano/i6.jpg",	    // sphere texture (room texture)
-            6						// Marker Setup
+            6,						// Marker Setup
+            this.isDoorMarkerVisible    // Visibility
         );
         this.scene.add(this.actualRoom);
         this.actualRoom.sphereMat.needUpdate = true;
@@ -208,7 +223,8 @@ Estate.prototype.updateEstateOne = function(object)
         (
             this.scene,				// THREE scene
             "img/pano/i5.jpg",	    // sphere texture (room texture)
-            5						// Marker Setup
+            5,						// Marker Setup
+            this.isDoorMarkerVisible    // Visibility
         );
         this.scene.add(this.actualRoom);
         this.actualRoom.sphereMat.needUpdate = true;

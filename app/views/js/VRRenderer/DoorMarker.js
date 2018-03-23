@@ -23,7 +23,7 @@
 * has to be added to the a THREE.Scene object to be interactive
 * (intersection with THREE.Raycaster) and renderable.
 */
-var DoorMarker = function(id, position, orientation, scale, scene)
+var DoorMarker = function(id, position, orientation, scale, scene, isDoorMarkerVisible)
 {
     // The name or identification for a door marker entity
     this.id = id; 
@@ -51,16 +51,23 @@ var DoorMarker = function(id, position, orientation, scale, scene)
     // Plane
     this.plane = null;
 
+    // Visibility
+    this.isDoorMarkerVisible = isDoorMarkerVisible
+
     // Create the visible marker object
     this.createMarker(scene);
 }
 
 DoorMarker.prototype.createMarker = function(scene)
 {
+    var opacity = 0.0;
+    if(this.isDoorMarkerVisible)
+        opacity = 0.35;
+
     // Create plane geometry
     // Info: leaving heightSegments emtpy ends up in
     // a striped pattern.
-    var geometry = new THREE.PlaneGeometry
+    this.geometry = new THREE.PlaneGeometry
     ( 
         5,  // width — Width along the X axis. Default is 1.
         20, // height — Height along the Y axis. Default is 1.
@@ -69,19 +76,19 @@ DoorMarker.prototype.createMarker = function(scene)
     );
 
     // Set material
-    var material = new THREE.MeshBasicMaterial
+    this.material = new THREE.MeshBasicMaterial
     ( 
         {
             color       : 0x00ff00,             // Green color
             side        : THREE.DoubleSide,     // No backface culling
             wireframe   : true,                 // Optional wireframe
             transparent : true,                 // In any case, it has transparency
-            opacity     : 0.35 // 0.35          // Level of visibility form 0 - 1
+            opacity     : opacity               // Level of visibility form 0 - 1
         } 
     );
 
     // Create the mesh
-    this.plane  = new THREE.Mesh( geometry, material );
+    this.plane  = new THREE.Mesh( this.geometry, this.material );
 
     // Setup mesh translation
     this.plane.position.copy(this.position);
