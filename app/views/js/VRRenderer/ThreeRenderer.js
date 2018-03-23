@@ -9,10 +9,10 @@ var ThreeRenderer = function()
 
 	// Launch settings
 	this.isVRActive 	= false;
-	this.isOrbitActive 	= true;
-	this.isGridVisible	= true;
+	this.isOrbitActive 	= false;
+	this.isGridVisible	= false;
 	this.isDoorMarkerVisible = true;
-	this.test 			= true;
+	this.test 			= false;
 
 	// Renderer, scene and camera
 	this.canvas 	= null;
@@ -28,35 +28,12 @@ var ThreeRenderer = function()
 	this.cSizeY 	= window.innerHeight; //null;
 	this.grid 		= null;
 
-	// Parameter for jump animation
-	this.bodyPosition = null; 
-	this.velocity = null;
+	this.inputControler = new InputControler(this);
+
 	// Texture array which holds our panoramas
 	this.panoramas = [6];
 	// Count and switch the panorama (Key: Space)
 	this.panocounter = 0;
-
-	// Checks if input is allowed
-	this.isUserInteracting = false;
-	// Mouse position
-	this.onMouseDownMouseX = 0;
-	this.onMouseDownMouseY = 0;
-	// Longitude
-	this.lon = 0;
-	// Latitude
-	this.lat = 0;
-	// Angle of twist
-	this.phi = 0;
-	this.theta = 0;
-	this.onPointerDownPointerX = 0
-	this.onPointerDownPointerY = 0;
-	this.onPointerDownLon = 0;
-	this.onPointerDownLat = 0;
-
-	// Raycaster
-	this.mouse = new THREE.Vector2();
-	this.lastMove = Date.now();
-	this.raycaster = new THREE.Raycaster();
 
 	this.controller = null;
 	var that = this;
@@ -73,7 +50,7 @@ var ThreeRenderer = function()
 	// Init Three.js (cb: detectAndSetVRRenderer)
 	this.initTJS(function(renderer){
 		//  This button is important. It toggles between normal in-browser view
-		//  and the brand new WebVR in-your-goggles view!
+		//  and the brand new WebVR in-your-googles view!
 		if(that.isVRActive) {
 			WEBVR.getVRDisplay( function( display ){
 				//console.log(renderer);
@@ -91,28 +68,8 @@ var ThreeRenderer = function()
 	this.estate.loadEstateOne();
 	//this.initEstate();
 
-	// document.addEventListener('mousedown', function (event){
-	// 	that.onDocumentMouseDown(event, that)
-	// }, false );
-
-	document.addEventListener('mousedown', function (event){
-		that.onDocumentMouseDown(event)
-	}, false );
-
-	document.addEventListener('mouseup',  function (event){
-		that.onDocumentMouseUp(event)
-	}, false );
-
-	document.addEventListener('mousemove', function (event){
-		that.onDocumentMouseMove(event)
-	}, false );
-
-	document.addEventListener('mousewheel', function (event){
-		that.onDocumentMouseWheel(event)
-	}, false );
-
-	document.addEventListener('DOMMouseScroll', function (event){
-		that.onDocumentMouseWheel(event)
+	document.addEventListener('keydown', function (event){
+		that.onKeyDown(event)
 	}, false );
 
 	// Set update callback
@@ -160,15 +117,15 @@ ThreeRenderer.prototype.initTJS = function(detectAndSetVRRenderer)
 	// Set inspectors (camera) position (to be on eye hight)
 	if(this.isOrbitActive)
 	{
-		this.setOrbitControls();
+		this.inputControler.setOrbitControls();
 	
-		this.bodyPosition  		= new THREE.Vector3(0, 0, 350);
-		this.camera.position.set( this.bodyPosition.x, this.bodyPosition.y, this.bodyPosition.z );
+		this.inputControler.bodyPosition = new THREE.Vector3(0, 0, 350);
+		this.camera.position.set( this.inputControler.bodyPosition.x, this.inputControler.bodyPosition.y, this.inputControler.bodyPosition.z );
 	}
 	else 
 	{
-		this.bodyPosition  		= new THREE.Vector3(0, 15, 0);
-		this.camera.position.set( this.bodyPosition.x, this.bodyPosition.y, this.bodyPosition.z );
+		this.inputControler.bodyPosition = new THREE.Vector3(0, 15, 0);
+		this.camera.position.set( this.inputControler.bodyPosition.x, this.inputControler.bodyPosition.y, this.inputControler.bodyPosition.z );
 		
 		// TODO: Look at specific target when lauchning
 		this.camera.target 		= new THREE.Vector3( 0, 0, -1 );
@@ -177,7 +134,7 @@ ThreeRenderer.prototype.initTJS = function(detectAndSetVRRenderer)
 	}
 
 	// Hey may jump (later in VR ^^)
-	this.velocity      		= new THREE.Vector3();
+	this.inputControler.velocity = new THREE.Vector3();
 
 	// Set a light
 	var dirLight = new THREE.DirectionalLight
@@ -236,7 +193,7 @@ ThreeRenderer.prototype.initTJS = function(detectAndSetVRRenderer)
 	//  https://github.com/dataarts/dat.guiVR
 
 	dat.GUIVR.enableMouse( this.camera )
-	console.log(dat.GUIVR);
+	//console.log(dat.GUIVR);
 	//var gui = dat.GUIVR.create( 'Settings' )
 	//gui.position.set( 0.2, 0.8, -1 )
 	//gui.rotation.set( Math.PI / -6, 0, 0 )
@@ -252,16 +209,17 @@ ThreeRenderer.prototype.initTJS = function(detectAndSetVRRenderer)
 ThreeRenderer.prototype.animate = function()
 {
 	// Update first person controls
-	this.updateFPSControls();
+	if(!this.isOrbitActive)
+		this.inputControler.updateFPSControls();
 
 	// Resize
 	this.resize();
 
 	// Update raycaster and intersected objects
-	this.updateRaycaster();
+	this.inputControler.updateRaycaster();
 	
 	// Set the mouse curser if a marker is intersected
-	this.handleMouseCurserState();
+	this.inputControler.handleMouseCurserState();
 
 	// Save instance to the class
 	var that = this;
@@ -306,246 +264,6 @@ ThreeRenderer.prototype.resize = function()
 
 	this.camera.updateProjectionMatrix();
 	this.renderer.setSize(this.cSizeX, this.cSizeY);
-}
-
-ThreeRenderer.prototype.setOrbitControls = function()
-{
-	this.activeControls = new THREE.OrbitControls
-	(
-		this.camera,
-		this.renderer.domElement
-	);
-
-	this.activeControls.rotateSpeed 		= 1.0;
-	this.activeControls.enableDamping 		= true;
-	this.activeControls.dampingFactor 		= 1.25;
-	this.activeControls.zoomSpeed 			= 1.2;
-	this.activeControls.keys 				= [ 65, 83, 68 ];
-
-	this.activeControls.autoRotate 			= false;
-	this.activeControls.autoRotateSpeed 	= 0.5;
-};
-
-// Mouse-Down-Event: Raycast intersection and room handling (for now)
-ThreeRenderer.prototype.onDocumentMouseDown = function ( event ) 
-{
-	event.preventDefault();
-
-	switch(event.button)
-	{
-		case 0: // left
-			this.isUserInteracting = true;
-
-			// Update non THREE mouse controls on button press
-			if(!this.isOrbitActive)
-			{
-				this.onPointerDownPointerX = event.clientX;
-				this.onPointerDownPointerY = event.clientY;
-			
-				this.onPointerDownLon = this.lon;
-				this.onPointerDownLat = this.lat;
-			}
-
-			// if(this.intersects.length > 0)
-			// {
-			// 	if(this.intersects[0].object.geometry.type === 'PlaneGeometry')
-			// 	{
-			// 		//console.log(this.intersects[0]);
-			// 		//this.intersects[0].object.material.color.set( 0xff0000 );
-					
-			// 		if(this.test)
-			// 		{
-			// 			this.estate.updateTestEstate();
-			// 		}
-			// 		else 
-			// 		{
-			// 			this.estate.updateEstateOne(this.intersects[0].object);
-			// 		}
-			// 	}
-			// }
-			
-			break;
-
-		case 1: // middle
-			if(this.test)
-				this.estate.updateTestEstate();
-			break;
-
-		case 2: // right
-		//riftEnabled = true;
-			break;
-	}
-}
-
-// Mouse-Up-Event: Lock user input (mouse) once if button was released
-ThreeRenderer.prototype.onDocumentMouseUp = function( event ) 
-{
-	if(this.intersects.length > 0)
-	{
-		if(this.intersects[0].object.geometry.type === 'PlaneGeometry')
-		{
-			//console.log(this.intersects[0]);
-			//this.intersects[0].object.material.color.set( 0xff0000 );
-			
-			if(this.test)
-			{
-				this.estate.updateTestEstate();
-			}
-			else 
-			{
-				this.estate.updateEstateOne(this.intersects[0].object);
-			}
-		}
-	}
-	this.isUserInteracting = false;
-}
-
-// Mouse-Move-Event: While lift mouse button is pressed, update mouse user input
-ThreeRenderer.prototype.onDocumentMouseMove = function( event )
-{
-	// if (Date.now() - this.lastMove < 60) { // 32 frames a second
-    //     return;
-    // } else {
-    //     this.lastMove = Date.now();
-	// }
-
-	// Update non THREE mouse controls on mouse move
-	if (this.isUserInteracting && !this.isOrbitActive) 
-	{
-		this.lon = ( this.onPointerDownPointerX - event.clientX ) * 0.1 + this.onPointerDownLon;
-		this.lat = ( event.clientY - this.onPointerDownPointerY ) * 0.1 + this.onPointerDownLat;
-	}
-
-	// Get mouse position between -1 and 1 for both axis
-	this.mouse = this.updateMouseVector(event);
-}
-
-// Mouse-Wheel-Event: Update user input from mouse wheel (zoom)
-// Also handles DOMMouseScroll for different browser support
-ThreeRenderer.prototype.onDocumentMouseWheel = function( event ) 
-{
-	// WebKit
-	if ( event.wheelDeltaY ) 
-	{
-		this.camera.fov -= event.wheelDeltaY * 0.05;
-		console.log(this.camera.fov);
-		// fovrange -= event.wheelDeltaY * 0.05;
-		// fovscale -= event.wheelDeltaY * 0.0005;
-		// console.log("Increased RiftFOV by : " + fovscale);
-		// console.log("Increased FOV by : " + fovrange);
-		// console.log("FOV : " + finalfov);
-
-	// Opera / Explorer 9
-	} 
-	else if ( event.wheelDelta ) 
-	{
-		this.camera.fov -= event.wheelDelta * 0.05;
-		// fovrange -= event.wheelDelta * 0.05;
-		// fovscale -= event.wheelDelta * 0.0005;
-		// console.log("Increased RiftFOV by : " + fovscale);
-		// console.log("Increased FOV by : " + fovrange);
-		// console.log("FOV : " + finalfov);
-
-	// Firefox
-	}
-	else if ( event.detail ) 
-	{
-		this.camera.fov += event.detail * 1.0;
-		// fovrange += event.detail * 1.0;
-		// fovscale += event.detail * 0.01;
-		// console.log("Increased RiftFOV by : " + fovscale);
-		// console.log("Increased FOV by : " + fovrange);
-		// console.log("FOV : " + finalfov);
-
-	} // end if mouse wheel
-
-	// Update projection with new FOV
-	this.camera.updateProjectionMatrix();
-	//riftCam = new THREE.OculusRiftEffect(renderer);
-}
-
-// Compute 2D mouse vector for 3D raycast picking. The mouse
-// vector is normalized and then mapped from [0, 1] to [-1, 1].
-// It also respects the browser scroll offset and the canvas position
-ThreeRenderer.prototype.updateMouseVector = function( event )
-{
-	// Init vector2D for mouse
-	var mouse = new THREE.Vector2(0,0);
-
-	// Get scroll offset by the different browsers
-	var scrollOffsetX = 
-	(
-		window.pageXOffset ||
-		window.scrollX     ||
-		document.documentElement.scrollLeft
-	);
-
-	var scrollOffsetY = (window.pageYOffset ||
-						 window.scrollY     || 
-						 document.documentElement.scrollTop);
-
-	// Get mouse position inside render area in dependence of the scroll offset
-	mouse.x     = event.clientX - this.canvas.offsetLeft + scrollOffsetX;
-	mouse.y     = event.clientY - this.canvas.offsetTop  + scrollOffsetY;
-
-	// Normalize mouse coordinates
-	mouse.x     /= this.canvas.width;
-	mouse.y     /= this.canvas.height;
-
-	// MouseVec to normalVec: maps mouse vector from [0, 1] to [-1, 1]
-	mouse.x     =   mouse.x * 2  - 1;
-	mouse.y     = -(mouse.y * 2) + 1;
-
-	return mouse;
-}
-
-ThreeRenderer.prototype.updateRaycaster = function()
-{
-	// Update the picking ray with the camera and mouse position
-	this.raycaster.setFromCamera( this.mouse, this.camera );
-
-	// Calculate objects intersecting the picking ray
-	this.intersects = this.raycaster.intersectObjects( this.scene.children, true );
-}
-
-// If the mouse is over an doormarker, the mouse curser should 
-// change to a pointer. Else the curser should be default
-ThreeRenderer.prototype.handleMouseCurserState = function() 
-{
-	// If there are intersections
-	if(this.intersects.length > 0)
-	{
-		// Handle only plane geometries (door markers)
-		if(this.intersects[0].object.geometry.type === 'PlaneGeometry')
-			document.body.style.cursor = 'pointer';	
-		else 
-			document.body.style.cursor = 'default';
-	}
-}
-
-// Update the first person controls
-ThreeRenderer.prototype.updateFPSControls = function()
-{
-	// If orbit camera is not active
-	if(!this.isOrbitActive)
-	{
-		// Update rotation
-		this.lat = Math.max( -85, Math.min( 85, this.lat ) );
-		this.phi = THREE.Math.degToRad( 90 - this.lat );
-		this.theta = THREE.Math.degToRad( this.lon );
-
-		// Set target to look at
-		if(this.camera != 'undefined')
-		{
-			// Update target vector
-			this.camera.target.x = 500 * Math.sin( this.phi ) * Math.cos( this.theta );
-			this.camera.target.y = 500 * Math.cos( this.phi );
-			this.camera.target.z = 500 * Math.sin( this.phi ) * Math.sin( this.theta );
-		}
-
-		// Set look at target
-		this.camera.lookAt( this.camera.target );
-	}
 }
 
 ThreeRenderer.prototype.connectVRController = function(scene, renderer, that){
@@ -725,3 +443,23 @@ ThreeRenderer.prototype.initVRIntersectionRay = function(controller, controllerM
 	// Add the line to the vr controller
 	controller.add(that.line);
 }
+
+/*
+ThreeRenderer.prototype.onKeyDown = function( event ) 
+{
+	var keyCode = event.which;
+
+	// q
+	if (keyCode == 81) {
+		console.log("up");
+	// w
+	} else if (keyCode == 87) {
+		console.log("down");
+	}
+}
+
+ThreeRenderer.prototype.setupUI = function( event ) 
+{
+	
+}*/
+
