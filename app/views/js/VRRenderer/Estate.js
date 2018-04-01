@@ -21,7 +21,7 @@ var Estate = function(scene, isDoorMarkerVisible)
 }
 
 // Init the initial room for a estate
-Estate.prototype.loadEstateOne = function ()
+Estate.prototype.loadEstate = function ()
 {
 	// We start with the demo launch room
 	this.actualRoom = new Room
@@ -33,7 +33,7 @@ Estate.prototype.loadEstateOne = function ()
 	);
 }
 
-Estate.prototype.updateEstateOne = function(object)
+Estate.prototype.updateEstate = function(object)
 {
     // To entrence (from outside)
     if(object.name == 0)
@@ -229,21 +229,4 @@ Estate.prototype.updateEstateOne = function(object)
         this.scene.add(this.actualRoom);
         this.actualRoom.sphereMat.needUpdate = true;
     }
-}
-
-Estate.prototype.updateTestEstate = function()
-{
-
-    // Switch between panoramas
-    this.panocounter++;
-
-    if(this.panocounter > 6) 
-        this.panocounter = 0; 
-
-    // Switch panoramas
-    this.actualRoom.sphereMat.map = THREE.ImageUtils.loadTexture(this.actualRoom.panoramas[this.panocounter]);
-    this.actualRoom.sphereMat.needUpdate = true;
-
-    console.log('Src in panoramas : ' + this.actualRoom.panoramas[this.panocounter]);
-    console.log('Panocounter: ' + this.panocounter);
 }

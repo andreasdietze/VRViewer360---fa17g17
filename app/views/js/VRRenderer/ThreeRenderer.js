@@ -1,42 +1,35 @@
+// Renderer
 var ThreeRenderer = function()
 {
-	// INFO:
-	// Klasse für Sphere erstellen (Room, -> enthält mehrere Marker (array) / MarkerManager möglich, hält array einzelne
-	// Marker -> Estate enhält array von Rooms -> Room enthält MarkerHandler (DoorMarkerFactory) -> DoorMarkerFactory enthält array von DoorMarkers
-	// http://www.dofactory.com/javascript/factory-method-design-pattern
-	// Renderer
 	console.log("Init Renderer");
 
 	// Launch settings
-	this.isVRActive 	= false;
-	this.isOrbitActive 	= false;
-	this.isGridVisible	= false;
-	this.isDoorMarkerVisible = true;
-	this.test 			= false;
+	this.isVRActive 			= false;
+	this.isOrbitActive 			= false;
+	this.isGridVisible 			= false;
+	this.isDoorMarkerVisible 	= false;
+	this.test 					= false;
 
-	// Renderer, scene and camera
-	this.canvas 	= null;
-	this.scene 		= null; 
-	this.camera 	= null;
-	this.renderer 	= null;
-	this.FOV 		= 75;
+	// Renderer, scene, camera and spaces
+	this.canvas 				= null;
+	this.scene 					= null; 
+	this.camera 				= null;
+	this.renderer 				= null;
+	this.FOV 					= 75;
+	this.cSizeX 				= window.innerWidth;
+	this.cSizeY 				= window.innerHeight;
 
-	// Additional Objects
-	this.loader		= null;
-	this.dirLight 	= null;
-	this.cSizeX		= window.innerWidth;  //null;
-	this.cSizeY 	= window.innerHeight; //null;
-	this.grid 		= null;
+	// Visual grid for orientation
+	this.grid 					= null;
 
-	this.inputControler = new InputControler(this);
+	// Non-VR input management
+	this.inputControler 		= new InputControler(this);
 
-	// Texture array which holds our panoramas
-	this.panoramas = [6];
-	// Count and switch the panorama (Key: Space)
-	this.panocounter = 0;
+	// VR controller
+	this.controller 			= null;
 
-	this.controller = null;
-	var that = this;
+	// Copy of 'this'
+	var that 					= this;
 
 	// If we use vr, check for availability
 	if(this.isVRActive)
@@ -65,8 +58,7 @@ var ThreeRenderer = function()
 
 	// Init Estate/Rooms
 	this.estate = new Estate(this.scene, this.isDoorMarkerVisible);
-	this.estate.loadEstateOne();
-	//this.initEstate();
+	this.estate.loadEstate();
 
 	document.addEventListener('keydown', function (event){
 		that.onKeyDown(event)
@@ -130,27 +122,7 @@ ThreeRenderer.prototype.initTJS = function(detectAndSetVRRenderer)
 		// TODO: Look at specific target when lauchning
 		this.camera.target 		= new THREE.Vector3( 0, 0, -1 );
 		this.camera.lookAt(this.camera.position, this.camera.target, new THREE.Vector3(1000,1,0));
-		// console.log(this.camera.target);
 	}
-
-	// Hey may jump (later in VR ^^)
-	this.inputControler.velocity = new THREE.Vector3();
-
-	// Set a light
-	var dirLight = new THREE.DirectionalLight
-	(
-		0xffffff, 		// color
-		1.0				// Intensity			
-	);
-
-	var pos = new THREE.Vector3 (1, 1, 0);
-	dirLight.position.x = pos.x
-	dirLight.position.y = pos.y;
-	dirLight.position.z = pos.z;
-	this.scene.add(dirLight);
-
-	// var light = new THREE.AmbientLight( 0x404040, 3 );
-	// scene.add( light );
 
 	// Add world grid.
 	var gridSettings = 
@@ -252,15 +224,17 @@ ThreeRenderer.prototype.render = function()
 	this.renderer.render( this.scene, this.camera );
 }
 
+// Resize function - Resize sceen if window spaces transform
 ThreeRenderer.prototype.resize = function()
 {
-	// Resize
-	//this.cSizeX 		= 800; //(this.uploadPan.clientHeight / 3) * 4;
-	//this.cSizeY 		= 600; //this.uploadPan.clientHeight;
-	this.cSizeX		= window.innerWidth;  //800;
-	this.cSizeY 	= window.innerHeight; //600;
+	// Get actual browser window spaces
+	this.cSizeX		= window.innerWidth;
+	this.cSizeY 	= window.innerHeight;
+
+	// Compute aspect
 	this.camera.aspect 	= this.cSizeX / this.cSizeY;
 
+	// Update camera and set new render spaces
 	this.camera.updateProjectionMatrix();
 	this.renderer.setSize(this.cSizeX, this.cSizeY);
 }
@@ -382,16 +356,7 @@ ThreeRenderer.prototype.connectVRController = function(scene, renderer, that){
 				for(var i = 0; i < that.intersectsVR.length; i++)
 				{
 					if(that.intersectsVR[i].object.geometry.type === 'PlaneGeometry')
-					{
-						if(that.test)
-						{
-							that.estate.updateTestEstate();
-						}
-						else 
-						{
-							that.estate.updateEstateOne(that.intersectsVR[i].object);
-						}
-					}
+						that.estate.updateEstate(that.intersectsVR[i].object);
 				}
 			}
 		})

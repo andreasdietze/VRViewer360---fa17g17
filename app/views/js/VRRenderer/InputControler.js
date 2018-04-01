@@ -4,9 +4,8 @@ var InputControler = function(main)
     console.log("Called InputControler");
     this.threeRenderer = main;
 
-    // Parameter for jump animation
+    // Standing position
 	this.bodyPosition = null; 
-    this.velocity = null;
     
     // Mouse manual controls position
 	this.onMouseDownMouseX = 0;
@@ -26,17 +25,16 @@ var InputControler = function(main)
     // Checks if input is allowed
 	this.isUserInteracting = false;
     
-    // Raycaster
+    // Raycaster for mouse intersections
     this.mouse = new THREE.Vector2();
     this.lastMove = Date.now();
     this.raycaster = new THREE.Raycaster();
 
-    // document.addEventListener('mousedown', function (event){
-	// 	that.onDocumentMouseDown(event, that)
-    // }, false );
-    
+	// Make a copy of 'this' because within a Event-Callback 
+	// the keyword 'this' calles the event itself.
     var that = this;
 
+	// Mouse events
 	document.addEventListener('mousedown', function (event){
 		that.onDocumentMouseDown(event)
 	}, false );
@@ -83,6 +81,7 @@ InputControler.prototype.updateFPSControls = function()
 	}
 }
 
+// Settings of THREE OrbitControls
 InputControler.prototype.setOrbitControls = function()
 {
 	this.activeControls = new THREE.OrbitControls
@@ -129,38 +128,26 @@ InputControler.prototype.onDocumentMouseDown = function ( event )
 			break;
 
 		case 2: // right
-		//riftEnabled = true;
 			break;
 	}
 }
 
-// Mouse-Up-Event: Lock user input (mouse) once if button was released
+// Mouse-Up-Event: Lock user input (mouse) once if button was released and check intersections
 InputControler.prototype.onDocumentMouseUp = function( event ) 
 {
 	if(this.intersects.length > 0)
 	{
-		if( this.intersects[0].object.geometry.name !== "undefined") //this.intersects[0].object.geometry.type === 'PlaneGeometry' ||
-		{
-			//console.log(this.intersects[0]);
-			//this.intersects[0].object.material.color.set( 0xff0000 );
-			
-			if(this.threeRenderer.test)
-			{
-				this.threeRenderer.estate.updateTestEstate();
-			}
-			else 
-			{
-				this.threeRenderer.estate.updateEstateOne(this.intersects[0].object);
-			}
-		}
+		if( this.intersects[0].object.geometry.name !== "undefined")
+			this.threeRenderer.estate.updateEstate(this.intersects[0].object);
 	}
+
 	this.isUserInteracting = false;
 }
 
 // Mouse-Move-Event: While lift mouse button is pressed, update mouse user input
 InputControler.prototype.onDocumentMouseMove = function( event )
 {
-	// if (Date.now() - this.lastMove < 60) { // 32 frames a second
+	// if (Date.now() - this.lastMove < 60) { // 60/30 frames a second
     //     return;
     // } else {
     //     this.lastMove = Date.now();
@@ -184,7 +171,6 @@ InputControler.prototype.onDocumentMouseWheel = function( event )
 	// WebKit
 	if ( event.wheelDeltaY ) 
 	{
-
 		this.threeRenderer.camera.fov -= event.wheelDeltaY * 0.05;
 
 		if(this.threeRenderer.camera.fov > 75)
@@ -192,8 +178,6 @@ InputControler.prototype.onDocumentMouseWheel = function( event )
 
 		if(this.threeRenderer.camera.fov < 33)
 			this.threeRenderer.camera.fov = 33;
-
-		console.log(this.threeRenderer.camera.fov);
 
 	// Opera / Explorer 9
 	} 
@@ -207,21 +191,17 @@ InputControler.prototype.onDocumentMouseWheel = function( event )
 		if(this.threeRenderer.camera.fov < 33)
 			this.threeRenderer.camera.fov = 33;
 
-		console.log(this.threeRenderer.camera.fov);
-
 	// Firefox
 	}
 	else if ( event.detail ) 
 	{
 		this.threeRenderer.camera.fov += event.detail * 1.0;
-		
+
 		if(this.threeRenderer.camera.fov > 75)
 			this.threeRenderer.camera.fov = 75;
 
 		if(this.threeRenderer.camera.fov < 33)
 			this.threeRenderer.camera.fov = 33;
-
-		console.log(this.threeRenderer.camera.fov);
 
 	} // end if mouse wheel
 
