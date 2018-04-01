@@ -139,7 +139,7 @@ InputControler.prototype.onDocumentMouseUp = function( event )
 {
 	if(this.intersects.length > 0)
 	{
-		if(this.intersects[0].object.geometry.type === 'PlaneGeometry')
+		if( this.intersects[0].object.geometry.name !== "undefined") //this.intersects[0].object.geometry.type === 'PlaneGeometry' ||
 		{
 			//console.log(this.intersects[0]);
 			//this.intersects[0].object.material.color.set( 0xff0000 );
@@ -184,35 +184,44 @@ InputControler.prototype.onDocumentMouseWheel = function( event )
 	// WebKit
 	if ( event.wheelDeltaY ) 
 	{
+
 		this.threeRenderer.camera.fov -= event.wheelDeltaY * 0.05;
+
+		if(this.threeRenderer.camera.fov > 75)
+			this.threeRenderer.camera.fov = 75;
+
+		if(this.threeRenderer.camera.fov < 33)
+			this.threeRenderer.camera.fov = 33;
+
 		console.log(this.threeRenderer.camera.fov);
-		// fovrange -= event.wheelDeltaY * 0.05;
-		// fovscale -= event.wheelDeltaY * 0.0005;
-		// console.log("Increased RiftFOV by : " + fovscale);
-		// console.log("Increased FOV by : " + fovrange);
-		// console.log("FOV : " + finalfov);
 
 	// Opera / Explorer 9
 	} 
 	else if ( event.wheelDelta ) 
 	{
 		this.threeRenderer.camera.fov -= event.wheelDelta * 0.05;
-		// fovrange -= event.wheelDelta * 0.05;
-		// fovscale -= event.wheelDelta * 0.0005;
-		// console.log("Increased RiftFOV by : " + fovscale);
-		// console.log("Increased FOV by : " + fovrange);
-		// console.log("FOV : " + finalfov);
+
+		if(this.threeRenderer.camera.fov > 75)
+			this.threeRenderer.camera.fov = 75;
+
+		if(this.threeRenderer.camera.fov < 33)
+			this.threeRenderer.camera.fov = 33;
+
+		console.log(this.threeRenderer.camera.fov);
 
 	// Firefox
 	}
 	else if ( event.detail ) 
 	{
 		this.threeRenderer.camera.fov += event.detail * 1.0;
-		// fovrange += event.detail * 1.0;
-		// fovscale += event.detail * 0.01;
-		// console.log("Increased RiftFOV by : " + fovscale);
-		// console.log("Increased FOV by : " + fovrange);
-		// console.log("FOV : " + finalfov);
+		
+		if(this.threeRenderer.camera.fov > 75)
+			this.threeRenderer.camera.fov = 75;
+
+		if(this.threeRenderer.camera.fov < 33)
+			this.threeRenderer.camera.fov = 33;
+
+		console.log(this.threeRenderer.camera.fov);
 
 	} // end if mouse wheel
 
@@ -272,10 +281,13 @@ InputControler.prototype.handleMouseCurserState = function()
 	// If there are intersections
 	if(this.intersects.length > 0)
 	{
-		// Handle only plane geometries (door markers)
+		// Handle only plane geometries (door markers) and sphere geometries which do not have the name "Room"
 		if(this.intersects[0].object.geometry.type === 'PlaneGeometry')
+			document.body.style.cursor = 'pointer';	
+		else if (this.intersects[0].object.geometry.type == "SphereGeometry" && this.intersects[0].object.name != "Room")
 			document.body.style.cursor = 'pointer';	
 		else 
 			document.body.style.cursor = 'default';
+
 	}
 }

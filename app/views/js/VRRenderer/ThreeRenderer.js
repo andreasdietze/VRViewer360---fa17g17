@@ -243,7 +243,6 @@ ThreeRenderer.prototype.animate = function()
 	// Blind is slow in chrome
 	// https://stackoverflow.com/questions/10697748/how-do-i-use-requestanimationframe-to-call-my-js-prototype
 	//requestAnimationFrame( ThreeRenderer.prototype.animate.blind (this) );
-
 	this.render();
 }
 
@@ -443,23 +442,3 @@ ThreeRenderer.prototype.initVRIntersectionRay = function(controller, controllerM
 	// Add the line to the vr controller
 	controller.add(that.line);
 }
-
-/*
-ThreeRenderer.prototype.onKeyDown = function( event ) 
-{
-	var keyCode = event.which;
-
-	// q
-	if (keyCode == 81) {
-		console.log("up");
-	// w
-	} else if (keyCode == 87) {
-		console.log("down");
-	}
-}
-
-ThreeRenderer.prototype.setupUI = function( event ) 
-{
-	
-}*/
-

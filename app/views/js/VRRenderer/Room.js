@@ -199,6 +199,21 @@ Room.prototype.doMarkerSetup = function(markerSetup)
                 this.isDoorMarkerVisible            // Visibility
             )
         );
+
+        // Goto i1 - entrence
+        this.doorMarkerFactory.addMarker
+        (
+            new DoorMarker                          // Door to entrence
+            (
+                0,                                  // ID
+                new THREE.Vector3(20, 35, 160),	    // Position
+                new THREE.Vector3(0, 0 , 0),	    // Orientation
+                new THREE.Vector3(5.5,5,1),			// Scale
+                this.scene,							// Scene
+                this.isDoorMarkerVisible,            // Visibility
+                true
+            )
+        );
         break; 
 
         case 1: // Add markers for setup 1 (i1 - entrence)
@@ -213,6 +228,7 @@ Room.prototype.doMarkerSetup = function(markerSetup)
                 new THREE.Vector3(20, 8, 1),		// Scale
                 this.scene,							// Scene
                 this.isDoorMarkerVisible            // Visibility
+                
             )
         );
 

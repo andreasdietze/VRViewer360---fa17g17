@@ -23,7 +23,7 @@
 * has to be added to the a THREE.Scene object to be interactive
 * (intersection with THREE.Raycaster) and renderable.
 */
-var DoorMarker = function(id, position, orientation, scale, scene, isDoorMarkerVisible)
+var DoorMarker = function(id, position, orientation, scale, scene, isDoorMarkerVisible, isCurved)
 {
     // The name or identification for a door marker entity
     this.id = id; 
@@ -51,14 +51,23 @@ var DoorMarker = function(id, position, orientation, scale, scene, isDoorMarkerV
     // Plane
     this.plane = null;
 
+    // Sphere (small part of a sphere used as curved plane)
+    this.sphere = null;
+
     // Visibility
     this.isDoorMarkerVisible = isDoorMarkerVisible
 
-    // Create the visible marker object
-    this.createMarker(scene);
+    this.isCurved = isCurved;
+    console.log(this.isCurved);
+    // Create the visible marker object as curved plane object
+    if(this.isCurved) 
+        this.createMarkerCurvedPlane(scene);
+
+    if(!this.isCurved) // Create the visible marker object as plane object
+        this.createMarkerPlane(scene);
 }
 
-DoorMarker.prototype.createMarker = function(scene)
+DoorMarker.prototype.createMarkerPlane = function(scene)
 {
     var opacity = 0.0;
     if(this.isDoorMarkerVisible)
@@ -111,8 +120,70 @@ DoorMarker.prototype.createMarker = function(scene)
     this.scene.add( this.plane );
 }
 
+DoorMarker.prototype.createMarkerCurvedPlane = function(scene)
+{
+    var opacity = 0.0;
+    if(this.isDoorMarkerVisible)
+        opacity = 0.35;
+
+    // Create curved plane geometry
+    this.geometry = new THREE.SphereGeometry
+	(
+        200, // radius — sphere radius. Default is 1.
+        16,  // widthSegments — number of horizontal segments. Minimum value is 3, and the default is 8.
+        16,   // heightSegments — number of vertical segments. Minimum value is 2, and the default is 6.
+        0,     // phiStart — specify horizontal starting angle. Default is 0.
+        Math.PI / 11,     // phiLength — specify horizontal sweep angle size. Default is Math.PI * 2.
+        Math.PI / 2.1,     // thetaStart — specify vertical starting angle. Default is 0.
+        Math.PI / 7     // thetaLength — specify vertical sweep angle size. Default is Math.PI.
+    );
+    
+    // Set material
+    this.material = new THREE.MeshBasicMaterial
+    ( 
+        {
+            color       : 0xffff00,             // Green color
+            side        : THREE.DoubleSide,     // No backface culling
+            wireframe   : true,                 // Optional wireframe
+            transparent : true,                 // In any case, it has transparency
+            opacity     : opacity               // Level of visibility form 0 - 1
+        } 
+    );
+
+    // Create the mesh
+	this.sphere = new THREE.Mesh( this.geometry, this.material );
+
+	// 5. Transformation: copy scale from room spehre
+	this.sphere.applyMatrix( new THREE.Matrix4().makeScale(1, 1, 1)); //(0.975,0.975,0.975));
+
+	// 4. Transformation: rotate y (left - right)
+	this.sphere.applyMatrix( new THREE.Matrix4().makeRotationAxis (new THREE.Vector3(0, 1, 0), Math.PI / 180 * 88 ));
+
+	// 3. Transformation: rotate x (up - down)
+	this.sphere.applyMatrix( new THREE.Matrix4().makeRotationAxis (new THREE.Vector3(1, 0, 0), Math.PI / 180 * -19 ));
+
+	// 2. Transformation: rotate z (level of diagonal alignment)
+    this.sphere.applyMatrix( new THREE.Matrix4().makeRotationAxis (new THREE.Vector3(0, 0, 1), Math.PI / 180 * 5 ));
+    
+    // 1. Transformation: translation (position)
+	this.sphere.position.copy(new THREE.Vector3(0, 0, 0));
+
+    // Every room has the same name: Room
+    // Note: at present, the max amount of concurrent rooms at 
+    //       any time is ONE! This saves memory and performance
+    //       on less powerful devices.
+    this.sphere.name = this.id;
+
+    // Add mesh to scene
+    this.scene.add( this.sphere );
+}
+
  // Remove single plane objects from the scene
 DoorMarker.prototype.removeFromScene = function()
 {
-    this.scene.remove(this.plane);
+    if(this.plane == null)
+        this.scene.remove(this.sphere);
+
+    if(this.sphere == null)
+        this.scene.remove(this.plane);
 }
