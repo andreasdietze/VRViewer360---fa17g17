@@ -1,6 +1,7 @@
 /*
-* Class DoorMarkerFactory:
-* Handles any door marker entities for a single room.
+* Class DoorMarkerFactory: base data structure manager for doormarkers.
+* Handles any door marker entities for a single room and 
+* allowes a simple managment of multiple markers. 
 */
 var DoorMarkerFactory = function() 
 {

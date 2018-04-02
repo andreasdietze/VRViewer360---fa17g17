@@ -194,13 +194,13 @@ Room.prototype.doMarkerSetup = function(markerSetup)
                 0,                                  // ID
                 new THREE.Vector3(20, 35, 160),	    // Position
                 new THREE.Vector3(0, 0 , 0),	    // Orientation
-                new THREE.Vector3(5.5,5,1),			// Scale
+                new THREE.Vector3(5.5, 5, 1),		// Scale
                 this.scene,							// Scene
                 this.isDoorMarkerVisible            // Visibility
             )
         );
 
-        // Goto i1 - entrence
+        // Goto i1 - entrence (precision marker)
         this.doorMarkerFactory.addMarker
         (
             new DoorMarker                          // Door to entrence
@@ -208,10 +208,10 @@ Room.prototype.doMarkerSetup = function(markerSetup)
                 0,                                  // ID
                 new THREE.Vector3(20, 35, 160),	    // Position
                 new THREE.Vector3(0, 0 , 0),	    // Orientation
-                new THREE.Vector3(5.5,5,1),			// Scale
+                new THREE.Vector3(5.5, 5, 1),		// Scale
                 this.scene,							// Scene
-                this.isDoorMarkerVisible,            // Visibility
-                true
+                this.isDoorMarkerVisible,           // Visibility
+                true                                // Is curved
             )
         );
         break; 
@@ -240,7 +240,7 @@ Room.prototype.doMarkerSetup = function(markerSetup)
                 2,                                  // ID
                 new THREE.Vector3(180, -35, -45),	// Position
                 new THREE.Vector3(0, 104 , 0),	    // Orientation
-                new THREE.Vector3(5.5,5,1),			// Scale
+                new THREE.Vector3(5.5, 5, 1),		// Scale
                 this.scene,							// Scene
                 this.isDoorMarkerVisible            // Visibility
             )
@@ -256,7 +256,7 @@ Room.prototype.doMarkerSetup = function(markerSetup)
                 3,                                  // ID
                 new THREE.Vector3(-160, -70, -20),	// Position
                 new THREE.Vector3(0, 90, 0), 		// Orientation
-                new THREE.Vector3(20,15,1),			// Scale
+                new THREE.Vector3(20, 15, 1),		// Scale
                 this.scene,							// Scene
                 this.isDoorMarkerVisible            // Visibility
             )
@@ -270,7 +270,7 @@ Room.prototype.doMarkerSetup = function(markerSetup)
                 4,                                  // ID
                 new THREE.Vector3(40, -70, -150),	// Position
                 new THREE.Vector3(0, 0 , 0),	    // Orientation
-                new THREE.Vector3(20,15,1),			// Scale
+                new THREE.Vector3(20, 15, 1),		// Scale
                 this.scene,							// Scene
                 this.isDoorMarkerVisible            // Visibility
             )
@@ -284,7 +284,7 @@ Room.prototype.doMarkerSetup = function(markerSetup)
                 5,                                  // ID
                 new THREE.Vector3(-40, -70, 150),	// Position
                 new THREE.Vector3(0, 0 , 0),	    // Orientation
-                new THREE.Vector3(20,15,1),			// Scale
+                new THREE.Vector3(20, 15, 1),		// Scale
                 this.scene,							// Scene
                 this.isDoorMarkerVisible            // Visibility
             )
@@ -300,7 +300,7 @@ Room.prototype.doMarkerSetup = function(markerSetup)
                 6,                                  // ID
                 new THREE.Vector3(100, -35, -140),	// Position
                 new THREE.Vector3(0, 0, 0), 		// Orientation
-                new THREE.Vector3(10,8,1),			// Scale
+                new THREE.Vector3(10, 8, 1),		// Scale
                 this.scene,							// Scene
                 this.isDoorMarkerVisible            // Visibility
             )
@@ -314,7 +314,7 @@ Room.prototype.doMarkerSetup = function(markerSetup)
                 7,                                  // ID
                 new THREE.Vector3(180, -35, -45),	// Position
                 new THREE.Vector3(0, 104 , 0),	    // Orientation
-                new THREE.Vector3(5.5,5,1),			// Scale
+                new THREE.Vector3(5.5, 5, 1),		// Scale
                 this.scene,							// Scene
                 this.isDoorMarkerVisible            // Visibility
             )
@@ -330,7 +330,7 @@ Room.prototype.doMarkerSetup = function(markerSetup)
                 8,                                  // ID
                 new THREE.Vector3(140, -35, 100),	// Position
                 new THREE.Vector3(0, 55, 0), 		// Orientation
-                new THREE.Vector3(15,8,1),			// Scale
+                new THREE.Vector3(15, 8, 1),		// Scale
                 this.scene,							// Scene
                 this.isDoorMarkerVisible            // Visibility
             )
@@ -346,7 +346,7 @@ Room.prototype.doMarkerSetup = function(markerSetup)
                 9,                                  // ID
                 new THREE.Vector3(-160, -70, -20),	// Position
                 new THREE.Vector3(0, 90, 0), 		// Orientation
-                new THREE.Vector3(20,15,1),			// Scale
+                new THREE.Vector3(20, 15, 1),		// Scale
                 this.scene,							// Scene
                 this.isDoorMarkerVisible            // Visibility
             )
@@ -360,7 +360,7 @@ Room.prototype.doMarkerSetup = function(markerSetup)
                 10,                                 // ID
                 new THREE.Vector3(40, -70, -150),	// Position
                 new THREE.Vector3(0, 0 , 0),	    // Orientation
-                new THREE.Vector3(20,15,1),			// Scale
+                new THREE.Vector3(20, 15, 1),		// Scale
                 this.scene,							// Scene
                 this.isDoorMarkerVisible            // Visibility
             )
@@ -374,7 +374,7 @@ Room.prototype.doMarkerSetup = function(markerSetup)
                 11,                                 // ID
                 new THREE.Vector3(-40, -70, 150),	// Position
                 new THREE.Vector3(0, 0 , 0),	    // Orientation
-                new THREE.Vector3(20,15,1),			// Scale
+                new THREE.Vector3(20, 15, 1),		// Scale
                 this.scene,							// Scene
                 this.isDoorMarkerVisible            // Visibility
             )
@@ -390,7 +390,7 @@ Room.prototype.doMarkerSetup = function(markerSetup)
                 12,                                 // ID
                 new THREE.Vector3(150, -35, 70),	// Position
                 new THREE.Vector3(0, 55, 0), 		// Orientation
-                new THREE.Vector3(15,8,1),			// Scale
+                new THREE.Vector3(15, 8, 1),		// Scale
                 this.scene,							// Scene
                 this.isDoorMarkerVisible            // Visibility
             )
@@ -406,7 +406,7 @@ Room.prototype.doMarkerSetup = function(markerSetup)
                 13,                                 // ID
                 new THREE.Vector3(150, -35, -70),	// Position
                 new THREE.Vector3(0, 55, 0), 		// Orientation
-                new THREE.Vector3(15,8,1),			// Scale
+                new THREE.Vector3(15, 8, 1),		// Scale
                 this.scene,							// Scene
                 this.isDoorMarkerVisible            // Visibility
             )

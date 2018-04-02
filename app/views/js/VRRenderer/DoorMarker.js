@@ -22,6 +22,14 @@
 * Due to a DoorMarker.js object is a THREE.Object3D object, it
 * has to be added to the a THREE.Scene object to be interactive
 * (intersection with THREE.Raycaster) and renderable.
+
+* @param {boolean}          isDoorMarkerVisible
+* Determines if doormarker plane objects are visible or not.
+*
+* @param {boolean}          isCurved
+* Determines wether a doormarker is sphere like curved or not.
+* Note: This is just a example for a more precise impimentation of 
+* possible doormarker objects.  
 */
 var DoorMarker = function(id, position, orientation, scale, scene, isDoorMarkerVisible, isCurved)
 {
@@ -120,6 +128,7 @@ DoorMarker.prototype.createMarkerPlane = function(scene)
     this.scene.add( this.plane );
 }
 
+// Note: This is just a example marker for a better precision 
 DoorMarker.prototype.createMarkerCurvedPlane = function(scene)
 {
     var opacity = 0.0;
@@ -129,12 +138,12 @@ DoorMarker.prototype.createMarkerCurvedPlane = function(scene)
     // Create curved plane geometry
     this.geometry = new THREE.SphereGeometry
 	(
-        200, // radius — sphere radius. Default is 1.
-        16,  // widthSegments — number of horizontal segments. Minimum value is 3, and the default is 8.
-        16,   // heightSegments — number of vertical segments. Minimum value is 2, and the default is 6.
-        0,     // phiStart — specify horizontal starting angle. Default is 0.
-        Math.PI / 11,     // phiLength — specify horizontal sweep angle size. Default is Math.PI * 2.
-        Math.PI / 2.1,     // thetaStart — specify vertical starting angle. Default is 0.
+        200,            // radius — sphere radius. Default is 1.
+        16,             // widthSegments — number of horizontal segments. Minimum value is 3, and the default is 8.
+        16,             // heightSegments — number of vertical segments. Minimum value is 2, and the default is 6.
+        0,              // phiStart — specify horizontal starting angle. Default is 0.
+        Math.PI / 11,   // phiLength — specify horizontal sweep angle size. Default is Math.PI * 2.
+        Math.PI / 2.1,  // thetaStart — specify vertical starting angle. Default is 0.
         Math.PI / 7     // thetaLength — specify vertical sweep angle size. Default is Math.PI.
     );
     
@@ -181,9 +190,11 @@ DoorMarker.prototype.createMarkerCurvedPlane = function(scene)
  // Remove single plane objects from the scene
 DoorMarker.prototype.removeFromScene = function()
 {
+    // In case the non curved planar object is null, remove the curved plane
     if(this.plane == null)
         this.scene.remove(this.sphere);
 
+    // In case the curved plane is null, remove the non curved plane
     if(this.sphere == null)
         this.scene.remove(this.plane);
 }

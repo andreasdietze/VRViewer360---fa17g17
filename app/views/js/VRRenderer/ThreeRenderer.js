@@ -5,9 +5,9 @@ var ThreeRenderer = function()
 
 	// Launch settings
 	this.isVRActive 			= false;
-	this.isOrbitActive 			= false;
+	this.isOrbitActive 			= true;
 	this.isGridVisible 			= false;
-	this.isDoorMarkerVisible 	= false;
+	this.isDoorMarkerVisible 	= true;
 	this.test 					= false;
 
 	// Renderer, scene, camera and spaces
@@ -18,6 +18,7 @@ var ThreeRenderer = function()
 	this.FOV 					= 75;
 	this.cSizeX 				= window.innerWidth;
 	this.cSizeY 				= window.innerHeight;
+	this.lightDir 				= null;
 
 	// Visual grid for orientation
 	this.grid 					= null;
@@ -28,15 +29,25 @@ var ThreeRenderer = function()
 	// VR controller
 	this.controller 			= null;
 
+	// Is a VR divices avaiable ?
+	this.isVRAvailable			= false;
+
 	// Copy of 'this'
 	var that 					= this;
+
+	this.intersectsVR = [];
 
 	// If we use vr, check for availability
 	if(this.isVRActive)
 	{
+		// Set vr availability to true
+		that.isVRAvailable = true;
+
+		// If exception is catched by vr availability check, set vr availability to false
 		WEBVR.checkAvailability().catch( function( message ){
 			console.log("Checking VR-Avaibility");
 			document.body.appendChild( WEBVR.getMessageContainer( message ))
+			that.isVRAvailable = false;
 		})
 	}
 
@@ -60,10 +71,6 @@ var ThreeRenderer = function()
 	this.estate = new Estate(this.scene, this.isDoorMarkerVisible);
 	this.estate.loadEstate();
 
-	document.addEventListener('keydown', function (event){
-		that.onKeyDown(event)
-	}, false );
-
 	// Set update callback
 	this.animate();
 }
@@ -78,12 +85,16 @@ ThreeRenderer.prototype.initTJS = function(detectAndSetVRRenderer)
 	this.scene = new THREE.Scene();
 
 	// Init camera - standard perspective camera if rift is disabled
-	this.cSizeX		= window.innerWidth;  //800;
-	this.cSizeY 	= window.innerHeight; //600;
-	if(this.isVRActive)
+	this.cSizeX		= window.innerWidth;
+	this.cSizeY 	= window.innerHeight;
+
+	// FOV is greater if VR is active (60 per eye)
+	if(this.isVRActive && this.isVRAvailable)
 		this.FOV = 120;
-	else 
+	else // FOV settings for non-VR
 		this.FOV = 75;
+
+	// Setup perspective camera
 	this.camera = new THREE.PerspectiveCamera
 	( 
 		this.FOV, 
@@ -99,8 +110,22 @@ ThreeRenderer.prototype.initTJS = function(detectAndSetVRRenderer)
 		canvas 		: this.canvas,
 		antialias	: true
 	});
+
 	this.renderer.setSize(this.cSizeX, this.cSizeY);
 	this.renderer.setClearColor(0xFFFFFF);
+
+	// Set a light
+	var dirLight = new THREE.DirectionalLight
+	(
+		0xffffff, 		// color
+		1.0				// Intensity			
+	);
+
+	var pos = new THREE.Vector3 (1, 1, 0);
+	dirLight.position.x = pos.x
+	dirLight.position.y = pos.y;
+	dirLight.position.z = pos.z;
+	this.scene.add(dirLight);
 	
 	// VR settings
 	this.renderer.vr.enabled = true;
@@ -185,7 +210,8 @@ ThreeRenderer.prototype.animate = function()
 		this.inputControler.updateFPSControls();
 
 	// Resize
-	this.resize();
+	if(!this.isVRActive)
+		this.resize();
 
 	// Update raycaster and intersected objects
 	this.inputControler.updateRaycaster();
@@ -196,11 +222,20 @@ ThreeRenderer.prototype.animate = function()
 	// Save instance to the class
 	var that = this;
 
+	if(this.isVRActive)
+	{
+		// Upate the ray and raycaster by controller input
+		this.updateRaycasterVR();
+
+		// Change ray color when intersecting any doormarker
+		this.handleVRPointerState();
+	}
+
 	//  Here’s VRController’s UPDATE goods right here:
 	//  This one command in your animation loop is going to handle
 	//  all the VR controller business you need to get done!
 	THREE.VRController.update();
-
+	
 	// Handle update
 	requestAnimationFrame
 	(
@@ -251,6 +286,8 @@ ThreeRenderer.prototype.connectVRController = function(scene, renderer, that){
 		that.controller = event.detail;
 		scene.add( that.controller );
 
+		console.log(THREE.VRController);
+
 		// For standing experiences (not seated) we need to set the standingMatrix
 		// otherwise you’ll wonder why your controller appears on the floor
 		// instead of in your hands! And for seated experiences this will have no
@@ -270,7 +307,8 @@ ThreeRenderer.prototype.connectVRController = function(scene, renderer, that){
 		meshColorOn  = 0xF4C20D, // Yellow
 		controllerMaterial = new THREE.MeshStandardMaterial({
 
-			color: meshColorOff
+			color: meshColorOff,
+			emissive: meshColorOff
 		}),
 		controllerMesh = new THREE.Mesh(
 
@@ -282,7 +320,7 @@ ThreeRenderer.prototype.connectVRController = function(scene, renderer, that){
 			new THREE.BoxGeometry( 0.03, 0.1, 0.03 ),
 			controllerMaterial
 		)
-
+		console.log(controllerMesh);
 		controllerMaterial.flatShading = true;
 		controllerMesh.rotation.x = -Math.PI / 2;
 		handleMesh.position.y = -0.05;
@@ -292,7 +330,26 @@ ThreeRenderer.prototype.connectVRController = function(scene, renderer, that){
 		//castShadows( controller )
 		//receiveShadows( controller )
 
-		that.initVRIntersectionRay(that.controller, controllerMesh, that);
+		var geometry = new THREE.SphereGeometry
+		(
+			20,            // radius — sphere radius. Default is 1.
+			16,             // widthSegments — number of horizontal segments. Minimum value is 3, and the default is 8.
+			16             // heightSegments — number of vertical segments. Minimum value is 2, and the default is 6.
+		);
+		
+		// Set material
+		var material = new THREE.MeshBasicMaterial
+		( 
+			{
+				color       : 0xffff00,             // Green color
+				side        : THREE.DoubleSide     // No backface culling
+			} 
+		);
+		that.scene.add(geometry);
+
+		// Init vr intersection ray if vr is active
+		if(that.isVRActive)
+			that.initVRIntersectionRay(that.controller, controllerMesh, that);
 
 		// Allow this controller to interact with DAT GUI.
 		var guiInputHelper = dat.GUIVR.addInputObject( that.controller );
@@ -304,6 +361,7 @@ ThreeRenderer.prototype.connectVRController = function(scene, renderer, that){
 		// all the named buttons we’ve already mapped for you!
 		that.controller.addEventListener( 'primary press began', function( event ){
 			event.target.userData.mesh.material.color.setHex( meshColorOn );
+			that.line.material.color.setHex( 0x00ff00 );
 			guiInputHelper.pressed( true );
 
 			that.isUserInteracting = true;
@@ -361,8 +419,10 @@ ThreeRenderer.prototype.connectVRController = function(scene, renderer, that){
 			}
 		})
 
+		// Primary button released event
 		that.controller.addEventListener( 'primary press ended', function( event ){
 			event.target.userData.mesh.material.color.setHex( meshColorOff );
+			that.line.material.color.setHex( 0x0000ff );
 			guiInputHelper.pressed( false );
 			that.isUserInteracting = false;
 		})
@@ -406,4 +466,57 @@ ThreeRenderer.prototype.initVRIntersectionRay = function(controller, controllerM
 
 	// Add the line to the vr controller
 	controller.add(that.line);
+}
+
+// If the mouse is over an doormarker, the mouse curser should 
+// change to a pointer. Else the curser should be default
+ThreeRenderer.prototype.handleVRPointerState = function() 
+{
+	// If there are intersections
+	if(this.intersectsVR.length > 0)
+	{
+		// Handle only plane geometry and sphere geometry (curved plane) doormarkers
+		if(this.intersectsVR[0].object.geometry.type === 'PlaneGeometry')
+			this.line.material.color.setHex( 0x00ff00 );
+		else if (this.intersectsVR[0].object.geometry.type == "SphereGeometry" && this.intersectsVR[0].object.name != "Room")
+			this.line.material.color.setHex( 0x00ff00 );	
+		else if(this.intersectsVR[0].object.name == "Room")
+			this.line.material.color.setHex( 0x0000ff );
+	}
+}
+
+// Update the VR intersection ray and the raycaster 
+ThreeRenderer.prototype.updateRaycasterVR = function()
+{
+	if(this.controller && this.controller.gamepad.pose.position)
+	{
+		// Controller position
+		var conVec = new THREE.Vector3(0,0,0);
+		conVec.x = this.controller.gamepad.pose.position[0];
+		conVec.y = this.controller.gamepad.pose.position[1];
+		conVec.z = this.controller.gamepad.pose.position[2];
+
+		// Controller orientation 
+		var quad = new THREE.Quaternion
+		(
+			this.controller.gamepad.pose.orientation[0],	// x
+			this.controller.gamepad.pose.orientation[1],	// y
+			this.controller.gamepad.pose.orientation[2],	// z
+			this.controller.gamepad.pose.orientation[3]		// w
+		);
+
+		// Set rotation (direction) matrix by controller orientation
+		var matrix = new THREE.Matrix4();
+		matrix.setRotationFromQuaternion(quad);
+
+		// Mult mat with vec which aims at z neg (view direction)
+		var conDir = new THREE.Vector3( 0, 0, -1 );
+		conDir = matrix.multiplyVector3(conDir);
+
+		// Init the raycaster which handels intersections by the vr controller ray
+		this.raycasterVR = new THREE.Raycaster(conVec, conDir);
+
+		// Get the intersections with vr controller ray
+		this.intersectsVR = this.raycasterVR.intersectObjects( this.scene.children, true );
+	}
 }
