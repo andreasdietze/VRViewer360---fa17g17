@@ -330,23 +330,6 @@ ThreeRenderer.prototype.connectVRController = function(scene, renderer, that){
 		//castShadows( controller )
 		//receiveShadows( controller )
 
-		var geometry = new THREE.SphereGeometry
-		(
-			20,            // radius — sphere radius. Default is 1.
-			16,             // widthSegments — number of horizontal segments. Minimum value is 3, and the default is 8.
-			16             // heightSegments — number of vertical segments. Minimum value is 2, and the default is 6.
-		);
-		
-		// Set material
-		var material = new THREE.MeshBasicMaterial
-		( 
-			{
-				color       : 0xffff00,             // Green color
-				side        : THREE.DoubleSide     // No backface culling
-			} 
-		);
-		that.scene.add(geometry);
-
 		// Init vr intersection ray if vr is active
 		if(that.isVRActive)
 			that.initVRIntersectionRay(that.controller, controllerMesh, that);
