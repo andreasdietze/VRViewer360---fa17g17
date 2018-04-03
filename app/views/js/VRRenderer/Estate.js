@@ -8,15 +8,13 @@
 */
 var Estate = function(scene, isDoorMarkerVisible)
 {
-    // Params
+    // Scene object
     this.scene = scene;
 
     // The actual room to be displayed
     this.actualRoom = null;
 
-    // Test scene
-    this.panocounter = null;
-
+    // Are door markers visible?
     this.isDoorMarkerVisible = isDoorMarkerVisible;
 }
 

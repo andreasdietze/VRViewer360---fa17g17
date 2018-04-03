@@ -1,34 +1,35 @@
 // Note: grid has overlay intersection if fps is active
 var InputControler = function(main) 
 {
-    console.log("Called InputControler");
-    this.threeRenderer = main;
+	//console.log("Called InputControler");
+	
+    this.threeRenderer 			= main;
 
     // Standing position
-	this.bodyPosition = null; 
+	this.bodyPosition 			= null; 
     
     // Mouse manual controls position
-	this.onMouseDownMouseX = 0;
-	this.onMouseDownMouseY = 0;
+	this.onMouseDownMouseX 		= 0;
+	this.onMouseDownMouseY 		= 0;
 	// Longitude
-	this.lon = 0;
+	this.lon 					= 0;
 	// Latitude
-	this.lat = 0;
+	this.lat 					= 0;
 	// Angle of twist
-	this.phi = 0;
-	this.theta = 0;
-	this.onPointerDownPointerX = 0
-	this.onPointerDownPointerY = 0;
-	this.onPointerDownLon = 0;
-    this.onPointerDownLat = 0;
+	this.phi 					= 0;
+	this.theta 					= 0;
+	this.onPointerDownPointerX 	= 0
+	this.onPointerDownPointerY 	= 0;
+	this.onPointerDownLon 		= 0;
+    this.onPointerDownLat 		= 0;
 
     // Checks if input is allowed
-	this.isUserInteracting = false;
+	this.isUserInteracting 		= false;
     
     // Raycaster for mouse intersections
-    this.mouse = new THREE.Vector2();
-    this.lastMove = Date.now();
-    this.raycaster = new THREE.Raycaster();
+    this.mouse 					= new THREE.Vector2();
+    this.lastMove 				= Date.now();
+    this.raycaster 				= new THREE.Raycaster();
 
 	// Make a copy of 'this' because within a Event-Callback 
 	// the keyword 'this' calles the event itself.
@@ -56,7 +57,9 @@ var InputControler = function(main)
 	}, false );
 }
 
-// Update the first person controls
+// Update the first person controls.
+// Used sample:
+// https://github.com/timoxley/threejs/blob/master/examples/webgl_panorama_equirectangular.html
 InputControler.prototype.updateFPSControls = function()
 {
 	// If orbit camera is not active
@@ -108,6 +111,7 @@ InputControler.prototype.onDocumentMouseDown = function ( event )
 	switch(event.button)
 	{
 		case 0: // left
+			// Enable mouse move input
 			this.isUserInteracting = true;
 
 			// Update non THREE mouse controls on button press
@@ -123,8 +127,6 @@ InputControler.prototype.onDocumentMouseDown = function ( event )
 			break;
 
 		case 1: // middle
-			if(this.test)
-				this.estate.updateTestEstate();
 			break;
 
 		case 2: // right
@@ -135,12 +137,18 @@ InputControler.prototype.onDocumentMouseDown = function ( event )
 // Mouse-Up-Event: Lock user input (mouse) once if button was released and check intersections
 InputControler.prototype.onDocumentMouseUp = function( event ) 
 {
+	// If we got intersections
 	if(this.intersects.length > 0)
 	{
+		// Checks only for the closest intersected object. In any case a doormarker
+		// is closer to the user than the room sphere.
+		// Note: Supports all geometries which have a special name 
+		// including experimental doormarkers.
 		if( this.intersects[0].object.geometry.name !== "undefined")
 			this.threeRenderer.estate.updateEstate(this.intersects[0].object);
 	}
 
+	// Lock mouse move input
 	this.isUserInteracting = false;
 }
 
@@ -207,7 +215,6 @@ InputControler.prototype.onDocumentMouseWheel = function( event )
 
 	// Update projection with new FOV
 	this.threeRenderer.camera.updateProjectionMatrix();
-	//riftCam = new THREE.OculusRiftEffect(renderer);
 }
 
 // Compute 2D mouse vector for 3D raycast picking. The mouse

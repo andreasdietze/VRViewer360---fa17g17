@@ -15,28 +15,41 @@
 *
 * @param {int}              markerSetup
 * Pree defined Room setup.
+*
+* @param {boolean}          isDoorMarkerVisible
+* Determines if doormarker plane objects are visible or not.
 */
 var Room = function (scene, texturePath, markerSetup, isDoorMarkerVisible)
 {
     // THREE.js scene object
     this.scene          = scene;
 
-    // Public vars
+    // Sphere geometry for the panorama sphere
     this.sphereGeo      = null;
+
+    // Sphere material for the 360° sphere image
     this.sphereMat      = null;
+
+    // Sphere mesh object (the object to render)
     this.sphereMesh     = null;
+
+    // Path of the room image
     this.texturePath    = texturePath;
+
+    // Markersetup: setup markers for the room with this image
     this.markerSetup    = markerSetup;
+
+    // Are door markers visible?
     this.isDoorMarkerVisible = isDoorMarkerVisible;
 
-    // DoorMarkerFacroty
+    // DoorMarkerFacroty: management for all door markers
     this.doorMarkerFactory = null;
 
-    // For test room
+    // For test room (debug purposes only)
     this.panoramas      = [];
-
     //this.createTestRoom();
 
+    // Create the room
     this.create(texturePath);
 }
 
@@ -156,7 +169,7 @@ Room.prototype.create = function (texturePath)
     // Handle marker factory
     if(this.markerSetup > -1)
     {
-        // Pre defined marker setup
+        // Pre defined marker setup for a room
         this.doMarkerSetup(this.markerSetup);
     }
     else 
@@ -165,16 +178,12 @@ Room.prototype.create = function (texturePath)
         this.doorMarkerFactory = new DoorMarkerFactory();
     }
 
+    // Every room has the name 'Room'. In the scene there only existis one room at once!
+    // The estate class is responsible for the management of the rooms.
     this.spehreMesh.name = "Room";
 
     // Add mesh to scene
 	this.scene.add(this.spehreMesh); 
-}
-
-// DoorMarkerFactory - Setter
-Room.prototype.setDoorMarkerFactory = function (doorMarkerFactory)
-{
-    this.doorMarkerFactory = doorMarkerFactory;
 }
 
 // Execute the pre defined marker setup for each room.

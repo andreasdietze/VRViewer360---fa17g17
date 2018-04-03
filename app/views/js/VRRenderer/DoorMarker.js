@@ -22,7 +22,7 @@
 * Due to a DoorMarker.js object is a THREE.Object3D object, it
 * has to be added to the a THREE.Scene object to be interactive
 * (intersection with THREE.Raycaster) and renderable.
-
+*
 * @param {boolean}          isDoorMarkerVisible
 * Determines if doormarker plane objects are visible or not.
 *
@@ -65,8 +65,9 @@ var DoorMarker = function(id, position, orientation, scale, scene, isDoorMarkerV
     // Visibility
     this.isDoorMarkerVisible = isDoorMarkerVisible
 
+    // Curved or planar
     this.isCurved = isCurved;
-    console.log(this.isCurved);
+
     // Create the visible marker object as curved plane object
     if(this.isCurved) 
         this.createMarkerCurvedPlane(scene);

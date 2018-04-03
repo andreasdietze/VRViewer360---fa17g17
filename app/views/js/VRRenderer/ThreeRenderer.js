@@ -1,24 +1,68 @@
-// Renderer
+/*
+* Class ThreeRenderer:
+* Management of the 3D-Renderer for a VR and non-VR 
+* presentation. Also manages the user input by the
+* Oculus Rift Touch Controller and loads the active estate.
+*/
 var ThreeRenderer = function()
 {
 	console.log("Init Renderer");
 
-	// Launch settings
-	this.isVRActive 			= false;
-	this.isOrbitActive 			= true;
-	this.isGridVisible 			= false;
-	this.isDoorMarkerVisible 	= true;
-	this.test 					= false;
+	//**********************************//
+	//			Launch Settings			//
+	//**********************************//
 
-	// Renderer, scene, camera and spaces
+	// Enable or disable VR: no VR device attached.
+	// This flag can also be true without any VR 
+	// device attached to the presentation system.
+	// however, it will display a 'No VR Device found' message. 
+	this.isVRActive 			= false;
+
+	// Enable or disable orbit camera: the camera
+	// settings and input controls used by this 
+	// flag are used for debug and demonstration purposes
+	this.isOrbitActive 			= false;
+
+	// Enable or disable 3D-Grid: for debug purposes
+	this.isGridVisible 			= false;
+
+	// Enable or disable visibility of doormarkers
+	this.isDoorMarkerVisible 	= true;
+
+	//**********************************//
+	//			Render Settings			//
+	//**********************************//
+
+	// The HTML canvas rendertarget
 	this.canvas 				= null;
-	this.scene 					= null; 
+
+	// THREE.js scene object
+	this.scene 					= null;
+
+	// THREE.js camera object
 	this.camera 				= null;
+
+	// THREE.js render object
 	this.renderer 				= null;
+
+	// Field of View: default settings are for a
+	// non-VR presentation. If a VR-Device is available the
+	// application will handle the FOV for a stereoscoptic 
+	// projection (FOV = 120°, 60° per eye)
 	this.FOV 					= 75;
+
+	// Client width
 	this.cSizeX 				= window.innerWidth;
+
+	// Client height
 	this.cSizeY 				= window.innerHeight;
+
+	// Light vector: light direction
 	this.lightDir 				= null;
+
+	//**********************************//
+	//			App-Objects				//
+	//**********************************//
 
 	// Visual grid for orientation
 	this.grid 					= null;
@@ -29,13 +73,18 @@ var ThreeRenderer = function()
 	// VR controller
 	this.controller 			= null;
 
-	// Is a VR divices avaiable ?
+	// Is a VR divices avaiable (internal flag)? 
 	this.isVRAvailable			= false;
 
 	// Copy of 'this'
 	var that 					= this;
 
+	// Array for intersections with VR-Intersection ray
 	this.intersectsVR = [];
+
+	//**********************************//
+	//	Init VR- and THREE Renderer		//
+	//**********************************//
 
 	// If we use vr, check for availability
 	if(this.isVRActive)
@@ -64,10 +113,10 @@ var ThreeRenderer = function()
 		}
 	});
 
-	// Try to connect VR-Controller and setup dat GUI
+	// Try to connect VR-Controller
 	this.connectVRController(this.scene, this.renderer, this);
 
-	// Init Estate/Rooms
+	// Create and load the estate for presentation
 	this.estate = new Estate(this.scene, this.isDoorMarkerVisible);
 	this.estate.loadEstate();
 
@@ -111,45 +160,79 @@ ThreeRenderer.prototype.initTJS = function(detectAndSetVRRenderer)
 		antialias	: true
 	});
 
+	// Set render width and height
 	this.renderer.setSize(this.cSizeX, this.cSizeY);
+
+	// Set clear color (white)
 	this.renderer.setClearColor(0xFFFFFF);
 
-	// Set a light
+	// Set a light (white)
 	var dirLight = new THREE.DirectionalLight
 	(
 		0xffffff, 		// color
 		1.0				// Intensity			
 	);
 
+	// Set light direction
 	var pos = new THREE.Vector3 (1, 1, 0);
 	dirLight.position.x = pos.x
 	dirLight.position.y = pos.y;
 	dirLight.position.z = pos.z;
+
+	// Add light to scene
 	this.scene.add(dirLight);
 	
 	// VR settings
-	this.renderer.vr.enabled = true;
-	this.renderer.vr.standing = true;
+	if(this.isVRActive)
+	{
+		this.renderer.vr.enabled = true;
+		this.renderer.vr.standing = true;
+	}
 
 	// Set inspectors (camera) position (to be on eye hight)
 	if(this.isOrbitActive)
 	{
+		// Orbit controls are used for debug and internal 
+		// feature demonstration purposes
 		this.inputControler.setOrbitControls();
 	
+		// Setup user position (camera position)
 		this.inputControler.bodyPosition = new THREE.Vector3(0, 0, 350);
-		this.camera.position.set( this.inputControler.bodyPosition.x, this.inputControler.bodyPosition.y, this.inputControler.bodyPosition.z );
+		this.camera.position.set
+		( 
+			this.inputControler.bodyPosition.x,
+			this.inputControler.bodyPosition.y,
+			this.inputControler.bodyPosition.z
+		);
 	}
 	else 
 	{
+		// Setup user position for first person user input: this 
+		// is the non-VR input for using the application
 		this.inputControler.bodyPosition = new THREE.Vector3(0, 15, 0);
-		this.camera.position.set( this.inputControler.bodyPosition.x, this.inputControler.bodyPosition.y, this.inputControler.bodyPosition.z );
+		this.camera.position.set
+		( 
+			this.inputControler.bodyPosition.x,
+			this.inputControler.bodyPosition.y,
+			this.inputControler.bodyPosition.z
+		);
 		
-		// TODO: Look at specific target when lauchning
-		this.camera.target 		= new THREE.Vector3( 0, 0, -1 );
-		this.camera.lookAt(this.camera.position, this.camera.target, new THREE.Vector3(1000,1,0));
+		// Setup camera target
+		this.camera.target = new THREE.Vector3( 0, 0, -1 );
+
+		// Look at specific target at launch (neg. z)
+		this.camera.lookAt(this.camera.target);
+
+		// Look at target (3D-Object to target)
+		/*this.camera.lookAt
+		(
+			this.camera.position,
+			this.camera.target
+			new THREE.Vector3(1000,1,0)
+		);*/
 	}
 
-	// Add world grid.
+	// Add world grid
 	var gridSettings = 
 	{
 		position 	: new THREE.Vector3( 0, 0, 0 ),
@@ -164,41 +247,15 @@ ThreeRenderer.prototype.initTJS = function(detectAndSetVRRenderer)
 		lineWidth 	: 10
 	};
 
-	// Grid interferes with raycaster fps cam
+	// Grid interferes with raycaster fps camera
 	if(this.isGridVisible)
 	{
 		this.grid = new GridGenerator(this);
 		this.scene.add(this.grid.createGrid(gridSettings));
 	}
 
-	// Callback
+	// Callback from initTJS
 	detectAndSetVRRenderer(this.renderer);
-
-	//var torus = new THREE.Mesh(
-		
-		//new THREE.TorusKnotGeometry( 0.4, 0.15, 256, 32 ),
-		//new THREE.MeshStandardMaterial({ roughness: 0.01, metalness: 0.2 })
-	//)
-	//torus.position.set( -0.25, 1.4, -1.5 )
-	//torus.castShadow    = true
-	//torus.receiveShadow = true
-	//this.scene.add( torus )
-
-	//  DAT GUI for WebVR is just one of the coolest things ever.
-	//  Huge, huge thanks to Jeff Nusz / http://custom-logic.com
-	//  and Michael Chang / http://minmax.design for making this!!
-	//  https://github.com/dataarts/dat.guiVR
-
-	dat.GUIVR.enableMouse( this.camera )
-	//console.log(dat.GUIVR);
-	//var gui = dat.GUIVR.create( 'Settings' )
-	//gui.position.set( 0.2, 0.8, -1 )
-	//gui.rotation.set( Math.PI / -6, 0, 0 )
-	//this.scene.add( gui )
-	//gui.add( torus.position, 'x', -1, 1 ).step( 0.001 ).name( 'Position X' )
-	//gui.add( torus.position, 'y', -1, 2 ).step( 0.001 ).name( 'Position Y' )
-	//gui.add( torus.rotation, 'y', -Math.PI, Math.PI ).step( 0.001 ).name( 'Rotation' ).listen()
-	//castShadows( gui )
 }
 
 // Updates the logic of the graphical application and triggers
@@ -209,7 +266,8 @@ ThreeRenderer.prototype.animate = function()
 	if(!this.isOrbitActive)
 		this.inputControler.updateFPSControls();
 
-	// Resize
+	// Resize only if no VR-Device is attached 
+	// (three exception/ render context exception)
 	if(!this.isVRActive)
 		this.resize();
 
@@ -218,9 +276,6 @@ ThreeRenderer.prototype.animate = function()
 	
 	// Set the mouse curser if a marker is intersected
 	this.inputControler.handleMouseCurserState();
-
-	// Save instance to the class
-	var that = this;
 
 	if(this.isVRActive)
 	{
@@ -236,20 +291,25 @@ ThreeRenderer.prototype.animate = function()
 	//  all the VR controller business you need to get done!
 	THREE.VRController.update();
 	
+	// Save instance of the class
+	var that = this;
+
+	// Bind is slow in chrome
+	// https://stackoverflow.com/questions/10697748/how-do-i-use-requestanimationframe-to-call-my-js-prototype
+	//requestAnimationFrame( ThreeRenderer.prototype.animate.bind (this) );
+
 	// Handle update
 	requestAnimationFrame
 	(
 		// Update callback 
 		function() 
 		{
-			// Trigger update function
+			// Trigger update function recursive
 			that.animate ();
 		} 
 	);
 
-	// Blind is slow in chrome
-	// https://stackoverflow.com/questions/10697748/how-do-i-use-requestanimationframe-to-call-my-js-prototype
-	//requestAnimationFrame( ThreeRenderer.prototype.animate.blind (this) );
+	// Render the scene
 	this.render();
 }
 
@@ -274,6 +334,11 @@ ThreeRenderer.prototype.resize = function()
 	this.renderer.setSize(this.cSizeX, this.cSizeY);
 }
 
+
+// Connects the VR-Controller and handles controller button events. Also 
+// manages intersections with doormarkers by the VR-Intersection-Ray.
+// Used example for VR-Controller input:
+// https://raw.githubusercontent.com/stewdio/THREE.VRController/master/index.html
 ThreeRenderer.prototype.connectVRController = function(scene, renderer, that){
 	// Check this out: When THREE.VRController finds a new controller
 	// it will emit a custom “vr controller connected” event on the
@@ -286,7 +351,7 @@ ThreeRenderer.prototype.connectVRController = function(scene, renderer, that){
 		that.controller = event.detail;
 		scene.add( that.controller );
 
-		console.log(THREE.VRController);
+		//console.log(THREE.VRController);
 
 		// For standing experiences (not seated) we need to set the standingMatrix
 		// otherwise you’ll wonder why your controller appears on the floor
@@ -320,43 +385,39 @@ ThreeRenderer.prototype.connectVRController = function(scene, renderer, that){
 			new THREE.BoxGeometry( 0.03, 0.1, 0.03 ),
 			controllerMaterial
 		)
-		console.log(controllerMesh);
+
+		// Set shading (BRDF)
 		controllerMaterial.flatShading = true;
+
+		// Adjust controller mesh and add it to scene
 		controllerMesh.rotation.x = -Math.PI / 2;
 		handleMesh.position.y = -0.05;
 		controllerMesh.add( handleMesh );
-		that.controller.userData.mesh = controllerMesh;//  So we can change the color later.
+		that.controller.userData.mesh = controllerMesh; //  So we can change the color later.
 		that.controller.add( controllerMesh );
-		//castShadows( controller )
-		//receiveShadows( controller )
 
 		// Init vr intersection ray if vr is active
 		if(that.isVRActive)
 			that.initVRIntersectionRay(that.controller, controllerMesh, that);
 
-		// Allow this controller to interact with DAT GUI.
-		var guiInputHelper = dat.GUIVR.addInputObject( that.controller );
-		scene.add( guiInputHelper );
-
-		// Button events. How easy is this?!
-		// We’ll just use the “primary” button -- whatever that might be ;)
-		// Check out the THREE.VRController.supported{} object to see
-		// all the named buttons we’ve already mapped for you!
+		// Primary button pressed event
 		that.controller.addEventListener( 'primary press began', function( event ){
+			// Set controller color
 			event.target.userData.mesh.material.color.setHex( meshColorOn );
-			that.line.material.color.setHex( 0x00ff00 );
-			guiInputHelper.pressed( true );
 
+			// Set ray color
+			that.line.material.color.setHex( 0x00ffff );
+
+			// Enable user interaction
 			that.isUserInteracting = true;
-			//console.log(that.controller);
 
-			// Controller position
+			// Get the controller position
 			var conVec = new THREE.Vector3(0,0,0);
 			conVec.x = that.controller.gamepad.pose.position[0];
 			conVec.y = that.controller.gamepad.pose.position[1];
 			conVec.z = that.controller.gamepad.pose.position[2];
 
-			// Controller orientation 
+			// Get the controller orientation
 			var quad = new THREE.Quaternion
 			(
 				that.controller.gamepad.pose.orientation[0],	// x
@@ -365,11 +426,11 @@ ThreeRenderer.prototype.connectVRController = function(scene, renderer, that){
 				that.controller.gamepad.pose.orientation[3]		// w
 			);
 
-			// Set rotation (direction) matrix by controller orientation
+			// Set rotation matrix by controller orientation
 			var matrix = new THREE.Matrix4();
 			matrix.setRotationFromQuaternion(quad);
 
-			// Mult mat with vec which aims at z neg (view direction)
+			// Multiply rotation matrix with our view vector which aims at z negative.
 			var conDir = new THREE.Vector3( 0, 0, -1 );
 			conDir = matrix.multiplyVector3(conDir);
 
@@ -388,14 +449,17 @@ ThreeRenderer.prototype.connectVRController = function(scene, renderer, that){
 				0xffffff							// Color
 			);
 
-			// Add arrow to scene
+			// Add arrow to scene (for debug purposes)
 			//that.scene.add(helperArrow);
 
-			//console.log(that.intersectsVR);
+			// If we got intersections
 			if(that.intersectsVR.length > 0)
 			{
+				// Plane geometries are the only objects of interest in VR-Mode
+				// Note: no experimental doormarkers
 				for(var i = 0; i < that.intersectsVR.length; i++)
 				{
+					// If we found a doormarker, update the estate based on the found marker
 					if(that.intersectsVR[i].object.geometry.type === 'PlaneGeometry')
 						that.estate.updateEstate(that.intersectsVR[i].object);
 				}
@@ -406,7 +470,6 @@ ThreeRenderer.prototype.connectVRController = function(scene, renderer, that){
 		that.controller.addEventListener( 'primary press ended', function( event ){
 			event.target.userData.mesh.material.color.setHex( meshColorOff );
 			that.line.material.color.setHex( 0x0000ff );
-			guiInputHelper.pressed( false );
 			that.isUserInteracting = false;
 		})
 
