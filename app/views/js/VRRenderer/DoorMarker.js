@@ -164,7 +164,7 @@ DoorMarker.prototype.createMarkerCurvedPlane = function(scene)
 	this.sphere = new THREE.Mesh( this.geometry, this.material );
 
 	// 5. Transformation: copy scale from room spehre
-	this.sphere.applyMatrix( new THREE.Matrix4().makeScale(1, 1, 1)); //(0.975,0.975,0.975));
+	this.sphere.applyMatrix( new THREE.Matrix4().makeScale(1.0, 1.0, 1.0)); //(0.975,0.975,0.975));
 
 	// 4. Transformation: rotate y (left - right)
 	this.sphere.applyMatrix( new THREE.Matrix4().makeRotationAxis (new THREE.Vector3(0, 1, 0), Math.PI / 180 * 88 ));
