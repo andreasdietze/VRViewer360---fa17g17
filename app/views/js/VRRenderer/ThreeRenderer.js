@@ -16,7 +16,7 @@ var ThreeRenderer = function()
 	// This flag can also be true without any VR 
 	// device attached to the presentation system.
 	// however, it will display a 'No VR Device found' message. 
-	this.isVRActive 			= false;
+	this.isVRActive 			= true;
 
 	// Enable or disable orbit camera: the camera
 	// settings and input controls used by this 
