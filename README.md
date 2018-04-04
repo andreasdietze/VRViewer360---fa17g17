@@ -2,4 +2,4 @@
 Masterprojekt WiSe 17/18 - Teil 2
 
 Location der Dateien zum VRViewer:
-views/js/VRViewer/
+app/views/js/VRRenderer/
