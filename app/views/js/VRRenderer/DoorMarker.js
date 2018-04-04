@@ -89,8 +89,8 @@ DoorMarker.prototype.createMarkerPlane = function(scene)
     ( 
         5,  // width — Width along the X axis. Default is 1.
         20, // height — Height along the Y axis. Default is 1.
-        1   // widthSegments — Optional. Default is 1.
-            // heightSegments — Optional. Default is 1. 
+        1,   // widthSegments — Optional. Default is 1.
+        1    // heightSegments — Optional. Default is 1. 
     );
 
     // Set material
